@@ -18,7 +18,7 @@ Tested in newest Chrome only.
 
 ## Tests
 
-🤡
+    $ yarn test
 
 ## License
 
