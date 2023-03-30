@@ -1,0 +1,21 @@
+{
+  "name": "screenwriter",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Philipp Staender",
+  "license": "MIT",
+  "source": "src/index.html",
+  "devDependencies": {
+    "@parcel/transformer-sass": "2.8.3",
+    "parcel": "^2.8.3",
+    "process": "^0.11.10"
+  },
+  "scripts": {
+    "watch": "parcel",
+    "bukld": "parcel build"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}
