@@ -39,7 +39,7 @@ export function SceneSection({ current, goNext, goPrev, removeSection, id, index
                     }
                     if (previousSection.classList.contains('dialogText')) {
                         if (previousPreviousSection && previousPreviousSection.textContent && previousPreviousSection.classList.contains('dialogCharacter')) {
-                            setHtmlContent(previousPreviousSection.textContent)
+                            setHtmlContent(previousPreviousSection.textContent.match(/[\w]+/)[0])
                         }
                         return setEditingLevel('dialogCharacter');
                     }
@@ -87,7 +87,7 @@ export function SceneSection({ current, goNext, goPrev, removeSection, id, index
             let nextLevel = editingLevels[editingLevels.indexOf(editingLevel) + direction];
             setEditingLevel(nextLevel || editingLevels[0]);
             if (ev.shiftKey && !nextLevel) {
-                setEditingLevel(editingLevels[editingLevels.length-1]);
+                setEditingLevel(editingLevels[editingLevels.length - 1]);
             }
             cleanupContenteditableMarkup()
         }
@@ -122,7 +122,7 @@ export function SceneSection({ current, goNext, goPrev, removeSection, id, index
             div.innerHTML = html;
             return div.textContent.replace(/---BRLINEBREAK---/g, '<br>')
         }
-    
+
         function trimLineBreaks(html) {
             return html.replace(/^\s*<br>/ig, '').replace(/<br>\s*$/ig, '')
         }
@@ -143,7 +143,12 @@ export function SceneSection({ current, goNext, goPrev, removeSection, id, index
         }
     }, [htmlContent])
 
-    return <section className={[isCurrent ? 'selected' : '', editingLevel].filter(e => !!e).join(' ')} onClick={handleFocus} data-index={index + 1}>
+    return <section className={
+        [
+            isCurrent ? 'selected' : '',
+            editingLevel,
+            inputRef.current?.textContent?.trim()?.match(/^(INT|EXT)/) ? 'sceneIntroduction' : '',
+        ].filter(e => !!e).join(' ')} onClick={handleFocus} data-index={index + 1}>
         <div contentEditable={true} onFocus={handleFocus} onBlur={handleBlur} ref={inputRef} className={editingLevel} onKeyDown={handleKeyDown}>
         </div>
     </section>

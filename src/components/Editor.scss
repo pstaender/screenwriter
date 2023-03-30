@@ -1,8 +1,4 @@
 #screenwriter {
-    --color-background: #fff;
-    --color-text: #222;
-    --color-light-grey: #f5f5f5;
-    --color-almost-white: #fafafa;
     background: var(--color-background);
     color: var(--color-text);
     *,
@@ -14,12 +10,27 @@
     --line-height: 1.5;
     --font-size: 18px;
 }
+body {
+    --color-background: #fff;
+    --color-text: #222;
+    --color-light-grey: #f5f5f5;
+    --color-almost-white: #fafafa;
+    background: var(--color-background);
+    transition: background 0.4s;
+}
+body.dark-mode {
+    --color-background: #222;
+    --color-text: #fff;
+    --color-light-grey: #333;
+    --color-almost-white: #262626;
+}
 #screenwriter-editor {
     font-size: var(--font-size);
     line-height: var(--line-height);
     max-width: 46rem;
     margin: 0 auto;
     letter-spacing: 0px;
+    counter-reset: scene-counter 0;
     [contenteditable] {
         &:focus {
             // background: var(--color-light-grey);
@@ -29,13 +40,20 @@
     > section {
         position: relative;
         &:before {
-            content: attr(data-index);
+            // content: attr(data-index);
             position: absolute;
             top: 1rem;
             left: -1.5rem;
             text-align: right;
             opacity: 0.25;
             font-size: 0.8rem;
+        }
+        &.sceneIntroduction {
+            counter-increment: scene-counter 1;
+            &:before {
+                content: counter(scene-counter);
+                font-size: 1rem;
+            }
         }
         padding: 1rem 2rem;
         &.selected {
@@ -81,6 +99,7 @@
     div.dialogCharacter {
         padding-left: 20rem;
         text-transform: uppercase;
+        font-weight: bold;
     }
     div.dialogText {
         padding-left: 10rem;

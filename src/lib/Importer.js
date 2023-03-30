@@ -1,6 +1,6 @@
 export function Importer(str) {
     let parts = str.split(`\n`)
-    
+
 
     function extractMetaData(parts) {
         let eofMetaDataReached = false;
@@ -13,19 +13,19 @@ export function Importer(str) {
             }
             return l.match(/^[^\:]+?\:\s+.+$/);
         })
-    
+
         let metaData = {};
         metaDataParts.forEach(m => {
             metaData[m.split(':')[0].trim()] = m.split(':')[1].trim()
         })
-        return {metaData, eofMetaDataReached};
+        return { metaData, eofMetaDataReached };
     }
 
-    let {metaData, eofMetaDataReached} = extractMetaData(parts);
+    let { metaData, eofMetaDataReached } = extractMetaData(parts);
 
 
     parts = parts
-        .slice(eofMetaDataReached+1)
+        .slice(eofMetaDataReached + 1)
         .join(`\n`).replace(/^\n+/, '')
         .replace(/\n+$/, '')
         .replace(/\t/g, '  ')
@@ -56,7 +56,7 @@ export function Importer(str) {
                 classification: 'descriptionAnnotation'
             })
         }
-        
+
         // else if (/^\s{6,16}[A-Z]+/.test(part)) {
         //     sections.push({
         //         text: part,
@@ -79,5 +79,5 @@ export function Importer(str) {
         s.html = s.text.replace(/\n\n/, '<br><br>').split(`\n`).map(l => l.trim().replace('  ', ' &nbsp;')).join('<br>')
         return s;
     })
-    return {sections, metaData};
+    return { sections, metaData };
 }

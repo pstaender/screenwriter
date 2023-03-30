@@ -6,14 +6,45 @@
   src: url("./fonts/iAWriterDuoS-Regular.woff2") format("woff2"),
     /* Chrome 36+, Opera 23+, Firefox 39+ */ url("./fonts/iAWriterDuoS-Regular.woff") format("woff"); /* Chrome 5+, Firefox 3.6+, IE 9+, Safari 5.1+ */ /* Legacy iOS */
 }
+@font-face {
+  font-display: swap;
+  font-family: "iA Writer Duo";
+  font-style: bold;
+  font-weight: 600;
+  src: url("./fonts/iAWriterDuoS-Bold.woff2") format("woff2"),
+    /* Chrome 36+, Opera 23+, Firefox 39+ */ url("./fonts/iAWriterDuoS-Bold.woff") format("woff"); /* Chrome 5+, Firefox 3.6+, IE 9+, Safari 5.1+ */ /* Legacy iOS */
+}
 .toolbar {
   position: fixed;
   z-index: 999;
+  display: flex;
+  .icons {
+    display: flex;
+    align-items: center;
+  }
+  .show-more-icons {
+    position: relative;
+    > .icons {
+      display: none;
+      position: absolute;
+      left: 0;
+      top: 1.75rem;
+      // height: 4rem;
+    }
+    &:hover {
+      
+      .icons {
+        display: block;
+      }
+    }
+  }
   .icon {
     font-size: 20px;
+    width: 30px;
+    height: 30px;
     padding: 5px;
-    filter: saturate(0);
-    display: inline-block;
+    display: grid;
+    place-content: center;
     &:hover {
       cursor: pointer;
       background: var(--color-light-grey);

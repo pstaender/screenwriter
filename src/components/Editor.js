@@ -7,16 +7,15 @@ import { convertDomSectionsToDataStructure } from '../lib/Exporter';
 export function Editor() {
 
     function id() {
-        return new Date().getTime() + (Math.floor(Math.random() * 100000))
+        return crypto.randomUUID();
     }
 
     function emptySection() {
         return [{ id: id(), current: true, html: null, classification: null }]
     }
 
-
     function sectionsCurrentScreenplayViaLocalStorageOrPlainText() {
-        let lastScreenPlay = {}; 
+        let lastScreenPlay = {};
         try {
             lastScreenPlay = localStorage.getItem('currentScreenplay') ? JSON.parse(localStorage.getItem('currentScreenplay')) : {};
         } catch (e) {
@@ -39,9 +38,9 @@ export function Editor() {
         } else {
             // empty section
             return emptySection();
-        }   
+        }
     }
-    
+
     const [sections, setSections] = useState(sectionsCurrentScreenplayViaLocalStorageOrPlainText())
 
     function setAllSectionToNotCurrent(sections) {
@@ -52,14 +51,12 @@ export function Editor() {
     }
 
     function appendNewSection(sections) {
-        setSections([...setAllSectionToNotCurrent(sections),...emptySection()])
+        setSections([...setAllSectionToNotCurrent(sections), ...emptySection()])
     }
 
     function prependNewSection(sections) {
         setSections([...emptySection(), ...setAllSectionToNotCurrent(sections)])
     }
-
-    
 
     function handleKeyDown(ev) {
         if (ev.key === 'Enter' && !ev.shiftKey) {
@@ -71,7 +68,7 @@ export function Editor() {
                     let index = Number(ev.target.closest('section').dataset.index);
                     setSections([...setAllSectionToNotCurrent(sections.slice(0, index)), ...emptySection(), ...setAllSectionToNotCurrent(sections.slice(index))])
                 }
-                
+
             }
             else if (i + 1 === _sections.length) {
                 appendNewSection(_sections)
@@ -81,9 +78,9 @@ export function Editor() {
         // save()
     }
 
-    function goNext({id} = {}) {
+    function goNext({ id } = {}) {
         let i = sections.indexOf(sections.filter(s => s.id === id)[0])
-        let nextIndex = i+1;
+        let nextIndex = i + 1;
         if (nextIndex >= sections.length) {
             appendNewSection(sections)
         } else {
@@ -94,9 +91,9 @@ export function Editor() {
         }
     }
 
-    function goPrev({id} = {}) {
+    function goPrev({ id } = {}) {
         let i = sections.indexOf(sections.filter(s => s.id === id)[0])
-        let nextIndex = i-1;
+        let nextIndex = i - 1;
         if (nextIndex < 0) {
             prependNewSection(sections)
         } else {
@@ -107,14 +104,14 @@ export function Editor() {
         }
     }
 
-    function removeSection({id} = {}) {
+    function removeSection({ id } = {}) {
         setSections([...sections.filter(s => s.id !== id)])
     }
 
 
     return <div id="screenwriter-editor" onKeyDown={handleKeyDown}>
         {sections.map((section, i) => (
-            <SceneSection current={section.current} key={section.id} id={section.id} next={sections[i+1]} prev={sections[i+1]} removeSection={removeSection} goNext={goNext} goPrev={goPrev} index={i} sectionsLength={sections.length} html={section.html} classification={section.classification} />
+            <SceneSection current={section.current} key={section.id} id={section.id} next={sections[i + 1]} prev={sections[i + 1]} removeSection={removeSection} goNext={goNext} goPrev={goPrev} index={i} sectionsLength={sections.length} html={section.html} classification={section.classification} />
         ))}
     </div>;
 }

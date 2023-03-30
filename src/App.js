@@ -6,6 +6,7 @@ import { Editor } from './components/Editor.js'
 import Dropzone from './Dropzopne';
 import { Importer } from './lib/Importer';
 import { Exporter, convertDomSectionsToDataStructure } from './lib/Exporter';
+import { useInterval } from 'usehooks-ts';
 
 export function App() {
 
@@ -18,11 +19,7 @@ export function App() {
             const reader = new FileReader();
             reader.onload = function (e) {
                 if (e.target.result) {
-                    console.log(
-                        Importer(e.target.result)
-                    )
                     localStorage.setItem('currentScreenplay', JSON.stringify(Importer(e.target.result)))
-
                     setSeed(Math.random())
                 }
             };
@@ -35,7 +32,7 @@ export function App() {
 
     }, []);
 
-    function storeScreenplay() {
+    function storeScreenplayInLocalStorage() {
         let sections = convertDomSectionsToDataStructure([...document.querySelectorAll('#screenwriter-editor > section > div')]);
 
 
@@ -52,7 +49,7 @@ export function App() {
     }
 
     function downloadScreenplay() {
-        let data = storeScreenplay();
+        let data = storeScreenplayInLocalStorage();
         const content = Exporter(data.sections, data.metaData);
         const mimeType = 'text/plain';
         const filename = 'screenplay.txt'
@@ -64,11 +61,32 @@ export function App() {
         a.click() // Start downloading
     }
 
+    useInterval(() => {
+        storeScreenplayInLocalStorage();
+    }, 2000);
+
     return <div>
         <div className="toolbar">
             <Dropzone onDrop={onDrop} accept={"plain/txt"} />
-            <div className="icon">
-                <i className="gg-arrow-down-o" onClick={downloadScreenplay}></i>
+            <div className="icons">
+                <div className="icon">
+                    <i className="gg-arrow-down-o" onClick={downloadScreenplay}></i>
+                </div>
+                <div className='icon show-more-icons'>
+                    <i class="gg-more-alt"></i>
+                    <div className='icons'>
+                        <div className="icon">
+                            <i className="gg-dark-mode" onClick={() => document.querySelector('body').classList.toggle('dark-mode')}></i>
+                        </div>
+                        <div className='icon'>
+                            <i className="gg-trash" onClick={() => {
+                                setSeed(Math.random())
+                                localStorage.setItem('currentScreenplay', '{}')
+                             }}></i>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
         <Editor key={seed} />
