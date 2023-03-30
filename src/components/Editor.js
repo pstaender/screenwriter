@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { SceneSection } from './SceneSection';
 import { exporter, importer } from '../exporter';
 
+
 export function Editor() {
 
     function id() {
@@ -13,15 +14,12 @@ export function Editor() {
     function emptySection() {
         return [{ id: id(), current: true, html: null, classification: null }]
     }
-    // const currentRef = useRef(null);
 
-    function sectionsCurrentScreenplayViaLocalStorage() {
+    function sectionsCurrentScreenplayViaLocalStorageOrPlainText() {
         let lastScreenPlay = localStorage.getItem('currentScreenplay');
-        if (!window.loadedLastCurrentScreenplayFromLocalStorage && lastScreenPlay) {
-
+        if (lastScreenPlay) {
             console.debug(`Loading last used screenplay`);
             let importedSections = importer(lastScreenPlay);
-            window.loadedLastCurrentScreenplayFromLocalStorage = true;
             return [...importedSections.map((s, i) => {
                 return {
                     current: i === 0,
@@ -35,14 +33,8 @@ export function Editor() {
             return emptySection();
         }   
     }
-
     
-
-    const [sections, setSections] = useState(sectionsCurrentScreenplayViaLocalStorage())
-
-    if (!window.loadedLastCurrentScreenplayFromLocalStorage) {
-        loadLastCurrentScreenplayFromLocalStorage();
-    }
+    const [sections, setSections] = useState(sectionsCurrentScreenplayViaLocalStorageOrPlainText())
 
     function setAllSectionToNotCurrent(sections) {
         return sections.map(s => {
@@ -59,14 +51,7 @@ export function Editor() {
         setSections([...emptySection(), ...setAllSectionToNotCurrent(sections)])
     }
 
-    function downloadScreenplay(content, mimeType = 'text/plain', filename = 'screenplay.txt'){
-        const a = document.createElement('a')
-        const blob = new Blob([content], {type: mimeType});
-        const url = URL.createObjectURL(blob) // Create an object URL from blob
-        a.setAttribute('href', url) // Set "a" element link
-        a.setAttribute('download', filename) // Set download filename
-        a.click() // Start downloading
-      }
+    
 
     function handleKeyDown(ev) {
         if (ev.key === 'Enter' && !ev.shiftKey) {
@@ -90,9 +75,9 @@ export function Editor() {
             // if error occurs, this may be empty…
             localStorage.setItem('currentScreenplay', plainText)
         }
-        if (ev.metaKey && ev.key === 'e') {
-            downloadScreenplay(localStorage.getItem('currentScreenplay'))
-        }
+        // if (ev.metaKey && ev.key === 'e') {
+        //     downloadScreenplay(localStorage.getItem('currentScreenplay'))
+        // }
     }
 
     function goNext({id} = {}) {

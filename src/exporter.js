@@ -61,13 +61,13 @@ export function importer(str) {
         }
         else if (/^\s{17,25}[A-Z]+/.test(part)) {
             sections.push({
-                text: part,
+                text: part.toUpperCase(),
                 classification: 'dialogCharacter'
             })
         }
         else if (/^\s{26,}[A-Z]+/.test(part)) {
             sections.push({
-                text: part,
+                text: part.toUpperCase(),
                 classification: 'descriptionAnnotation'
             })
         } else {
