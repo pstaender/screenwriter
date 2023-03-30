@@ -12,7 +12,7 @@
   },
   "scripts": {
     "watch": "parcel",
-    "bukld": "parcel build"
+    "build": "parcel build"
   },
   "dependencies": {
     "react": "^18.2.0",
