@@ -1,7 +1,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export function SceneSection({ current, goNext, goPrev, removeSection, id, index, sectionsLength} = {}) {
+export function SceneSection({ current, goNext, goPrev, removeSection, id, index, sectionsLength, html, classification } = {}) {
 
     const inputRef = useRef(null);
 
@@ -12,8 +12,9 @@ export function SceneSection({ current, goNext, goPrev, removeSection, id, index
         'descriptionAnnotation',
     ];
 
-    const [editingLevel, setEditingLevel] = useState('description');
+    const [editingLevel, setEditingLevel] = useState(classification || 'description');
     const [isCurrent, setIsCurrent] = useState(current);
+    const [htmlContent, setHtmlContent] = useState(html || null)
 
     useEffect(() => {
         if (current) {
@@ -27,16 +28,30 @@ export function SceneSection({ current, goNext, goPrev, removeSection, id, index
         }
         if (inputRef?.current) {
             if (inputRef.current.innerHTML) {
-                inputRef.current.innerHTML = trimLineBreaks(removeAllTagsExceptBr(inputRef.current.innerHTML))
-                // console.log(inputRef.innerHTML)
+                cleanupContenteditableMarkup();
+            }
+            if (!inputRef.current.textContent.trim()) {
+                let previousSection = inputRef.current?.closest('section')?.previousSibling
+                if (previousSection) {
+                    let previousPreviousSection = inputRef.current.closest('section').previousSibling?.previousSibling?.previousSibling?.previousSibling
+                    if (previousSection.classList.contains('dialogCharacter')) {
+                        return setEditingLevel('dialogText');
+                    }
+                    if (previousSection.classList.contains('dialogText')) {
+                        if (previousPreviousSection && previousPreviousSection.textContent && previousPreviousSection.classList.contains('dialogCharacter')) {
+                            setHtmlContent(previousPreviousSection.textContent)
+                        }
+                        return setEditingLevel('dialogCharacter');
+                    }
+                }
             }
         }
 
     }, [inputRef, current]);
 
-    useEffect(() => {
-        console.debug(editingLevel);
-    }, [editingLevel]);
+    // useEffect(() => {
+    //     console.debug(editingLevel);
+    // }, [editingLevel]);
 
     function getCaretCharacterOffsetWithin(element) {
         var caretOffset = 0;
@@ -52,15 +67,15 @@ export function SceneSection({ current, goNext, goPrev, removeSection, id, index
                 preCaretRange.setEnd(range.endContainer, range.endOffset);
                 caretOffset = preCaretRange.toString().length;
             }
-        } else if ( (sel = doc.selection) && sel.type != "Control") {
+        } else if ((sel = doc.selection) && sel.type != "Control") {
             var textRange = sel.createRange();
             var preCaretTextRange = doc.body.createTextRange();
             preCaretTextRange.moveToElementText(element);
             preCaretTextRange.setEndPoint("EndToEnd", textRange);
             caretOffset = preCaretTextRange.text.length;
-         }
-         return caretOffset;
         }
+        return caretOffset;
+    }
 
 
 
@@ -69,25 +84,28 @@ export function SceneSection({ current, goNext, goPrev, removeSection, id, index
         if (ev.key === 'Tab') {
             const direction = ev.shiftKey ? -1 : 1;
             ev.preventDefault();
-            // if (content.trim() === '') {
-            setEditingLevel(editingLevels[editingLevels.indexOf(editingLevel) + direction] || editingLevels[0]);
-            // }
-        }
-        if (ev.key === 'Backspace' && inputRef.current.textContent.trim() === '') {
-            if (index >= sectionsLength - 1) {
-                goPrev({id})
-            } else {
-                goNext({id})
+            let nextLevel = editingLevels[editingLevels.indexOf(editingLevel) + direction];
+            setEditingLevel(nextLevel || editingLevels[0]);
+            if (ev.shiftKey && !nextLevel) {
+                setEditingLevel(editingLevels[editingLevels.length-1]);
             }
-            removeSection({id})
-            
+            cleanupContenteditableMarkup()
+        }
+        if (ev.key === 'Backspace' && (ev.metaKey || inputRef.current.textContent.trim() === '')) {
+            if (index >= sectionsLength - 1) {
+                goPrev({ id })
+            } else {
+                goNext({ id })
+            }
+            removeSection({ id })
+
         }
         if (ev.key === 'ArrowDown' && getCaretCharacterOffsetWithin(ev.target) === content.length) {
-            goNext({id});
+            goNext({ id });
             return;
         }
         else if (ev.key === 'ArrowUp' && getCaretCharacterOffsetWithin(ev.target) === 0) {
-            goPrev({id});
+            goPrev({ id });
             return;
         }
         else if (ev.key === 'Enter') {
@@ -97,15 +115,18 @@ export function SceneSection({ current, goNext, goPrev, removeSection, id, index
         }
     }
 
-    function removeAllTagsExceptBr(html) {
-        html = html.replace(/(<br>|<br\s*\/>)/ig, '---BRLINEBREAK---');
-        const div = document.createElement("div");
-        div.innerHTML = html;
-        return div.textContent.replace(/---BRLINEBREAK---/g, '<br>')
-    }
-
-    function trimLineBreaks(html) {
-        return html.replace(/^\s*<br>/ig, '').replace(/<br>\s*$/ig, '')
+    function cleanupContenteditableMarkup() {
+        function removeAllTagsExceptBr(html) {
+            html = html.replace(/(<br>|<br\s*\/>)/ig, '---BRLINEBREAK---');
+            const div = document.createElement("div");
+            div.innerHTML = html;
+            return div.textContent.replace(/---BRLINEBREAK---/g, '<br>')
+        }
+    
+        function trimLineBreaks(html) {
+            return html.replace(/^\s*<br>/ig, '').replace(/<br>\s*$/ig, '')
+        }
+        inputRef.current.innerHTML = trimLineBreaks(removeAllTagsExceptBr(inputRef.current.innerHTML))
     }
 
     function handleFocus() {
@@ -116,7 +137,13 @@ export function SceneSection({ current, goNext, goPrev, removeSection, id, index
         setIsCurrent(false);
     }
 
-    return <section className={isCurrent ? 'selected' : ''} onClick={handleFocus} data-index={index+1}>
+    useEffect(() => {
+        if (htmlContent) {
+            inputRef.current.innerHTML = htmlContent;
+        }
+    }, [htmlContent])
+
+    return <section className={[isCurrent ? 'selected' : '', editingLevel].filter(e => !!e).join(' ')} onClick={handleFocus} data-index={index + 1}>
         <div contentEditable={true} onFocus={handleFocus} onBlur={handleBlur} ref={inputRef} className={editingLevel} onKeyDown={handleKeyDown}>
         </div>
     </section>

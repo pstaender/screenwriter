@@ -2,6 +2,7 @@
     --color-background: #fff;
     --color-text: #222;
     --color-light-grey: #f5f5f5;
+    --color-almost-white: #fafafa;
     background: var(--color-background);
     color: var(--color-text);
     *,
@@ -16,7 +17,7 @@
 #screenwriter-editor {
     font-size: var(--font-size);
     line-height: var(--line-height);
-    max-width: 50em;
+    max-width: 46rem;
     margin: 0 auto;
     letter-spacing: 0px;
     [contenteditable] {
@@ -37,10 +38,12 @@
             font-size: 0.8rem;
         }
         padding: 1rem 2rem;
-        &.selected,
-        &:hover {
+        &.selected {
             background: var(--color-light-grey);
             outline: none;
+        }
+        &:hover {
+            background: var(--color-almost-white);
         }
         > div {
             // position: relative;
@@ -70,17 +73,29 @@
         }
     }
 
-    .description {
+    div.description {
     }
-    .descriptionAnnotation {
+    div.descriptionAnnotation {
         text-align: right;
     }
-    .dialogCharacter {
+    div.dialogCharacter {
         padding-left: 20rem;
         text-transform: uppercase;
     }
-    .dialogText {
+    div.dialogText {
         padding-left: 10rem;
-        max-width: 40rem;
+        max-width: 33rem;
+    }
+    section.dialogCharacter {
+        padding-bottom: 1rem;
+    }
+    section.dialogCharacter + section.dialogText {
+        padding-top: 0;
+    }
+    section.description + section.dialogCharacter {
+        margin-top: 1rem;
+    }
+    section.dialogText + section.description {
+        margin-top: 2.5rem;
     }
 }

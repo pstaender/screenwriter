@@ -2,18 +2,47 @@ import './Editor.scss';
 
 import { useEffect, useRef, useState } from "react";
 import { SceneSection } from './SceneSection';
+import { exporter, importer } from '../exporter';
 
 export function Editor() {
 
-
     function id() {
-        return new Date().getTime()
+        return new Date().getTime() + (Math.floor(Math.random() * 100000))
+    }
+
+    function emptySection() {
+        return [{ id: id(), current: true, html: null, classification: null }]
     }
     // const currentRef = useRef(null);
 
-    const [sections, setSections] = useState([
-        {id: id(), current: true}
-    ])
+    function sectionsCurrentScreenplayViaLocalStorage() {
+        let lastScreenPlay = localStorage.getItem('currentScreenplay');
+        if (!window.loadedLastCurrentScreenplayFromLocalStorage && lastScreenPlay) {
+
+            console.debug(`Loading last used screenplay`);
+            let importedSections = importer(lastScreenPlay);
+            window.loadedLastCurrentScreenplayFromLocalStorage = true;
+            return [...importedSections.map((s, i) => {
+                return {
+                    current: i === 0,
+                    id: id(),
+                    html: s.html,
+                    classification: s.classification
+                }
+            })];
+        } else {
+            // empty section
+            return emptySection();
+        }   
+    }
+
+    
+
+    const [sections, setSections] = useState(sectionsCurrentScreenplayViaLocalStorage())
+
+    if (!window.loadedLastCurrentScreenplayFromLocalStorage) {
+        loadLastCurrentScreenplayFromLocalStorage();
+    }
 
     function setAllSectionToNotCurrent(sections) {
         return sections.map(s => {
@@ -23,21 +52,46 @@ export function Editor() {
     }
 
     function appendNewSection(sections) {
-        setSections([...setAllSectionToNotCurrent(sections),...[{ id: id(), current: true }]])
+        setSections([...setAllSectionToNotCurrent(sections),...emptySection()])
     }
 
     function prependNewSection(sections) {
-        setSections([...[{ id: id(), current: true }], ...setAllSectionToNotCurrent(sections)])
+        setSections([...emptySection(), ...setAllSectionToNotCurrent(sections)])
     }
+
+    function downloadScreenplay(content, mimeType = 'text/plain', filename = 'screenplay.txt'){
+        const a = document.createElement('a')
+        const blob = new Blob([content], {type: mimeType});
+        const url = URL.createObjectURL(blob) // Create an object URL from blob
+        a.setAttribute('href', url) // Set "a" element link
+        a.setAttribute('download', filename) // Set download filename
+        a.click() // Start downloading
+      }
 
     function handleKeyDown(ev) {
         if (ev.key === 'Enter' && !ev.shiftKey) {
             let _sections = sections;
             let i = _sections.indexOf(sections.filter(s => s.current)[0])
             // TODO: always insert
-            if (i + 1 === _sections.length) {
+            if (ev.metaKey) {
+                if (ev.target.closest('section').dataset.index) {
+                    let index = Number(ev.target.closest('section').dataset.index);
+                    setSections([...setAllSectionToNotCurrent(sections.slice(0, index)), ...emptySection(), ...setAllSectionToNotCurrent(sections.slice(index))])
+                }
+                
+            }
+            else if (i + 1 === _sections.length) {
                 appendNewSection(_sections)
             }
+        }
+        // test export + import
+        let plainText = exporter([...document.querySelectorAll('#screenwriter-editor > section > div')]);
+        if (plainText) {
+            // if error occurs, this may be empty…
+            localStorage.setItem('currentScreenplay', plainText)
+        }
+        if (ev.metaKey && ev.key === 'e') {
+            downloadScreenplay(localStorage.getItem('currentScreenplay'))
         }
     }
 
@@ -71,9 +125,10 @@ export function Editor() {
         setSections([...sections.filter(s => s.id !== id)])
     }
 
+
     return <div id="screenwriter-editor" onKeyDown={handleKeyDown}>
         {sections.map((section, i) => (
-            <SceneSection current={section.current} key={section.id} id={section.id} next={sections[i+1]} prev={sections[i+1]} removeSection={removeSection} goNext={goNext} goPrev={goPrev} index={i} sectionsLength={sections.length} />
+            <SceneSection current={section.current} key={section.id} id={section.id} next={sections[i+1]} prev={sections[i+1]} removeSection={removeSection} goNext={goNext} goPrev={goPrev} index={i} sectionsLength={sections.length} html={section.html} classification={section.classification} />
         ))}
     </div>;
 }
