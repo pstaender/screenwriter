@@ -4,6 +4,8 @@ import './Icons.scss';
 
 import { Editor } from './components/Editor.js'
 import Dropzone from './Dropzopne';
+import { Importer } from './lib/Importer';
+import { Exporter, convertDomSectionsToDataStructure } from './lib/Exporter';
 
 export function App() {
 
@@ -16,7 +18,11 @@ export function App() {
             const reader = new FileReader();
             reader.onload = function (e) {
                 if (e.target.result) {
-                    localStorage.setItem('currentScreenplay', e.target.result)
+                    console.log(
+                        Importer(e.target.result)
+                    )
+                    localStorage.setItem('currentScreenplay', JSON.stringify(Importer(e.target.result)))
+
                     setSeed(Math.random())
                 }
             };
@@ -29,8 +35,25 @@ export function App() {
 
     }, []);
 
+    function storeScreenplay() {
+        let sections = convertDomSectionsToDataStructure([...document.querySelectorAll('#screenwriter-editor > section > div')]);
+
+
+        let data = {
+            sections,
+            // TODO metadata
+            metaData: {},
+        }
+        if (data.sections?.length > 0) {
+            // if error occurs, this may be empty…
+            localStorage.setItem('currentScreenplay', JSON.stringify(data))
+        }
+        return data;
+    }
+
     function downloadScreenplay() {
-        const content = localStorage.getItem('currentScreenplay');
+        let data = storeScreenplay();
+        const content = Exporter(data.sections, data.metaData);
         const mimeType = 'text/plain';
         const filename = 'screenplay.txt'
         const a = document.createElement('a')
@@ -45,7 +68,7 @@ export function App() {
         <div className="toolbar">
             <Dropzone onDrop={onDrop} accept={"plain/txt"} />
             <div className="icon">
-                <i class="gg-arrow-down-o" onClick={downloadScreenplay}></i>
+                <i className="gg-arrow-down-o" onClick={downloadScreenplay}></i>
             </div>
         </div>
         <Editor key={seed} />

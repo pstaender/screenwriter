@@ -1,0 +1,43 @@
+Title:      Example Screenplay
+Author:     Philipp Staender
+Copyright:  2002
+
+
+
+                     JOHN
+          Well, one can't have everything.
+
+
+                                               CUT TO:
+
+EXT. JOHN AND MARY'S HOUSE - CONTINUOUS
+
+
+MIKE steps out of the car and walks up to the front door.
+He rings the doorbell.
+
+
+                                             BACK TO:
+
+INT. KITCHEN - CONTINUOUS
+
+
+                     JOHN
+          Who on Earth could that be?
+
+
+                     MARY
+          I'll go and see.
+
+
+Mary gets up and walks out. The front door lock CLICKS and
+door CREAKS a little as it's opened.
+
+
+                     MARY
+          Well hello Mike! Come on in!
+          John, Mike's here!
+
+
+                     JOHN
+          Hiya Mike! What brings you here?

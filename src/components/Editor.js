@@ -1,9 +1,8 @@
 import './Editor.scss';
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { SceneSection } from './SceneSection';
-import { exporter, importer } from '../exporter';
-
+import { convertDomSectionsToDataStructure } from '../lib/Exporter';
 
 export function Editor() {
 
@@ -15,12 +14,21 @@ export function Editor() {
         return [{ id: id(), current: true, html: null, classification: null }]
     }
 
+
     function sectionsCurrentScreenplayViaLocalStorageOrPlainText() {
-        let lastScreenPlay = localStorage.getItem('currentScreenplay');
-        if (lastScreenPlay) {
+        let lastScreenPlay = {}; 
+        try {
+            lastScreenPlay = localStorage.getItem('currentScreenplay') ? JSON.parse(localStorage.getItem('currentScreenplay')) : {};
+        } catch (e) {
+            if (!e.message.match(/JSON/)) {
+                throw e;
+            }
+            lastScreenPlay = {};
+        }
+        if (lastScreenPlay.sections) {
             console.debug(`Loading last used screenplay`);
-            let importedSections = importer(lastScreenPlay);
-            return [...importedSections.map((s, i) => {
+            // let importedSections = Importer(lastScreenPlay);
+            return [...lastScreenPlay.sections.map((s, i) => {
                 return {
                     current: i === 0,
                     id: id(),
@@ -70,14 +78,7 @@ export function Editor() {
             }
         }
         // test export + import
-        let plainText = exporter([...document.querySelectorAll('#screenwriter-editor > section > div')]);
-        if (plainText) {
-            // if error occurs, this may be empty…
-            localStorage.setItem('currentScreenplay', plainText)
-        }
-        // if (ev.metaKey && ev.key === 'e') {
-        //     downloadScreenplay(localStorage.getItem('currentScreenplay'))
-        // }
+        // save()
     }
 
     function goNext({id} = {}) {
