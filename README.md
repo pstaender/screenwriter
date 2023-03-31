@@ -39,7 +39,6 @@ Besides that, you can:
 ## TODOs
 
  * adding section for character annotation
- * arrow-left + arrow-right navigation
  * faster cleanup of html/plain-text during changing text
  * make spaces configurable in interface (via metaData?)
  * consider word wrap in import

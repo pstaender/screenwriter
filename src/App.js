@@ -49,9 +49,10 @@ export function App() {
     }
 
     function downloadScreenplay() {
+        let format = localStorage.getItem('exportFormat') === 'json' ? 'json' : 'txt';
+        console.log(localStorage.getItem('exportFormat'))
         let data = metaDataAndSections();
-        let content = Exporter(data.sections, data.metaData);
-        const mimeType = 'text/plain';
+        let mimeType = 'text/plain';
         const timesignatur = new Date().toISOString().replace(/\.\d+[A-Z]$/, '').replace(/:/g, '_');
         let filename = `screenplay_${timesignatur}`;
         if (data.metaData.title || data.metaData.author) {
@@ -62,10 +63,18 @@ export function App() {
            ].filter(v => !!v).join(' - ')
         }
         const a = document.createElement('a');
+        let content = null;
+        
+        if (format === 'json') {
+            content = JSON.stringify(data, null, '  ');
+            mimeType = 'application/json';
+        } else {
+            content = Exporter(data.sections, data.metaData);
+        }
         const blob = new Blob([content], { type: mimeType });
         const url = URL.createObjectURL(blob);
         a.setAttribute('href', url);
-        a.setAttribute('download', `${slugify(filename)}.txt`);
+        a.setAttribute('download', `${slugify(filename)}.${format}`);
         a.click();
     }
 
@@ -77,7 +86,7 @@ export function App() {
         let data = metaDataAndSections();
         let content = Exporter(data.sections, data.metaData);
         // only download if something has changed
-        if (content !== lastSavedExport) {
+        if (data.sections.filter(s => !!s.html.trim())?.length > 0 && content !== lastSavedExport) {
             downloadScreenplay();
             lastSavedExport = content;
         }
