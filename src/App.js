@@ -6,6 +6,7 @@ import { Exporter, convertDomSectionsToDataStructure } from './lib/Exporter';
 import { useInterval } from 'usehooks-ts';
 import { Toolbar } from './components/Toolbar';
 import slugify from 'slugify';
+import { MetaDataEdit } from './components/MetaDataEdit';
 
 let lastSavedExport = null;
 
@@ -96,14 +97,7 @@ export function App() {
 
     return <div>
         <Toolbar setSeed={setSeed} downloadScreenplay={downloadScreenplay} setIntervalDownload={setIntervalDownload} setEditMetaData={setEditMetaData} setMetaData={setMetaData}></Toolbar>
-        {editMetaData && (
-            <div className="edit-meta-data">
-                <input name="title" onChange={(ev) => setMetaData({ ...metaData, ...{ title: ev.target.value } })} value={metaData.title} placeholder="Title"></input>
-                <input name="author" onChange={(ev) => setMetaData({ ...metaData, ...{ author: ev.target.value } })} value={metaData.author} placeholder="Author"></input>
-                <input name="copyright" onChange={(ev) => setMetaData({ ...metaData, ...{ copyright: ev.target.value } })} value={metaData.copyright} placeholder="Copyright"></input>
-                <button onClick={() => setEditMetaData(false)}>Close</button>
-            </div>
-        )}
+        {editMetaData && <MetaDataEdit metaData={metaData} setMetaData={setMetaData} setEditMetaData={setEditMetaData}></MetaDataEdit>}
         <Editor key={seed} />
     </div>;
 }

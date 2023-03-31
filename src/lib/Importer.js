@@ -17,7 +17,7 @@ export function Importer(str, options = {}) {
     function extractMetaData(parts) {
         let eofMetaDataReached = false;
         let metaDataParts = parts.filter((l, i) => {
-            if (eofMetaDataReached || !l.match(/^[^\:]+?\:\s+.+$/)) {
+            if (eofMetaDataReached || !l.match(/^[a-zA-Z]+?\:\s+.+$/)) {
                 if (eofMetaDataReached === false) {
                     eofMetaDataReached = i;
                 }
@@ -33,8 +33,7 @@ export function Importer(str, options = {}) {
         return { metaData, eofMetaDataReached };
     }
 
-    let { metaData, eofMetaDataReached } = extractMetaData(parts);
-
+    let { metaData, eofMetaDataReached } = parts[0] && /^[a-zA-Z]+?\:\s+.+$/.test(parts[0].trim()) ?  extractMetaData(parts) : { metaData: {}, eofMetaDataReached: 0 };
 
     parts = parts
         .slice(eofMetaDataReached + 1)

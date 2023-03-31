@@ -2,7 +2,6 @@ import './Editor.scss';
 
 import { useState } from "react";
 import { SceneSection } from './SceneSection';
-import { convertDomSectionsToDataStructure } from '../lib/Exporter';
 
 export function Editor() {
 
@@ -59,6 +58,9 @@ export function Editor() {
     }
 
     function handleKeyDown(ev) {
+        if (ev.target?.contentEditable !== 'true') {
+            return;
+        }
         if (ev.key === 'Enter' && !ev.shiftKey) {
             let _sections = sections;
             let i = _sections.indexOf(sections.filter(s => s.current)[0])
@@ -113,6 +115,7 @@ export function Editor() {
             let _sections = setAllSectionToNotCurrent(sections);
             _sections[i].current = false;
             _sections[nextIndex].current = true;
+            _sections[nextIndex].cursorToEnd = true;
             setSections([..._sections])
         }
     }
@@ -124,7 +127,7 @@ export function Editor() {
 
     return <div id="screenwriter-editor" onKeyDown={handleKeyDown}>
         {sections.map((section, i) => (
-            <SceneSection current={section.current} key={section.id} id={section.id} next={sections[i + 1]} prev={sections[i + 1]} removeSection={removeSection} goNext={goNext} goPrev={goPrev} getNext={getNext} getPrev={getPrev} index={i} sectionsLength={sections.length} html={section.html} classification={section.classification} />
+            <SceneSection current={section.current} key={section.id} id={section.id} next={sections[i + 1]} prev={sections[i + 1]} removeSection={removeSection} goNext={goNext} goPrev={goPrev} getNext={getNext} getPrev={getPrev} index={i} sectionsLength={sections.length} html={section.html} classification={section.classification} cursorToEnd={section.cursorToEnd || false}/>
         ))}
     </div>;
 }

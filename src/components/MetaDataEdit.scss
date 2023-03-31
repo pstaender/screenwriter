@@ -1,0 +1,33 @@
+.edit-meta-data {
+    width: 15rem;
+    position: fixed;
+    top: 1rem;
+    right: 3rem;
+    z-index: 500;
+    input {
+      border: 2px solid var(--color-text);
+      border-radius: 4px;
+      font-size: 1rem;
+      padding: .5rem .75rem;
+      display: block;
+      margin-bottom: 1rem;
+      width: 100%;
+      background: var(--color-background);
+      color: var(--color-text);
+    }
+    button {
+      display: inline-block;
+      margin-right: 0.75rem;
+      font-size: 1rem;
+      padding: 0.5rem 0.75rem;
+      background: var(--color-text);
+      color: var(--color-background);
+      border: 0;
+      border-radius: 4px;
+      &:hover {
+        color: rgb(255, 227, 12);
+        cursor: pointer;
+      }
+    }
+  }
+  

@@ -35,6 +35,9 @@ export function Exporter(sections, metaData = {}) {
         let maxKeyLength = Object.keys(metaData).map(t => t.length).reduce((a,b) => a > b ? a : b)
         for(let k in metaData) {
             let key = `${k.trim()}:`
+            if (metaData[k].trim() === '') {
+                continue;
+            }
             metaDataText.push(Voca.padRight(key, maxKeyLength + 2) + metaData[k].trim());
         }
     }

@@ -1,7 +1,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export function SceneSection({ current, goNext, goPrev, getNext, getPrev, removeSection, id, index, sectionsLength, html, classification } = {}) {
+export function SceneSection({ current, goNext, goPrev, getNext, cursorToEnd, removeSection, id, index, sectionsLength, html, classification } = {}) {
 
     const inputRef = useRef(null);
 
@@ -18,6 +18,8 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, remove
 
     useEffect(() => {
         if (current) {
+            // if (!cursorToEnd) {
+            // to the beginning
             inputRef.current.focus();
             let s = window.getSelection();
             let r = document.createRange();
@@ -25,6 +27,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, remove
             r.setEnd(inputRef.current, 0);
             s.removeAllRanges();
             s.addRange(r);
+            // }
         }
         if (inputRef?.current) {
             if (inputRef.current.innerHTML) {
@@ -81,6 +84,9 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, remove
 
     function handleKeyDown(ev) {
         const content = ev.target.textContent;
+        if (ev.target?.contentEditable !== 'true') {
+            return;
+        }
         if (ev.key === 'Tab') {
             const direction = ev.shiftKey ? -1 : 1;
             ev.preventDefault();
@@ -104,9 +110,9 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, remove
                 inputRef.current.textContent = '';
             }
         }
-        if (ev.key === 'ArrowDown' && getCaretCharacterOffsetWithin(ev.target) === content.length) {
+        if ((ev.key === 'ArrowDown' || ev.key === 'ArrowRight') && getCaretCharacterOffsetWithin(ev.target) === content.length) {
+            ev.preventDefault();
             if (ev.shiftKey) {
-                ev.preventDefault();
                 // merge next section into this
                 let nextSection = ev.target.closest('section').nextElementSibling;
                 if (nextSection && nextSection.innerHTML) {
@@ -121,20 +127,8 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, remove
             goNext({ id, insert: ev.metaKey });
             return;
         }
-        else if (ev.key === 'ArrowUp' && getCaretCharacterOffsetWithin(ev.target) === 0) {
-            // if (ev.shiftKey) {
-            //     ev.preventDefault();
-            //     // merge prev section into this
-            //     let prevSection = ev.target.closest('section').previousElementSibling;
-            //     if (prevSection && prevSection.innerHTML) {
-            //         inputRef.current.innerHTML += '<br>' + prevSection.textContent.trim().replace(/\n/g, '<br>');
-            //         let prevID = getPrev(id).id;
-            //         if (prevID) {
-            //             removeSection(prevID)
-            //             return;
-            //         }
-            //     }
-            // }
+        else if ((ev.key === 'ArrowUp' || ev.key === 'ArrowLeft') && getCaretCharacterOffsetWithin(ev.target) === 0) {
+            ev.preventDefault();
             goPrev({ id, insert: ev.metaKey });
             return;
         }
@@ -159,12 +153,15 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, remove
         inputRef.current.innerHTML = trimLineBreaks(removeAllTagsExceptBr(inputRef.current.innerHTML))
     }
 
-    function handleFocus() {
+    function handleFocus(ev) {
         setIsCurrent(true);
+        cleanupContenteditableMarkup();
+
     }
 
     function handleBlur() {
         setIsCurrent(false);
+        cleanupContenteditableMarkup();
     }
 
     useEffect(() => {
