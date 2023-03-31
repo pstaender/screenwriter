@@ -1,11 +1,11 @@
 # Screenwriter
-## Your helper to write screenplays without any extra costs in your browser
+## Write distraction-free screenplays in your desktop browser
 
 <img width="1185" alt="Screenshot 2023-03-31 at 11 44 37" src="https://user-images.githubusercontent.com/140571/229086507-b4b63dd7-52ba-4c90-b97c-4dab1fc2bcbb.png">
 
-Stores data as local storage, imports and exports txt files. Made for keyboard-intensive usage (Tab, Cursors, Enter, CMD+Enter,  CMD+Backspace etc).
+Stores data as local storage, imports and exports txt files. Made for keyboard-intensive usage (see below).
 
-Tested in newest Chrome only.
+Tested in newest Chrome only. Firefox should work, too. I don't care about Safari.
 
 ## Demo
 
@@ -15,8 +15,8 @@ The data is stored in your browsers local storage.
 
 ## Keyboard Usage
 
- * `Tab`: change the type of text in the current secion (text, charater for dialog, dialog text and annotation)
- * `Shift` + `Enter`: insert a new line in the current section
+ * `tab`: change the type of text in the current secion (text, charater for dialog, dialog text and annotation)
+ * `shift` + `enter`: insert a new line in the current section
  * `meta`+`backspace`: remove the current section
  * `meta`+`enter`: insert a new section
  * `shift`+`arrow-down`: merge this section with next one
@@ -38,6 +38,11 @@ Besides that, you can:
 
 ## TODOs
 
+ * adding section for character annotation
+ * arrow-left + arrow-right navigation
+ * faster cleanup of html/plain-text during changing text
+ * make spaces configurable in interface (via metaData?)
+ * consider word wrap in import
  * more undo
 
 ## Build

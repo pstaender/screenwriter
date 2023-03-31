@@ -1,6 +1,18 @@
-export function Importer(str) {
+export function Importer(str, options = {}) {
     let parts = str.split(`\n`)
 
+    options = {...{
+        minSpacesCharacter: 17,
+        maxSpacesCharacter: 22,
+        // minSpacesCharacter: 20,
+        // maxSpacesCharacter: 30,
+        minSpacesAnnotation: null,
+        maxSpacesAnnotation: '',
+    }, ...options}
+
+    if (!options.minSpacesAnnotation) {
+        options.minSpacesAnnotation = options.maxSpacesCharacter + 1;
+    }
 
     function extractMetaData(parts) {
         let eofMetaDataReached = false;
@@ -36,8 +48,7 @@ export function Importer(str) {
 
     for (let part of parts) {
         part = part.replace(/^\n+/, '')
-
-        if (/^\s{17,22}[A-Z]+/.test(part.split(`\n`)[0])) {
+        if (new RegExp(`^\\s{${options.minSpacesCharacter},${options.maxSpacesCharacter}}[A-Z]+`).test(part.split(`\n`)[0])) {
             sections.push({
                 text: part.split(`\n`)[0],
                 classification: 'dialogCharacter'
@@ -49,7 +60,7 @@ export function Importer(str) {
                 }]];
             }
         }
-        else if (/^\s{26,}[A-Z]+/.test(part)) {
+        else if (new RegExp(`^\\s{${options.minSpacesAnnotation},${options.maxSpacesAnnotation}}[A-Z]+`).test(part)) {
             sections.push({
                 text: part,
                 classification: 'descriptionAnnotation'
