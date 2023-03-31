@@ -118,7 +118,6 @@ export function Editor() {
     }
 
     function removeSection(id) {
-        console.log(id, [...sections.filter(s => s.id !== id)])
         setSections([...sections.filter(s => s.id !== id)])
     }
 

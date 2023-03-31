@@ -15,7 +15,6 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
                 if (e.target.result) {
                     let data = Importer(e.target.result);
                     localStorage.setItem('currentScreenplay', JSON.stringify(data));
-                    // console.log(setMetaData, data)
                     setMetaData(data.metaData);
                     setSeed(Math.random());
                 }

@@ -43,7 +43,6 @@ export function Importer(str) {
                 classification: 'dialogCharacter'
             })
             if (part.split(`\n`)[1]) {
-                // console.log(part.split(`\n`).splice(1).join(`\n`))
                 sections = [...sections, ...[{
                     text: part.split(`\n`).splice(1).join(`\n`),
                     classification: 'dialogText'
@@ -56,12 +55,6 @@ export function Importer(str) {
                 classification: 'descriptionAnnotation'
             })
         }
-
-        // else if (/^\s{6,16}[A-Z]+/.test(part)) {
-        //     sections.push({
-        //         text: part,
-        //         classification: 'dialogText'
-        //     })
         else {
             // append
             if (sections.at(-1)?.className === 'description') {
