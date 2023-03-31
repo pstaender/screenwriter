@@ -32,7 +32,7 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
     const autoSaveIntervalInMilliSeconds = Number(localStorage.getItem('autosave'));
     const downloadIntervalInSeconds = 5;
  
-    [autoSave, setAutoSave] = useState(autoSaveIntervalInMilliSeconds > 0);
+    const [autoSave, setAutoSave] = useState(autoSaveIntervalInMilliSeconds > 0);
 
     function handleToggleAutoSave() {
         setAutoSave(!autoSave)
