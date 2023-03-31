@@ -7,7 +7,6 @@ export function MetaDataEdit({ metaData, setMetaData, setEditMetaData } = {}) {
     function setMetaDataByKey(key, value) {
         let data = {};
         data[key] = value;
-        console.log(key, value, data)
         setMetaData({ ...metaData, ...data })
     }
 

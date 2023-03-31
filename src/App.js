@@ -50,7 +50,6 @@ export function App() {
 
     function downloadScreenplay() {
         let format = localStorage.getItem('exportFormat') === 'json' ? 'json' : 'txt';
-        console.log(localStorage.getItem('exportFormat'))
         let data = metaDataAndSections();
         let mimeType = 'text/plain';
         const timesignatur = new Date().toISOString().replace(/\.\d+[A-Z]$/, '').replace(/:/g, '_');
