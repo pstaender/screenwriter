@@ -1,7 +1,4 @@
 :root {
-    background: var(--color-background);
-    color: var(--color-text);
-    font-family: "iA Writer Duo", monospace;
     --line-height: 1.5;
     --font-size: 18px;
 }
@@ -17,6 +14,8 @@ body {
     --color-almost-white: #fafafa;
     background: var(--color-background);
     transition: background 0.4s;
+    color: var(--color-text);
+    font-family: "iA Writer Duo", monospace;
 }
 body.dark-mode {
     --color-background: #222;
