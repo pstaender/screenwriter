@@ -29,6 +29,18 @@ export function Exporter(sections, metaData = {}) {
     const dialogSpace = 11;
     const overallSpace = 61;
 
+    let metaDataText = [];
+
+    if (Object.keys(metaData).length > 0) {
+        let maxKeyLength = Object.keys(metaData).map(t => t.length).reduce((a,b) => a > b ? a : b)
+        for(let k in metaData) {
+            let key = `${k.trim()}:`
+            metaDataText.push(Voca.padRight(key, maxKeyLength + 2) + metaData[k].trim());
+        }
+    }
+    
+    metaDataText = metaDataText.length > 0 ? metaDataText.join(`\n`) + `\n` : '';
+
     let parts = [...sections].map(section => {
         let text = section.html.replace(/<br>/ig, `\n`).replace(/\&nbsp;/g, ' ').trim();
         if (section.classification === 'dialogCharacter') {
@@ -66,5 +78,5 @@ export function Exporter(sections, metaData = {}) {
         }
         return text;
     })
-    return parts.join(`\n`);
+    return metaDataText + parts.join(`\n`);
 }

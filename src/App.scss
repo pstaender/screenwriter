@@ -14,43 +14,36 @@
   src: url("./fonts/iAWriterDuoS-Bold.woff2") format("woff2"),
     /* Chrome 36+, Opera 23+, Firefox 39+ */ url("./fonts/iAWriterDuoS-Bold.woff") format("woff"); /* Chrome 5+, Firefox 3.6+, IE 9+, Safari 5.1+ */ /* Legacy iOS */
 }
-.toolbar {
+
+.edit-meta-data {
+  width: 15rem;
   position: fixed;
-  z-index: 999;
-  display: flex;
-  .icons {
-    display: flex;
-    align-items: center;
+  top: 1rem;
+  right: 3rem;
+  z-index: 500;
+  input {
+    border: 2px solid var(--color-text);
+    border-radius: 4px;
+    font-size: 1rem;
+    padding: .5rem .75rem;
+    display: block;
+    margin-bottom: 1rem;
+    width: 100%;
+    background: var(--color-background);
+    color: var(--color-text);
   }
-  .show-more-icons {
-    position: relative;
-    > .icons {
-      display: none;
-      position: absolute;
-      left: 0;
-      top: 1.75rem;
-      // height: 4rem;
-    }
+  button {
+    display: inline-block;
+    margin-right: 0.75rem;
+    font-size: 1rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--color-text);
+    color: var(--color-background);
+    border: 0;
+    border-radius: 4px;
     &:hover {
-      
-      .icons {
-        display: block;
-      }
-    }
-  }
-  .icon {
-    font-size: 20px;
-    width: 30px;
-    height: 30px;
-    padding: 5px;
-    display: grid;
-    place-content: center;
-    &:hover {
+      color: rgb(255, 227, 12);
       cursor: pointer;
-      background: var(--color-light-grey);
     }
   }
-}
-.dropzone-div {
-  display: inline-block;
 }

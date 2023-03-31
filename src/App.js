@@ -1,36 +1,32 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import './App.scss';
-import './Icons.scss';
 
 import { Editor } from './components/Editor.js'
-import Dropzone from './Dropzopne';
-import { Importer } from './lib/Importer';
 import { Exporter, convertDomSectionsToDataStructure } from './lib/Exporter';
 import { useInterval } from 'usehooks-ts';
+import { Toolbar } from './components/Toolbar';
+import slugify from 'slugify';
+
+let lastSavedExport = null;
 
 export function App() {
 
+    function currentScreenplay() {
+        try {
+            let data = localStorage.getItem('currentScreenplay')
+            return JSON.parse(data);
+        } catch (e) {
+            if (!e.message.match('JSON')) {
+                throw e;
+            }
+        }
+        return {};
+    }
+
     const [seed, setSeed] = useState(Math.random());
-
-    const onDrop = useCallback(acceptedFiles => {
-        // Loop through accepted files
-        acceptedFiles.map(file => {
-            // Initialize FileReader browser API
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                if (e.target.result) {
-                    localStorage.setItem('currentScreenplay', JSON.stringify(Importer(e.target.result)))
-                    setSeed(Math.random())
-                }
-            };
-            // onload callback gets called after the reader reads the file data
-            // Read the file as Data URL (since we accept only images)
-            reader.readAsText(file);
-
-            return file;
-        });
-
-    }, []);
+    const [intervalDownload, setIntervalDownload] = useState(null);
+    const [editMetaData, setEditMetaData] = useState(false);
+    const [metaData, setMetaData] = useState(currentScreenplay().metaData || {})
 
     function storeScreenplayInLocalStorage() {
         let sections = convertDomSectionsToDataStructure([...document.querySelectorAll('#screenwriter-editor > section > div')]);
@@ -39,7 +35,7 @@ export function App() {
         let data = {
             sections,
             // TODO metadata
-            metaData: {},
+            metaData,
         }
         if (data.sections?.length > 0) {
             // if error occurs, this may be empty…
@@ -50,45 +46,61 @@ export function App() {
 
     function downloadScreenplay() {
         let data = storeScreenplayInLocalStorage();
-        const content = Exporter(data.sections, data.metaData);
+        let content = Exporter(data.sections, data.metaData);
         const mimeType = 'text/plain';
-        const filename = 'screenplay.txt'
-        const a = document.createElement('a')
+        const timesignatur = new Date().toISOString().replace(/\.\d+[A-Z]$/, '').replace(/:/g, '_');
+        let filename = `screenplay_${timesignatur}`;
+        if (data.metaData.title || data.metaData.author) {
+           filename = [
+            data.metaData.author,
+            data.metaData.title || 'screenplay',
+            timesignatur
+           ].filter(v => !!v).join(' - ')
+        }
+        const a = document.createElement('a');
         const blob = new Blob([content], { type: mimeType });
-        const url = URL.createObjectURL(blob) // Create an object URL from blob
-        a.setAttribute('href', url) // Set "a" element link
-        a.setAttribute('download', filename) // Set download filename
-        a.click() // Start downloading
+        const url = URL.createObjectURL(blob);
+        a.setAttribute('href', url);
+        a.setAttribute('download', `${slugify(filename)}.txt`);
+        a.click();
     }
 
     useInterval(() => {
         storeScreenplayInLocalStorage();
     }, 2000);
 
-    return <div>
-        <div className="toolbar">
-            <Dropzone onDrop={onDrop} accept={"plain/txt"} />
-            <div className="icons">
-                <div className="icon">
-                    <i className="gg-arrow-down-o" onClick={downloadScreenplay}></i>
-                </div>
-                <div className='icon show-more-icons'>
-                    <i class="gg-more-alt"></i>
-                    <div className='icons'>
-                        <div className="icon">
-                            <i className="gg-dark-mode" onClick={() => document.querySelector('body').classList.toggle('dark-mode')}></i>
-                        </div>
-                        <div className='icon'>
-                            <i className="gg-trash" onClick={() => {
-                                setSeed(Math.random())
-                                localStorage.setItem('currentScreenplay', '{}')
-                             }}></i>
-                        </div>
-                    </div>
-                </div>
+    useInterval(() => {
+        let data = storeScreenplayInLocalStorage();
+        let content = Exporter(data.sections, data.metaData);
+        // only download if something has changed
+        if (content !== lastSavedExport) {
+            downloadScreenplay();
+            lastSavedExport = content;
+        }
+    }, Number(intervalDownload) > 0 ? Number(intervalDownload) : null);
 
+    useEffect(() => {
+        localStorage.setItem('autosave', String(Number(intervalDownload)));
+    }, [intervalDownload])
+
+    useEffect(() => {
+        if (Object.keys(metaData).length > 0) {
+            let screenplay = currentScreenplay();
+            screenplay.metaData = metaData;
+            localStorage.setItem('currentScreenplay', JSON.stringify(screenplay))
+        }
+    }, [metaData])
+
+    return <div>
+        <Toolbar setSeed={setSeed} downloadScreenplay={downloadScreenplay} setIntervalDownload={setIntervalDownload} setEditMetaData={setEditMetaData} setMetaData={setMetaData}></Toolbar>
+        {editMetaData && (
+            <div className="edit-meta-data">
+                <input name="title" onChange={(ev) => setMetaData({ ...metaData, ...{ title: ev.target.value } })} value={metaData.title} placeholder="Title"></input>
+                <input name="author" onChange={(ev) => setMetaData({ ...metaData, ...{ author: ev.target.value } })} value={metaData.author} placeholder="Author"></input>
+                <input name="copyright" onChange={(ev) => setMetaData({ ...metaData, ...{ copyright: ev.target.value } })} value={metaData.copyright} placeholder="Copyright"></input>
+                <button onClick={() => setEditMetaData(false)}>Close</button>
             </div>
-        </div>
+        )}
         <Editor key={seed} />
     </div>;
 }

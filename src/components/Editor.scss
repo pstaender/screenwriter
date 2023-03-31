@@ -23,6 +23,9 @@ body.dark-mode {
     --color-text: #fff;
     --color-light-grey: #333;
     --color-almost-white: #262626;
+    .two-color-icon {
+        filter: invert(1);
+    }
 }
 #screenwriter-editor {
     font-size: var(--font-size);

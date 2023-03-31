@@ -8,5 +8,27 @@
     </head>
     <body>
         <div id="screenwriter"></div>
+        <a href="https://github.com/pstaender/screenwriter" id="github-link" target="_blank">
+            <img src="./icons/github-mark.svg" alt="github" class="two-color-icon"/>
+        </a>
+        <style>
+            #github-link {
+                position: fixed;
+                top: 1rem;
+                right: 1rem;
+                width: 1.5rem;
+                height: 1.5rem;
+                opacity: 0.25;
+                transition: opacity 0.2s;
+            }
+            #github-link:hover, #github-link:focus {
+                opacity: 1;
+            }
+            #github-link img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+            }
+        </style>
     </body>
 </html>

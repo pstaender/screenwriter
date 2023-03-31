@@ -4,41 +4,45 @@ import { readFile } from 'fs/promises'
 import { Exporter } from './Exporter';
 import { Importer } from './Importer';
 
+const exampleScreenplaySections = [
+    {
+        html: 'John',
+        classification: 'dialogCharacter',
+    },
+    {
+        html: 'Well, one can\'t have everything.',
+        classification: 'dialogText',
+    },
+    {
+        html: ' Cut TO:',
+        classification: 'descriptionAnnotation',
+    },
+    {
+        html: `EXT. JOHN AND MARY'S HOUSE - CONTINUOUS<br>    
+        An old car pulls up to the curb and a few KNOCKS as the engine shuts down.<br>
+        MIKE steps out of the car and walks up to the front door. He rings the doorbell.`,
+        classification: 'description'
+    },
+    {
+        html: `JOHN`,
+        classification: `dialogCharacter`
+    },
+    {
+        html: `Who on Earth could that be? And why the hell is he ringing the bell at this time of the day?`,
+        classification: 'dialogText'
+    }
+];
+const exampleScreenplayMetaData = {
+    title: 'Example Screenplay',
+    author: 'John Doe'
+};
 
+test('export to txt format of screenplay without any exceptions', () => {
+    Exporter(exampleScreenplaySections, exampleScreenplayMetaData);
+});
 
-// beforeAll(async () => {
-//     screenplayText = (await readFile(new URL('../../spec/screenplay.txt', import.meta.url))).toString();
-// });
-
-test('export to txt format of screenplay', () => {
-    let result = Exporter([
-        {
-            html: 'John',
-            classification: 'dialogCharacter',
-        },
-        {
-            html: 'Well, one can\'t have everything.',
-            classification: 'dialogText',
-        },
-        {
-            html: ' Cut TO:',
-            classification: 'descriptionAnnotation',
-        },
-        {
-            html: `EXT. JOHN AND MARY'S HOUSE - CONTINUOUS<br>    
-            An old car pulls up to the curb and a few KNOCKS as the engine shuts down.<br>
-            MIKE steps out of the car and walks up to the front door. He rings the doorbell.`,
-            classification: 'description'
-        },
-        {
-            html: `JOHN`,
-            classification: `dialogCharacter`
-        },
-        {
-            html: `Who on Earth could that be? And why the hell is he ringing the bell at this time of the day?`,
-            classification: 'dialogText'
-        }
-    ]);
-    let resultImportAndExportAgain = Exporter(Importer(result).sections)
+test('import exported txt format and export again, without changing the structure', () => {
+    let result = Exporter(exampleScreenplaySections, exampleScreenplayMetaData);;
+    let resultImportAndExportAgain = Exporter(Importer(result).sections, Importer(result).metaData)
     expect(result).toEqual(resultImportAndExportAgain)
 });
