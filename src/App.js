@@ -29,24 +29,26 @@ export function App() {
     const [editMetaData, setEditMetaData] = useState(false);
     const [metaData, setMetaData] = useState(currentScreenplay().metaData || {})
 
-    function storeScreenplayInLocalStorage() {
+    function metaDataAndSections() {
         let sections = convertDomSectionsToDataStructure([...document.querySelectorAll('#screenwriter-editor > section > div')]);
-
-
-        let data = {
+        return {
             sections,
-            // TODO metadata
             metaData,
         }
-        if (data.sections?.length > 0) {
+    }
+
+    function storeScreenplayInLocalStorage() {
+        let data = metaDataAndSections();
+        if (data.sections?.length > 0 && document.querySelector('#screenwriter-editor').textContent) {
             // if error occurs, this may be empty…
+            // console.debug(`Autosave`)
             localStorage.setItem('currentScreenplay', JSON.stringify(data))
         }
         return data;
     }
 
     function downloadScreenplay() {
-        let data = storeScreenplayInLocalStorage();
+        let data = metaDataAndSections();
         let content = Exporter(data.sections, data.metaData);
         const mimeType = 'text/plain';
         const timesignatur = new Date().toISOString().replace(/\.\d+[A-Z]$/, '').replace(/:/g, '_');
@@ -71,7 +73,7 @@ export function App() {
     }, 2000);
 
     useInterval(() => {
-        let data = storeScreenplayInLocalStorage();
+        let data = metaDataAndSections();
         let content = Exporter(data.sections, data.metaData);
         // only download if something has changed
         if (content !== lastSavedExport) {

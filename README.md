@@ -19,6 +19,7 @@ The data is stored in your browsers local storage.
     * `Shift` + `Enter`: insert a new line in the current section
     * `meta`+`backspace`: remove the current section
     * `meta`+`enter`: insert a new section
+    * `shift`+`arrow-down`: merge this section with next one
 
 ## Features
 
@@ -31,12 +32,10 @@ Besides that, you can:
     * export screenplay as plain text
     * import screenplay from plain text (using the same convetions)
     * enjoy dark-mode
-    * auto-save screenplay to local file every minute (beware, there is no real undo implemented!)
+    * auto-save screenplay to local file every minute (beware, there is no real undo implemented - if a section is deleted, it's gone)
 
-## TODO
+## TODOs
 
-    * meta data (title, author, copyright)
-    * make sections mergeable
     * more undo
 
 ## Build

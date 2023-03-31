@@ -1,7 +1,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export function SceneSection({ current, goNext, goPrev, removeSection, id, index, sectionsLength, html, classification } = {}) {
+export function SceneSection({ current, goNext, goPrev, getNext, getPrev, removeSection, id, index, sectionsLength, html, classification } = {}) {
 
     const inputRef = useRef(null);
 
@@ -97,15 +97,45 @@ export function SceneSection({ current, goNext, goPrev, removeSection, id, index
             } else {
                 goNext({ id })
             }
-            removeSection({ id })
-
+            // only remove if some elements still exists
+            if (document.querySelectorAll('#screenwriter-editor > section').length > 1) {
+                removeSection(id)
+            } else if (inputRef.current) {
+                inputRef.current.textContent = '';
+            }
         }
         if (ev.key === 'ArrowDown' && getCaretCharacterOffsetWithin(ev.target) === content.length) {
-            goNext({ id });
+            if (ev.shiftKey) {
+                ev.preventDefault();
+                // merge next section into this
+                let nextSection = ev.target.closest('section').nextElementSibling;
+                if (nextSection && nextSection.innerHTML) {
+                    inputRef.current.innerHTML += '<br>' + nextSection.textContent.trim().replace(/\n/g, '<br>');
+                    let nextID = getNext(id).id;
+                    if (nextID) {
+                        removeSection(nextID)
+                        return;
+                    }
+                }
+            }
+            goNext({ id, insert: ev.metaKey });
             return;
         }
         else if (ev.key === 'ArrowUp' && getCaretCharacterOffsetWithin(ev.target) === 0) {
-            goPrev({ id });
+            // if (ev.shiftKey) {
+            //     ev.preventDefault();
+            //     // merge prev section into this
+            //     let prevSection = ev.target.closest('section').previousElementSibling;
+            //     if (prevSection && prevSection.innerHTML) {
+            //         inputRef.current.innerHTML += '<br>' + prevSection.textContent.trim().replace(/\n/g, '<br>');
+            //         let prevID = getPrev(id).id;
+            //         if (prevID) {
+            //             removeSection(prevID)
+            //             return;
+            //         }
+            //     }
+            // }
+            goPrev({ id, insert: ev.metaKey });
             return;
         }
         else if (ev.key === 'Enter') {

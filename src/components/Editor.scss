@@ -36,7 +36,6 @@ body.dark-mode {
     counter-reset: scene-counter 0;
     [contenteditable] {
         &:focus {
-            // background: var(--color-light-grey);
             outline: none;
         }
     }
@@ -51,7 +50,7 @@ body.dark-mode {
             opacity: 0.25;
             font-size: 0.8rem;
         }
-        &.sceneIntroduction {
+        &.sceneIntroduction.description {
             counter-increment: scene-counter 1;
             &:before {
                 content: counter(scene-counter);
@@ -67,7 +66,6 @@ body.dark-mode {
             background: var(--color-almost-white);
         }
         > div {
-            // position: relative;
             &:focus:after {
                 content: 'Text';
                 display: block;

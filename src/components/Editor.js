@@ -68,21 +68,32 @@ export function Editor() {
                     let index = Number(ev.target.closest('section').dataset.index);
                     setSections([...setAllSectionToNotCurrent(sections.slice(0, index)), ...emptySection(), ...setAllSectionToNotCurrent(sections.slice(index))])
                 }
-
+            } else {
+                if (_sections[i]) {
+                    goNext({id: _sections[i].id})
+                }
             }
-            else if (i + 1 === _sections.length) {
+            if (i + 1 === _sections.length) {
                 appendNewSection(_sections)
             }
         }
-        // test export + import
-        // save()
     }
 
-    function goNext({ id } = {}) {
+    function getNext(id) {
+        return sections[sections.indexOf(sections.filter(s => s.id === id)[0]) + 1] || null;
+    }
+
+    function getPrev(id) {
+        return sections[sections.indexOf(sections.filter(s => s.id === id)[0]) - 1] || null;
+    }
+
+    function goNext({ id, insert } = {}) {
         let i = sections.indexOf(sections.filter(s => s.id === id)[0])
         let nextIndex = i + 1;
         if (nextIndex >= sections.length) {
-            appendNewSection(sections)
+            if (insert) {
+                appendNewSection(sections)
+            }
         } else {
             let _sections = setAllSectionToNotCurrent(sections);
             _sections[i].current = false;
@@ -91,11 +102,13 @@ export function Editor() {
         }
     }
 
-    function goPrev({ id } = {}) {
+    function goPrev({ id, insert } = {}) {
         let i = sections.indexOf(sections.filter(s => s.id === id)[0])
         let nextIndex = i - 1;
         if (nextIndex < 0) {
-            prependNewSection(sections)
+            if (insert) {
+                prependNewSection(sections)
+            }
         } else {
             let _sections = setAllSectionToNotCurrent(sections);
             _sections[i].current = false;
@@ -104,14 +117,15 @@ export function Editor() {
         }
     }
 
-    function removeSection({ id } = {}) {
+    function removeSection(id) {
+        console.log(id, [...sections.filter(s => s.id !== id)])
         setSections([...sections.filter(s => s.id !== id)])
     }
 
 
     return <div id="screenwriter-editor" onKeyDown={handleKeyDown}>
         {sections.map((section, i) => (
-            <SceneSection current={section.current} key={section.id} id={section.id} next={sections[i + 1]} prev={sections[i + 1]} removeSection={removeSection} goNext={goNext} goPrev={goPrev} index={i} sectionsLength={sections.length} html={section.html} classification={section.classification} />
+            <SceneSection current={section.current} key={section.id} id={section.id} next={sections[i + 1]} prev={sections[i + 1]} removeSection={removeSection} goNext={goNext} goPrev={goPrev} getNext={getNext} getPrev={getPrev} index={i} sectionsLength={sections.length} html={section.html} classification={section.classification} />
         ))}
     </div>;
 }
