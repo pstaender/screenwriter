@@ -14,13 +14,14 @@ export function App() {
     function currentScreenplay() {
         try {
             let data = localStorage.getItem('currentScreenplay')
-            return JSON.parse(data);
+            return JSON.parse(data) || {};
         } catch (e) {
             if (!e.message.match('JSON')) {
                 throw e;
             }
         }
-        return {};
+        return {
+        };
     }
 
     const [seed, setSeed] = useState(Math.random());

@@ -9,7 +9,9 @@ Tested in newest Chrome only.
 
 ## Demo
 
-**Try out the editor here: https://www.zeitpulse.com/screenwriter**. The data is stored in your browsers local storage.
+**Try out the editor here: https://screenwriter.zeitpulse.com/**.
+
+The data is stored in your browsers local storage.
 
 ## Keyboard Usage
 
