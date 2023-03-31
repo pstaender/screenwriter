@@ -1,0 +1,13 @@
+#screenwriter-toolbar,
+#github-link {
+    display: none !important;
+}
+:root {
+    --font-size: 12pt !important;
+}
+#screenwriter-editor > section {
+    padding: 0 !important;
+}
+#screenwriter-editor > section.dialogCharacter {
+    padding-top: 1rem !important;
+}

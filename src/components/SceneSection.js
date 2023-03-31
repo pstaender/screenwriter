@@ -1,7 +1,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export function SceneSection({ current, goNext, goPrev, getNext, cursorToEnd, removeSection, id, index, sectionsLength, html, classification } = {}) {
+export function SceneSection({ current, goNext, goPrev, getNext, cursorToEnd, removeSection, id, index, sectionsLength, html, classification, setCurrentSectionById } = {}) {
 
     const inputRef = useRef(null);
 
@@ -9,6 +9,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, cursorToEnd, re
         'description',
         'dialogCharacter',
         'dialogText',
+        'dialogAnnotation',
         'descriptionAnnotation',
     ];
 
@@ -36,13 +37,30 @@ export function SceneSection({ current, goNext, goPrev, getNext, cursorToEnd, re
             if (!inputRef.current.textContent.trim() && isCurrent) {
                 let previousSection = inputRef.current?.closest('section')?.previousSibling
                 if (previousSection) {
-                    let previousPreviousSection = inputRef.current.closest('section').previousSibling?.previousSibling?.previousSibling?.previousSibling
+                    let sibling = previousSection;
+                    let names = [];
+                    while (sibling) {
+                        if (sibling.classList.contains('dialogCharacter')) {
+                            names.push(sibling.textContent);
+                        }
+                        // names.push(sibling.textContent);
+                        if (names.length > 1) {
+                            break;
+                        }
+                        sibling = sibling.previousElementSibling
+                    }
+
                     if (previousSection.classList.contains('dialogCharacter')) {
                         return setEditingLevel('dialogText');
                     }
+                    if (previousSection.classList.contains('dialogAnnotation')) {
+                        return setEditingLevel('dialogText');
+                    }
                     if (previousSection.classList.contains('dialogText')) {
-                        if (previousPreviousSection && previousPreviousSection.textContent && previousPreviousSection.classList.contains('dialogCharacter')) {
-                            setHtmlContent(previousPreviousSection.textContent.match(/[\w]+/)[0])
+                        if (names.length > 1) {
+                            setHtmlContent(names.at(-1).match(/[\w]+/)[0])
+                        } else {
+                            setHtmlContent('Name')
                         }
                         return setEditingLevel('dialogCharacter');
                     }
@@ -154,9 +172,14 @@ export function SceneSection({ current, goNext, goPrev, getNext, cursorToEnd, re
     }
 
     function handleFocus(ev) {
+        if (isCurrent) {
+            return;
+        }
         setIsCurrent(true);
-        cleanupContenteditableMarkup();
-
+        setCurrentSectionById(id);
+        if (ev.type !== 'Click') {
+            cleanupContenteditableMarkup();
+        }
     }
 
     function handleBlur() {

@@ -15,6 +15,8 @@ export function convertDomSectionsToDataStructure(sections) {
             classification = 'dialogText';
         } else if (el.classList.contains('descriptionAnnotation')) {
             classification = 'descriptionAnnotation';
+        } else if (el.classList.contains('dialogAnnotation')) {
+            classification = 'dialogAnnotation';
         }
         return {
             html: el.innerHTML,

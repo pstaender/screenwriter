@@ -38,7 +38,7 @@ Besides that, you can:
 
 ## TODOs
 
- * adding section for character annotation
+ * https://pagedjs.org/posts/2020-04-15-starterkits-for-pagedjs/
  * faster cleanup of html/plain-text during changing text
  * make spaces configurable in interface (via metaData?)
  * consider word wrap in import

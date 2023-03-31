@@ -49,6 +49,13 @@ export function Editor() {
         })
     }
 
+    function setCurrentSectionById(id) {
+        return setSections([...sections.map(s => {
+            s.current = s.id === id;
+            return s;
+        })])
+    }
+
     function appendNewSection(sections) {
         setSections([...setAllSectionToNotCurrent(sections), ...emptySection()])
     }
@@ -127,7 +134,7 @@ export function Editor() {
 
     return <div id="screenwriter-editor" onKeyDown={handleKeyDown}>
         {sections.map((section, i) => (
-            <SceneSection current={section.current} key={section.id} id={section.id} next={sections[i + 1]} prev={sections[i + 1]} removeSection={removeSection} goNext={goNext} goPrev={goPrev} getNext={getNext} getPrev={getPrev} index={i} sectionsLength={sections.length} html={section.html} classification={section.classification} cursorToEnd={section.cursorToEnd || false}/>
+            <SceneSection current={section.current} key={section.id} id={section.id} next={sections[i + 1]} prev={sections[i + 1]} removeSection={removeSection} goNext={goNext} goPrev={goPrev} getNext={getNext} getPrev={getPrev} index={i} sectionsLength={sections.length} html={section.html} classification={section.classification} cursorToEnd={section.cursorToEnd || false} setCurrentSectionById={setCurrentSectionById}/>
         ))}
     </div>;
 }
