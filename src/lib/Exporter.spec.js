@@ -28,6 +28,10 @@ const exampleScreenplaySections = [
         classification: `dialogCharacter`
     },
     {
+        html: `wondering`,
+        classification: `dialogAnnotation`
+    },
+    {
         html: `Who on Earth could that be? And why the hell is he ringing the bell at this time of the day?`,
         classification: 'dialogText'
     }

@@ -51,6 +51,14 @@ export function Exporter(sections, metaData = {}) {
             }).join(`\n`)
 
         }
+        else if (section.classification === 'dialogAnnotation') {
+            text = text.split(`\n`).map(l => {
+                return Voca.wordWrap('('+l.trim()+')', {
+                    width: 25,
+                    indent: Array(dialogCharSpace - 5).join(' ')
+                })
+            }).join(`\n`)
+        }
         else if (section.classification === 'dialogText') {
             text = text.split(`\n`).map(l => {
                 return Voca.wordWrap(l.trim(), {

@@ -37,7 +37,7 @@ export function Importer(str, options = {}) {
                 throw e;
             }
         }
-        
+
         return { metaData, eofMetaDataReached };
     }
 
@@ -56,13 +56,21 @@ export function Importer(str, options = {}) {
     for (let part of parts) {
         part = part.replace(/^\n+/, '')
         if (new RegExp(`^\\s{${options.minSpacesCharacter},${options.maxSpacesCharacter}}[A-Z]+`).test(part.split(`\n`)[0])) {
+            let dialogParts = part.split(`\n`);
             sections.push({
-                text: part.split(`\n`)[0],
+                text: dialogParts.shift(),
                 classification: 'dialogCharacter'
             })
-            if (part.split(`\n`)[1]) {
+            if (dialogParts[0] && dialogParts[0].trim().startsWith('(') && dialogParts[0].trim().endsWith(')')) {
+                let annot = dialogParts.shift().trim();
                 sections = [...sections, ...[{
-                    text: part.split(`\n`).splice(1).join(`\n`),
+                    text: annot.substring(1, annot.length-1),
+                    classification: 'dialogAnnotation'
+                }]];
+            }
+            if (dialogParts[0]) {
+                sections = [...sections, ...[{
+                    text: dialogParts.join(`\n`),
                     classification: 'dialogText'
                 }]];
             }
