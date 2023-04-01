@@ -1,5 +1,5 @@
 #screenwriter-toolbar,
-#github-link {
+#github-link, .edit-meta-data {
     display: none !important;
 }
 :root {
@@ -10,6 +10,19 @@ body {
 }
 #screenwriter-editor > section {
     padding: 0 !important;
+    padding-bottom: 1rem !important;
+    &.sceneIntroduction {
+        > div:before {
+            content: counter(scene-counter) " ";
+            text-align: inherit;
+            position: relative;
+            opacity: inherit;
+            font-size: inherit;
+            top: inherit;
+            left: inherit;
+        }
+    }
+    
 }
 #screenwriter-editor > section.dialogCharacter {
     padding-top: 1rem !important;

@@ -24,7 +24,7 @@ export function MetaDataEdit({ metaData, setMetaData, setEditMetaData } = {}) {
 
     function handleAddField(ev) {
         let fieldName = prompt('Name of the field (lower case, letters and _ only please)', 'copyright');
-        fieldName = fieldName?.replace(/[^a-zA-Z\_]+/g, '')?.toLowerCase();
+        fieldName = fieldName?.replace(/[^a-zA-Z\_]+/g, '')?.toLocaleLowerCase();
         if (fieldName) {
             let d = metaData;
             d[fieldName] = '';

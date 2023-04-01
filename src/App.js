@@ -88,7 +88,7 @@ export function App() {
         const blob = new Blob([content], { type: mimeType });
         const url = URL.createObjectURL(blob);
         a.setAttribute('href', url);
-        a.setAttribute('download', `${slugify(filename)}.${format}`);
+        a.setAttribute('download', `${slugify(filename.toLocaleLowerCase())}.${format}`);
         a.click();
     }
 

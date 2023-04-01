@@ -35,7 +35,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, cursorToEnd, re
                 cleanupContenteditableMarkup();
             }
             if (!inputRef.current.textContent.trim() && isCurrent) {
-                let previousSection = inputRef.current?.closest('section')?.previousSibling
+                let previousSection = inputRef.current?.closest('section')?.previousElementSibling
                 if (previousSection) {
                     let sibling = previousSection;
                     let names = [];
@@ -43,8 +43,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, cursorToEnd, re
                         if (sibling.classList.contains('dialogCharacter')) {
                             names.push(sibling.textContent);
                         }
-                        // names.push(sibling.textContent);
-                        if (names.length > 1) {
+                        if ([...new Set(names.map(l => l.toLocaleLowerCase()))].length > 1) {
                             break;
                         }
                         sibling = sibling.previousElementSibling
@@ -58,7 +57,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, cursorToEnd, re
                     }
                     if (previousSection.classList.contains('dialogText')) {
                         if (names.length > 1) {
-                            setHtmlContent(names.at(-1).match(/[\w]+/)[0])
+                            setHtmlContent(names.at(-1))//.match(/[\w]+/)[0])
                         } else {
                             setHtmlContent('Name')
                         }
@@ -154,6 +153,12 @@ export function SceneSection({ current, goNext, goPrev, getNext, cursorToEnd, re
             if (!ev.shiftKey) {
                 ev.preventDefault();
             }
+        } else if ((ev.metaKey || ev.ctrlKey) && (ev.shiftKey) && ev.key === 'u') {
+            let text = inputRef.current.textContent.toLocaleUpperCase()
+            if (text === inputRef.current.textContent) {
+                text = inputRef.current.textContent.toLocaleLowerCase()
+            }
+            inputRef.current.textContent = text;
         }
     }
 
@@ -197,7 +202,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, cursorToEnd, re
         [
             isCurrent ? 'selected' : '',
             editingLevel,
-            inputRef.current?.textContent?.trim()?.match(/^(INT|EXT)/) ? 'sceneIntroduction' : '',
+            (inputRef.current?.textContent && inputRef.current?.textContent.toLocaleUpperCase() === inputRef.current.textContent) ? 'sceneIntroduction' : '',
         ].filter(e => !!e).join(' ')} onClick={handleFocus} data-index={index + 1}>
         <div contentEditable={true} onFocus={handleFocus} onBlur={handleBlur} ref={inputRef} className={editingLevel} onKeyDown={handleKeyDown}>
         </div>

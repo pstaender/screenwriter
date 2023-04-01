@@ -26,9 +26,11 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
                             console.error(e);
                             alert(e.message);
                         }
+                        setDownloadFormat('json')
                     } else {
                         // plaintext
                         data = Importer(e.target.result);
+                        setDownloadFormat('txt')
                         localStorage.setItem('currentScreenplay', JSON.stringify(data));
                     }
                     
@@ -69,6 +71,15 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
         );
     }, [autoSave])
 
+    useEffect(() => {
+        if (downloadFormat) {
+            if (downloadFormat !== 'json' && downloadFormat !== 'txt') {
+                throw new Error(`Only json and txt are allowed`)
+            }
+            localStorage.setItem('exportFormat', downloadFormat)
+        }
+    }, [downloadFormat])
+
     return (
         <div id="screenwriter-toolbar">
             <Dropzone onDrop={onDrop} accept={["plain/txt", "application/json"]} />
@@ -102,7 +113,6 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
                         <div className={['icon', downloadFormat === 'json' ? 'active' : ''].join(' ')} onClick={() => {
                             let format = downloadFormat === 'json' ? 'txt' : 'json';
                             setDownloadFormat(format);
-                            localStorage.setItem('exportFormat', format)
                         }} data-help="Use JSON format instead of text for file export">
                             <i className="gg-brackets"></i> 
                         </div>

@@ -27,11 +27,30 @@ export function convertDomSectionsToDataStructure(sections) {
 
 export function Exporter(sections, metaData = {}) {
 
-    const dialogCharSpace = 22;
-    const dialogSpace = 11;
-    const overallSpace = 61;
+    let options = {
+        spacesDialogCharacter: 22,
+        spacesDialog: 11,
+        documentWidth: 61,
+        dialogWordWrapLength: 33,
+        spacesAnnotation: 31,
+    }
+
+    if (metaData['spacesDialogCharacter'] !== undefined) {
+        options.spacesDialogCharacter = Number(metaData['spacesDialogCharacter']);
+    }
+    if (metaData['spacesDialog'] !== undefined) {
+        options.spacesDialog = Number(metaData['spacesDialog']);
+    }
+    if (metaData['documentWidth'] !== undefined) {
+        options.documentWidth = Number(metaData['documentWidth']);
+    }
+    if (metaData['dialogWordWrapLength'] !== undefined) {
+        options.dialogWordWrapLength = Number(metaData['dialogWordWrapLength']);
+    }
 
     let metaDataText = '';
+
+    metaData = {...metaData, ...options};
 
     if (Object.keys(metaData).length > 0) {
         metaDataText = JSON.stringify(metaData, null, '  ').replace(/^\s+/g, '').substring(1).replace(/\}$/,'').split('\n').map(l => {
@@ -44,31 +63,25 @@ export function Exporter(sections, metaData = {}) {
         let text = section.html.replace(/<br>/ig, `\n`).replace(/\&nbsp;/g, ' ').trim();
         if (section.classification === 'dialogCharacter') {
             text = `\n` + text.split(`\n`).map(l => {
-                return Voca.wordWrap(l.toUpperCase().trim(), {
-                    width: overallSpace - dialogCharSpace,
-                    indent: Array(dialogCharSpace).join(' ')
-                })
+                return Array(options.spacesDialogCharacter + 1).join(' ') + l.toLocaleUpperCase().trim()
             }).join(`\n`)
 
         }
         else if (section.classification === 'dialogAnnotation') {
             text = text.split(`\n`).map(l => {
-                return Voca.wordWrap('('+l.trim()+')', {
-                    width: 25,
-                    indent: Array(dialogCharSpace - 5).join(' ')
-                })
+                return Array(options.spacesDialogCharacter - 4).join(' ') + '('+l.trim()+')';
             }).join(`\n`)
         }
         else if (section.classification === 'dialogText') {
             text = text.split(`\n`).map(l => {
                 return Voca.wordWrap(l.trim(), {
-                    width: 33,
-                    indent: Array(dialogSpace).join(' ')
+                    width: options.dialogWordWrapLength,
+                    indent: Array(options.spacesDialog + 1).join(' ')
                 })
             }).join(`\n`)
         }
         else if (section.classification === 'descriptionAnnotation') {
-            text = `\n` + Voca.padLeft(text.toUpperCase().trim(), overallSpace - text.length, ' ')
+            text = `\n` + Voca.padLeft(text.toLocaleUpperCase().trim(), options.documentWidth - text.length, ' ')
         } else {
             // description
             if (!text.trim()) {
@@ -77,7 +90,7 @@ export function Exporter(sections, metaData = {}) {
 
             text = `\n` + text.split(`\n`).map(l => {
                 return Voca.wordWrap(l.trim(), {
-                    width: overallSpace,
+                    width: options.documentWidth,
                 })
             }).join(`\n`)
 

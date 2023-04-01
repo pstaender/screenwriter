@@ -17,13 +17,14 @@ The data is stored in your browsers local storage.
 
  * `tab`: change the type of text in the current secion (text, charater for dialog, dialog text and annotation)
  * `shift` + `enter`: insert a new line in the current section
- * `meta`+`backspace`: remove the current section
- * `meta`+`enter`: insert a new section
- * `shift`+`arrow-down`: merge this section with next one
+ * `meta` + `backspace`: remove the current section
+ * `meta` + `enter`: insert a new section
+ * `shift` + `arrow-down`: merge this section with next one
+ * `meta` + `shift` + `U`: uppercase the section, downcase if everthing is uppercase
 
 ## Features
 
-To detect the beginning of a new scene, you should start the line with `INT.` or `EXT.`.
+To detect the beginning of a new scene, you should write the whole line Uppercase (Meta+Shift+U).
 
 The editor will suggest the next name of the character if you are in a dialog.
 

@@ -1,19 +1,14 @@
 const META_DATA_LINE_REGEX = /^\"[a-zA-Z\_]+?\"\:/
 
-export function Importer(str, options = {}) {
+export function Importer(str) {
     let parts = str.split(`\n`)
 
-    options = {...{
-        minSpacesCharacter: 17,
-        maxSpacesCharacter: 22,
-        // minSpacesCharacter: 20,
-        // maxSpacesCharacter: 30,
-        minSpacesAnnotation: null,
-        maxSpacesAnnotation: '',
-    }, ...options}
-
-    if (!options.minSpacesAnnotation) {
-        options.minSpacesAnnotation = options.maxSpacesCharacter + 1;
+    let options = {
+        spacesDialogCharacter: 21,
+        spacesDialog: 11,
+        documentWidth: 61,
+        dialogWordWrapLength: 33,
+        spacesAnnotation: 30,
     }
 
     function extractMetaData(parts) {
@@ -43,6 +38,12 @@ export function Importer(str, options = {}) {
 
     let { metaData, eofMetaDataReached } = parts[0] && META_DATA_LINE_REGEX.test(parts[0].trim()) ?  extractMetaData(parts) : { metaData: {}, eofMetaDataReached: 0 };
 
+    for (let optionKey in metaData) {
+        if (options[optionKey]) {
+            options[optionKey] = Number(metaData[optionKey]);
+        }
+    }
+
     parts = parts
         .slice(eofMetaDataReached + 1)
         .join(`\n`).replace(/^\n+/, '')
@@ -55,7 +56,12 @@ export function Importer(str, options = {}) {
 
     for (let part of parts) {
         part = part.replace(/^\n+/, '')
-        if (new RegExp(`^\\s{${options.minSpacesCharacter},${options.maxSpacesCharacter}}[A-Z]+`).test(part.split(`\n`)[0])) {
+        if (new RegExp(`^\\s{${options.spacesAnnotation},${options.spacesAnnotation + 20}}?\\w+`).test(part)) {
+            sections.push({
+                text: part,
+                classification: 'descriptionAnnotation'
+            })
+        } else if (new RegExp(`^\\s{${options.spacesDialogCharacter},${options.spacesDialogCharacter + 2}}?\\w+`).test(part.split(`\n`)[0])) {
             let dialogParts = part.split(`\n`);
             sections.push({
                 text: dialogParts.shift(),
@@ -74,12 +80,6 @@ export function Importer(str, options = {}) {
                     classification: 'dialogText'
                 }]];
             }
-        }
-        else if (new RegExp(`^\\s{${options.minSpacesAnnotation},${options.maxSpacesAnnotation}}[A-Z]+`).test(part)) {
-            sections.push({
-                text: part,
-                classification: 'descriptionAnnotation'
-            })
         }
         else {
             // append

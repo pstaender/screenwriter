@@ -14,7 +14,7 @@ const exampleScreenplaySections = [
         classification: 'dialogText',
     },
     {
-        html: ' Cut TO:',
+        html: ' CUT TO:',
         classification: 'descriptionAnnotation',
     },
     {
@@ -47,12 +47,8 @@ test('export to txt format of screenplay without any exceptions', () => {
 
 test('import exported txt format and export again, without changing the structure', () => {
     let result = Exporter(exampleScreenplaySections, exampleScreenplayMetaData);
-
-    // expect(Importer(result).sections).toEqual(exampleScreenplaySections)
-    // expect(Importer(result).metaData).toEqual(exampleScreenplayMetaData)
-
     let resultImportAndExportAgain = Exporter(Importer(result).sections, Importer(result).metaData)
-
+    
     expect(result).toEqual(resultImportAndExportAgain)
 });
 

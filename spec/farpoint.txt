@@ -1,0 +1,41 @@
+"title": "STAR TREK: THE NEXT GENERATION\n\"Encounter at Farpoint\""
+"author": "D.C. Fontana and Gene Roddenberry"
+"description": "<center>FINAL DRAFT</center>\n<center>April 13, 1987</center>"
+"spacesDialogCharacter": 16
+"spacesDialog": 8
+"spacesAnnotation": 20
+
+                            FADE IN:
+
+EXT. SPACE - STARSHIP (OPTICAL)
+
+The U.S.S. Enterprise NCC 1701-D traveling at warp speed
+through space.
+
+                PICARD V.O.
+        Captain's log, stardate 42353.7.
+        Our destination is planet Cygnus
+        IV, beyond which lies the great
+        unexplored mass of the galaxy.
+
+OTHER INTRODUCTORY ANGLES (OPTICAL)
+
+on the gigantic new Enterprise NCC 1701-D.
+
+                PICARD V.O.
+        My orders are to examine Farpoint,
+        a starbase built there by the
+        inhabitants of that world.
+        Meanwhile ...
+
+INT. ENGINE ROOM
+
+Huge, with a giant wall diagram showing the immensity
+of this Galaxy Class starship.
+
+                PICARD V.O.
+            (continuing)
+        ... I am becoming better
+        acquainted with my new command,
+        this Galaxy Class U.S.S.
+        Enterprise.
