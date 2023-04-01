@@ -1,7 +1,9 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export function SceneSection({ current, goNext, goPrev, getNext, cursorToEnd, removeSection, id, index, sectionsLength, html, classification, setCurrentSectionById } = {}) {
+const mementos = []
+
+export function SceneSection({ current, goNext, goPrev, getNext, insertNewSectionAtId, removeSection, id, index, sectionsLength, html, classification, setCurrentSectionById } = {}) {
 
     const inputRef = useRef(null);
 
@@ -104,6 +106,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, cursorToEnd, re
         if (ev.target?.contentEditable !== 'true') {
             return;
         }
+        
         if (ev.key === 'Tab') {
             const direction = ev.shiftKey ? -1 : 1;
             ev.preventDefault();
@@ -122,14 +125,24 @@ export function SceneSection({ current, goNext, goPrev, getNext, cursorToEnd, re
             }
             // only remove if some elements still exists
             if (document.querySelectorAll('#screenwriter-editor > section').length > 1) {
+                //localStorage.setItem('lastDeletedSectionHTML', inputRef.current.innerHTML)
+                if (inputRef.current.innerHTML?.trim()) {
+                    mementos.push(inputRef.current.innerHTML)
+                }
                 removeSection(id)
             } else if (inputRef.current) {
                 inputRef.current.textContent = '';
             }
         }
+        // console.log(ev)
+        if ((ev.metaKey || ev.ctrlKey) && ev.key === 'z' && inputRef.current?.innerHTML) {
+            // undo
+            inputRef.current.innerHTML += mementos.pop() || ''
+            return
+        }
         if ((ev.key === 'ArrowDown' || ev.key === 'ArrowRight') && getCaretCharacterOffsetWithin(ev.target) === content.length) {
             ev.preventDefault();
-            if (ev.shiftKey) {
+            if (ev.shiftKey && (ev.metaKey || ev.ctrlKey)) {
                 // merge next section into this
                 let nextSection = ev.target.closest('section').nextElementSibling;
                 if (nextSection && nextSection.innerHTML) {
@@ -148,6 +161,18 @@ export function SceneSection({ current, goNext, goPrev, getNext, cursorToEnd, re
             ev.preventDefault();
             goPrev({ id, insert: ev.metaKey });
             return;
+        }
+        else if ((ev.metaKey || ev.ctrlKey) && (ev.shiftKey) && ev.key === 'Enter') {
+            let splitUpAt = getCaretCharacterOffsetWithin(inputRef.current);
+            if (splitUpAt > 0) {
+                let partRight = inputRef.current.textContent.substring(splitUpAt)
+                let partLeft = inputRef.current.textContent.substring(0, splitUpAt);
+                if (partLeft && partRight) {
+                    inputRef.current.textContent = partRight;
+                    insertNewSectionAtId(id, {html: partLeft})
+                }
+                
+            }
         }
         else if (ev.key === 'Enter') {
             if (!ev.shiftKey) {

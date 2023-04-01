@@ -11,7 +11,7 @@ body {
 #screenwriter-editor > section {
     padding: 0 !important;
     padding-bottom: 1rem !important;
-    &.sceneIntroduction {
+    &.description.sceneIntroduction {
         > div:before {
             content: counter(scene-counter) " ";
             text-align: inherit;

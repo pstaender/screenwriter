@@ -17,10 +17,11 @@ The data is stored in your browsers local storage.
 
  * `tab`: change the type of text in the current secion (text, charater for dialog, dialog text and annotation)
  * `shift` + `enter`: insert a new line in the current section
- * `meta` + `backspace`: remove the current section
- * `meta` + `enter`: insert a new section
- * `shift` + `arrow-down`: merge this section with next one
- * `meta` + `shift` + `U`: uppercase the section, downcase if everthing is uppercase
+ * `meta`/`ctrl` + `backspace`: remove the current section
+ * `meta`/`ctrl` + `enter`: insert a new section
+ * `meta`/`ctrl` + `shift` + `arrow-down`: merge this section with next one
+ * `meta`/`ctrl` + `shift` + `enter`: split this section here in two sections
+ * `meta`/`ctrl` + `shift` + `U`: uppercase the section, downcase if everthing is uppercase
 
 ## Features
 
