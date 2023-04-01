@@ -25,24 +25,24 @@ The data is stored in your browsers local storage.
 
 To detect the beginning of a new scene, you should start the line with `INT.` or `EXT.`.
 
-The editor will suggest the next name of he character if you are in a dialog.
+The editor will suggest the next name of the character if you are in a dialog.
 
-Besides that, you can:
+Other features:
 
- * export screenplay as plain text
- * import screenplay from plain text (using the same convetions)
- * auto-save screenplay to local file every minute (beware, there is no real undo implemented - if a section is deleted, it's gone)
+ * exports screenplay as plain-text or json
+ * imports screenplay from plain-text (using the same spacing-conventions) or json
+ * auto-saves/downloads screenplay to local file every minute (beware, there is no real undo implemented - if a section is deleted, it's gone)
  * enjoy dark-mode
  
 <img width="1189" alt="Screenshot 2023-03-31 at 11 46 53" src="https://user-images.githubusercontent.com/140571/229086759-31aa087d-cb28-443f-82c6-a36200b16a26.png">
 
 ## TODOs
 
- * https://pagedjs.org/posts/2020-04-15-starterkits-for-pagedjs/
- * faster cleanup of html/plain-text during changing text
- * make spaces configurable in interface (via metaData?)
+ * faster cleanup of html/plain-text during text changes
+ * make spaces configurable in interface (via metaData)
  * consider word wrap in import
  * more undo
+ * https://pagedjs.org/posts/2020-04-15-starterkits-for-pagedjs/
 
 ## Build
 
