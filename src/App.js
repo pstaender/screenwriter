@@ -7,6 +7,7 @@ import { useInterval } from 'usehooks-ts';
 import { Toolbar } from './components/Toolbar';
 import slugify from 'slugify';
 import { MetaDataEdit } from './components/MetaDataEdit';
+import { useVisibilityChange } from './components/useVisibilityChange';
 
 let lastSavedExport = null;
 
@@ -24,6 +25,9 @@ export function App() {
         return {
         };
     }
+
+   
+    const isVisible = useVisibilityChange();
 
     const [seed, setSeed] = useState(Math.random());
     const [intervalDownload, setIntervalDownload] = useState(null);
@@ -103,9 +107,18 @@ export function App() {
         }
     }, [metaData])
 
+    useEffect(() => {
+        if (isVisible) {
+            // force reload
+            setSeed(Math.random())
+        } else {
+            storeScreenplayInLocalStorage()
+        }
+    }, [isVisible])
+
     return <div>
         <Toolbar setSeed={setSeed} downloadScreenplay={downloadScreenplay} setIntervalDownload={setIntervalDownload} setEditMetaData={setEditMetaData} setMetaData={setMetaData}></Toolbar>
         {editMetaData && <MetaDataEdit metaData={metaData} setMetaData={setMetaData} setEditMetaData={setEditMetaData}></MetaDataEdit>}
-        <Editor key={seed} />
+        <Editor key={seed} seed={seed} />
     </div>;
 }

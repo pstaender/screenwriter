@@ -1,9 +1,9 @@
 import './Editor.scss';
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SceneSection } from './SceneSection';
 
-export function Editor() {
+export function Editor({seed} = {}) {
 
     function id() {
         return crypto.randomUUID();
@@ -41,6 +41,11 @@ export function Editor() {
     }
 
     const [sections, setSections] = useState(sectionsCurrentScreenplayViaLocalStorageOrPlainText())
+
+    useEffect(() => {
+        // changing seed forces reload
+        sectionsCurrentScreenplayViaLocalStorageOrPlainText()
+    }, [seed])
 
     function setAllSectionToNotCurrent(sections) {
         return sections.map(s => {
