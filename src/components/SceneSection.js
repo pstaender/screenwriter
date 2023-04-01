@@ -60,8 +60,6 @@ export function SceneSection({ current, goNext, goPrev, getNext, insertNewSectio
                     if (previousSection.classList.contains('dialogText')) {
                         if (names.length > 1) {
                             setHtmlContent(names.at(-1))//.match(/[\w]+/)[0])
-                        } else {
-                            setHtmlContent('Name')
                         }
                         return setEditingLevel('dialogCharacter');
                     }
@@ -117,7 +115,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, insertNewSectio
             }
             cleanupContenteditableMarkup()
         }
-        if (ev.key === 'Backspace' && (ev.metaKey || inputRef.current.textContent.trim() === '')) {
+        if (ev.key === 'Backspace' && ((ev.metaKey || ev.ctrlKey) || inputRef.current.textContent.trim() === '')) {
             if (index >= sectionsLength - 1) {
                 goPrev({ id })
             } else {
@@ -154,12 +152,12 @@ export function SceneSection({ current, goNext, goPrev, getNext, insertNewSectio
                     }
                 }
             }
-            goNext({ id, insert: ev.metaKey });
+            goNext({ id, insert: (ev.metaKey || ev.ctrlKey) });
             return;
         }
         else if ((ev.key === 'ArrowUp' || ev.key === 'ArrowLeft') && getCaretCharacterOffsetWithin(ev.target) === 0) {
             ev.preventDefault();
-            goPrev({ id, insert: ev.metaKey });
+            goPrev({ id, insert: (ev.metaKey || ev.ctrlKey) });
             return;
         }
         else if ((ev.metaKey || ev.ctrlKey) && (ev.shiftKey) && ev.key === 'Enter') {
