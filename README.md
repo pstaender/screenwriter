@@ -32,6 +32,12 @@ Other features:
  * exports screenplay as plain-text or json
  * imports screenplay from plain-text (using the same spacing-conventions) or json
  * auto-saves/downloads screenplay to local file every minute (beware, there is no real undo implemented - if a section is deleted, it's gone)
+ * cover page for printing
+ * editing meta data
+ * focus mode (inspired by iaWriter)
+ 
+ <img width="879" alt="Screenshot 2023-04-01 at 11 56 29" src="https://user-images.githubusercontent.com/140571/229279371-9cdeae04-28af-41f7-9c47-fee3a34b21aa.png">
+ 
  * enjoy dark-mode
  
 <img width="1189" alt="Screenshot 2023-03-31 at 11 46 53" src="https://user-images.githubusercontent.com/140571/229086759-31aa087d-cb28-443f-82c6-a36200b16a26.png">
