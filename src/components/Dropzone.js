@@ -22,9 +22,11 @@ const Dropzone = ({ onDrop, accept }) => {
       <input className="dropzone-input" {...getInputProps()} />
       <div className="dropzone-area icons">
         {isDragActive ? (
-          <div className="dropzone-content">Release to drop the txt file here</div>
-        ) : (
           <div className="dropzone-content icon">
+             <i className="gg-add-r"></i>
+          </div>
+        ) : (
+          <div className="dropzone-content icon" data-help="Open txt or json file">
             <i className="gg-add"></i>
           </div>
         )}

@@ -5,6 +5,9 @@
 :root {
     --font-size: 12pt !important;
 }
+body {
+    font-size: var(--font-size);
+}
 #screenwriter-editor > section {
     padding: 0 !important;
 }

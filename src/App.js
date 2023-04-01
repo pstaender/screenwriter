@@ -7,6 +7,7 @@ import { useInterval } from 'usehooks-ts';
 import { Toolbar } from './components/Toolbar';
 import slugify from 'slugify';
 import { MetaDataEdit } from './components/MetaDataEdit';
+import { Cover } from './components/Cover';
 import { useVisibilityChange } from './components/useVisibilityChange';
 
 let lastSavedExport = null;
@@ -33,6 +34,16 @@ export function App() {
     const [intervalDownload, setIntervalDownload] = useState(null);
     const [editMetaData, setEditMetaData] = useState(false);
     const [metaData, setMetaData] = useState(currentScreenplay().metaData || {})
+    const [focusMode, setFocusMode] = useState(false)
+
+    useEffect(() => {
+        // we need for some elements a glocal focus selector…
+        if (focusMode) {
+            document.querySelector('body').classList.add('focus');
+        } else {
+            document.querySelector('body').classList.remove('focus');
+        }
+    }, [focusMode])
 
     function metaDataAndSections() {
         let sections = convertDomSectionsToDataStructure([...document.querySelectorAll('#screenwriter-editor > section > div')]);
@@ -69,7 +80,7 @@ export function App() {
         let content = null;
         
         if (format === 'json') {
-            content = JSON.stringify(data, null, '  ');
+            content = JSON.stringify(data);
             mimeType = 'application/json';
         } else {
             content = Exporter(data.sections, data.metaData);
@@ -79,6 +90,15 @@ export function App() {
         a.setAttribute('href', url);
         a.setAttribute('download', `${slugify(filename)}.${format}`);
         a.click();
+    }
+
+    function handleKeyDown(ev) {
+        if ((ev.metaKey || ev.ctrlKey)) {
+            if (ev.key === '0') {
+                setFocusMode(!focusMode);
+            }
+        }
+        
     }
 
     useInterval(() => {
@@ -116,9 +136,10 @@ export function App() {
         }
     }, [isVisible])
 
-    return <div>
-        <Toolbar setSeed={setSeed} downloadScreenplay={downloadScreenplay} setIntervalDownload={setIntervalDownload} setEditMetaData={setEditMetaData} setMetaData={setMetaData}></Toolbar>
+    return <div className={[focusMode ? 'focus' : ''].join(' ')} onKeyDown={handleKeyDown}>
+        <Toolbar setSeed={setSeed} downloadScreenplay={downloadScreenplay} setIntervalDownload={setIntervalDownload} setEditMetaData={setEditMetaData} setMetaData={setMetaData} setFocusMode={setFocusMode} focusMode={focusMode}></Toolbar>
         {editMetaData && <MetaDataEdit metaData={metaData} setMetaData={setMetaData} setEditMetaData={setEditMetaData}></MetaDataEdit>}
+        <Cover metaData={metaData}></Cover>
         <Editor key={seed} seed={seed} />
     </div>;
 }

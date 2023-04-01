@@ -33,7 +33,7 @@ const exampleScreenplaySections = [
     }
 ];
 const exampleScreenplayMetaData = {
-    title: 'Example Screenplay',
+    title: 'Example Screenplay: \n Can be multiline',
     author: 'John Doe'
 };
 
@@ -42,7 +42,18 @@ test('export to txt format of screenplay without any exceptions', () => {
 });
 
 test('import exported txt format and export again, without changing the structure', () => {
-    let result = Exporter(exampleScreenplaySections, exampleScreenplayMetaData);;
+    let result = Exporter(exampleScreenplaySections, exampleScreenplayMetaData);
+
+    // expect(Importer(result).sections).toEqual(exampleScreenplaySections)
+    // expect(Importer(result).metaData).toEqual(exampleScreenplayMetaData)
+
     let resultImportAndExportAgain = Exporter(Importer(result).sections, Importer(result).metaData)
+
     expect(result).toEqual(resultImportAndExportAgain)
 });
+
+xit('export and import without any losses', () => {
+    let result = Exporter(exampleScreenplaySections, exampleScreenplayMetaData);
+    expect(Importer(result).sections).toEqual(exampleScreenplaySections)
+    expect(Importer(result).metaData).toEqual(exampleScreenplayMetaData)
+})

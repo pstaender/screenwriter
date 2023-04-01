@@ -31,20 +31,14 @@ export function Exporter(sections, metaData = {}) {
     const dialogSpace = 11;
     const overallSpace = 61;
 
-    let metaDataText = [];
+    let metaDataText = '';
 
     if (Object.keys(metaData).length > 0) {
-        let maxKeyLength = Object.keys(metaData).map(t => t.length).reduce((a,b) => a > b ? a : b)
-        for(let k in metaData) {
-            let key = `${k.trim()}:`
-            if (metaData[k].trim() === '') {
-                continue;
-            }
-            metaDataText.push(Voca.padRight(key, maxKeyLength + 2) + metaData[k].trim());
-        }
+        metaDataText = JSON.stringify(metaData, null, '  ').replace(/^\s+/g, '').substring(1).replace(/\}$/,'').split('\n').map(l => {
+            l = l.replace(/,$/, '').trim();
+            return l
+        }).join('\n').trim()+`\n`
     }
-    
-    metaDataText = metaDataText.length > 0 ? metaDataText.join(`\n`) + `\n` : '';
 
     let parts = [...sections].map(section => {
         let text = section.html.replace(/<br>/ig, `\n`).replace(/\&nbsp;/g, ' ').trim();
@@ -79,7 +73,6 @@ export function Exporter(sections, metaData = {}) {
                 })
             }).join(`\n`)
 
-            // text = `\n` + text.trim() + `\n`
         }
         return text;
     })

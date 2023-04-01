@@ -5,7 +5,7 @@ import Dropzone from "./Dropzone"
 import './Toolbar.scss';
 
 
-export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setEditMetaData, setMetaData } = {}) {
+export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setEditMetaData, setMetaData, focusMode, setFocusMode } = {}) {
 
     const onDrop = useCallback(acceptedFiles => {
         // Loop through accepted files
@@ -59,6 +59,10 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
         setEditMetaData(true);
     }
 
+    function toggleFocusMode() {
+        setFocusMode(!focusMode);
+    }
+
     useEffect(() => {
         setIntervalDownload(
             autoSave ? downloadIntervalInSeconds * 1000 : null
@@ -71,33 +75,38 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
             <div className="icons">
                 <div className="icon" onClick={() => {
                     downloadScreenplay()
-                }}>
+                }} data-help={`Download screenplay as ${downloadFormat} file`}>
                     <i className="gg-arrow-down-o"></i>
                 </div>
                 <div className='icon show-more-icons'>
                     <i className="gg-more-alt"></i>
                     <div className='icons'>
-                        <div className="icon" onClick={() => document.querySelector('body').classList.toggle('dark-mode')}>
+                        <div className="icon" onClick={() => document.querySelector('body').classList.toggle('dark-mode')} data-help="Dark Mode">
                             <i className="gg-dark-mode"></i>
                         </div>
                         <div className='icon' onClick={() => {
                             setSeed(Math.random())
                             localStorage.setItem('currentScreenplay', '{}')
                             setMetaData({})
-                        }}>
+                        }} data-help="Clear Document">
                             <i className="gg-trash"></i>
                         </div>
-                        <div className={["icon", autoSave > 0 ? 'active' : ''].filter(e => !!e).join(' ')} onClick={handleToggleAutoSave}>
+                        <div className={["icon", autoSave > 0 ? 'active' : ''].filter(e => !!e).join(' ')} onClick={handleToggleAutoSave} data-help="Download Backup every 60secs">
                             <i className="gg-timer"></i>
+                        </div>
+                        <div className={["icon", focusMode ? 'active' : ''].join(' ')} onClick={toggleFocusMode} data-help="Focus Mode (CTRL/META + 0)">
+                            <div style={{transform: 'translateX(-3px) translateY(-3px)'}}>
+                                <i className="gg-eye"></i>
+                            </div>
                         </div>
                         <div className={['icon', downloadFormat === 'json' ? 'active' : ''].join(' ')} onClick={() => {
                             let format = downloadFormat === 'json' ? 'txt' : 'json';
                             setDownloadFormat(format);
                             localStorage.setItem('exportFormat', format)
-                        }}>
+                        }} data-help="Use JSON format instead of text for file export">
                             <i className="gg-brackets"></i> 
                         </div>
-                        <div className='icon' onClick={handleEditMetadata}>
+                        <div className='icon' onClick={handleEditMetadata} data-help="Edit Meta Data">
                             <div>
                                 <i className="gg-notes" ></i>
                             </div>

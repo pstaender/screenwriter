@@ -1,3 +1,5 @@
+const META_DATA_LINE_REGEX = /^\"[a-zA-Z\_]+?\"\:/
+
 export function Importer(str, options = {}) {
     let parts = str.split(`\n`)
 
@@ -17,23 +19,29 @@ export function Importer(str, options = {}) {
     function extractMetaData(parts) {
         let eofMetaDataReached = false;
         let metaDataParts = parts.filter((l, i) => {
-            if (eofMetaDataReached || !l.match(/^[a-zA-Z]+?\:\s+.+$/)) {
+            if (eofMetaDataReached || !l.match(META_DATA_LINE_REGEX)) {
                 if (eofMetaDataReached === false) {
                     eofMetaDataReached = i;
                 }
                 return false;
             }
-            return l.match(/^[^\:]+?\:\s+.+$/);
+            return l.match(META_DATA_LINE_REGEX);
         })
 
-        let metaData = {};
-        metaDataParts.forEach(m => {
-            metaData[m.split(':')[0].trim()] = m.split(':')[1].trim()
-        })
+        let metaData = null;
+
+        try {
+            metaData = JSON.parse(`{${metaDataParts.join(',')}}`)
+        } catch (e) {
+            if (!e.message.match(/JSON/)) {
+                throw e;
+            }
+        }
+        
         return { metaData, eofMetaDataReached };
     }
 
-    let { metaData, eofMetaDataReached } = parts[0] && /^[a-zA-Z]+?\:\s+.+$/.test(parts[0].trim()) ?  extractMetaData(parts) : { metaData: {}, eofMetaDataReached: 0 };
+    let { metaData, eofMetaDataReached } = parts[0] && META_DATA_LINE_REGEX.test(parts[0].trim()) ?  extractMetaData(parts) : { metaData: {}, eofMetaDataReached: 0 };
 
     parts = parts
         .slice(eofMetaDataReached + 1)

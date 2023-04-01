@@ -96,8 +96,8 @@ test('import of txt screenplay', () => {
           }
         ],
         metaData: {
-          Title: 'Example Screenplay',
-          Author: 'Philipp Staender',
+          title: 'Example Screenplay',
+          author: 'Philipp Staender',
           Copyright: '2002'
         }
       })
