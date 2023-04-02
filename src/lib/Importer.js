@@ -1,3 +1,5 @@
+import { removeWordWrap } from "./helper";
+
 const META_DATA_LINE_REGEX = /^\"[a-zA-Z\_]+?\"\:/
 
 export function Importer(str) {
@@ -9,6 +11,7 @@ export function Importer(str) {
         documentWidth: 61,
         dialogWordWrapLength: 33,
         spacesAnnotation: 30,
+        removeWordWrap: 'yes',
     }
 
     function extractMetaData(parts) {
@@ -75,8 +78,9 @@ export function Importer(str) {
                 }]];
             }
             if (dialogParts[0]) {
+                let text = dialogParts.join(`\n`);
                 sections = [...sections, ...[{
-                    text: dialogParts.join(`\n`),
+                    text: (options.removeWordWrap) ? removeWordWrap(text) : text,
                     classification: 'dialogText'
                 }]];
             }
@@ -87,7 +91,7 @@ export function Importer(str) {
                 sections.at(-1).text += `\n` + part;
             } else {
                 sections.push({
-                    text: part,
+                    text: (options.removeWordWrap) ? removeWordWrap(part) : part,
                     classification: 'description'
                 })
             }

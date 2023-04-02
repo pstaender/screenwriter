@@ -69,10 +69,9 @@ test('import of txt screenplay', () => {
         html: "I'll go and see."
       },
       {
-        text: 'Mary gets up and walks out. The front door lock CLICKS and\n' +
-          "door CREAKS a little as it's opened.",
+        text: "Mary gets up and walks out. The front door lock CLICKS and door CREAKS a little as it's opened.",
         classification: 'description',
-        html: "Mary gets up and walks out. The front door lock CLICKS and<br>door CREAKS a little as it's opened."
+        html: "Mary gets up and walks out. The front door lock CLICKS and door CREAKS a little as it's opened."
       },
       {
         text: '                     MARY',
@@ -119,10 +118,9 @@ test('import of external txt screenplay', async () => {
         html: 'EXT. SPACE - STARSHIP (OPTICAL)'
       },
       {
-        text: 'The U.S.S. Enterprise NCC 1701-D traveling at warp speed\n' +
-          'through space.',
+        text: 'The U.S.S. Enterprise NCC 1701-D traveling at warp speed through space.',
         classification: 'description',
-        html: 'The U.S.S. Enterprise NCC 1701-D traveling at warp speed<br>through space.'
+        html: 'The U.S.S. Enterprise NCC 1701-D traveling at warp speed through space.'
       },
       {
         text: '                PICARD V.O.',
@@ -166,10 +164,9 @@ test('import of external txt screenplay', async () => {
         html: 'INT. ENGINE ROOM'
       },
       {
-        text: 'Huge, with a giant wall diagram showing the immensity\n' +
-          'of this Galaxy Class starship.',
+        text: 'Huge, with a giant wall diagram showing the immensity of this Galaxy Class starship.',
         classification: 'description',
-        html: 'Huge, with a giant wall diagram showing the immensity<br>of this Galaxy Class starship.'
+        html: 'Huge, with a giant wall diagram showing the immensity of this Galaxy Class starship.'
       },
       {
         text: '                PICARD V.O.',

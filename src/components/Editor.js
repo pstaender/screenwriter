@@ -73,9 +73,9 @@ export function Editor({ seed } = {}) {
         setSections([...setAllSectionToNotCurrent(sections.slice(0, index)), ...emptySection({ html }), ...setAllSectionToNotCurrent(sections.slice(index))])
     }
 
-    function insertNewSectionAtId(id, { html } = {}) {
+    function insertNewSectionAfterId(id, { html } = {}) {
         let index = sections.indexOf(sections.filter(s => s.id === id)[0])
-        insertNewSectionAtIndex(index, { html });
+        insertNewSectionAtIndex(index + 1, { html });
     }
 
     function handleKeyDown(ev) {
@@ -148,7 +148,7 @@ export function Editor({ seed } = {}) {
 
     return <div id="screenwriter-editor" onKeyDown={handleKeyDown}>
         {sections.map((section, i) => (
-            <SceneSection current={section.current} key={section.id} id={section.id} next={sections[i + 1]} prev={sections[i + 1]} removeSection={removeSection} goNext={goNext} goPrev={goPrev} getNext={getNext} getPrev={getPrev} index={i} sectionsLength={sections.length} html={section.html} classification={section.classification} cursorToEnd={section.cursorToEnd || false} setCurrentSectionById={setCurrentSectionById} insertNewSectionAtId={insertNewSectionAtId} />
+            <SceneSection current={section.current} key={section.id} id={section.id} next={sections[i + 1]} prev={sections[i + 1]} removeSection={removeSection} goNext={goNext} goPrev={goPrev} getNext={getNext} getPrev={getPrev} getPrev={getPrev} index={i} sectionsLength={sections.length} html={section.html} classification={section.classification} cursorToEnd={section.cursorToEnd || false} setCurrentSectionById={setCurrentSectionById} insertNewSectionAfterId={insertNewSectionAfterId} />
         ))}
     </div>;
 }

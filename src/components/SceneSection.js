@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 
 const mementos = []
 
-export function SceneSection({ current, goNext, goPrev, getNext, insertNewSectionAtId, removeSection, id, index, sectionsLength, html, classification, setCurrentSectionById } = {}) {
+export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insertNewSectionAfterId, removeSection, id, index, sectionsLength, html, classification, setCurrentSectionById } = {}) {
 
     const inputRef = useRef(null);
 
@@ -104,7 +104,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, insertNewSectio
         if (ev.target?.contentEditable !== 'true') {
             return;
         }
-        
+
         if (ev.key === 'Tab') {
             const direction = ev.shiftKey ? -1 : 1;
             ev.preventDefault();
@@ -132,10 +132,9 @@ export function SceneSection({ current, goNext, goPrev, getNext, insertNewSectio
                 inputRef.current.textContent = '';
             }
         }
-        // console.log(ev)
         if ((ev.metaKey || ev.ctrlKey) && ev.key === 'z' && inputRef.current?.innerHTML) {
             // undo
-            inputRef.current.innerHTML += mementos.pop() || ''
+            insertNewSectionAfterId(id, { html: mementos.pop() || '' })
             return
         }
         if ((ev.key === 'ArrowDown' || ev.key === 'ArrowRight') && getCaretCharacterOffsetWithin(ev.target) === content.length) {
@@ -157,6 +156,18 @@ export function SceneSection({ current, goNext, goPrev, getNext, insertNewSectio
         }
         else if ((ev.key === 'ArrowUp' || ev.key === 'ArrowLeft') && getCaretCharacterOffsetWithin(ev.target) === 0) {
             ev.preventDefault();
+            if (ev.shiftKey && (ev.metaKey || ev.ctrlKey)) {
+                // merge previous section into this
+                let prevSection = ev.target.closest('section').previousElementSibling;
+                if (prevSection && prevSection.innerHTML) {
+                    inputRef.current.innerHTML = prevSection.textContent.trim().replace(/\n/g, '<br>') + '<br>' + inputRef.current.innerHTML;
+                    let nextID = getPrev(id).id;
+                    if (nextID) {
+                        removeSection(nextID)
+                        return;
+                    }
+                }
+            }
             goPrev({ id, insert: (ev.metaKey || ev.ctrlKey) });
             return;
         }
@@ -166,10 +177,10 @@ export function SceneSection({ current, goNext, goPrev, getNext, insertNewSectio
                 let partRight = inputRef.current.textContent.substring(splitUpAt)
                 let partLeft = inputRef.current.textContent.substring(0, splitUpAt);
                 if (partLeft && partRight) {
-                    inputRef.current.textContent = partRight;
-                    insertNewSectionAtId(id, {html: partLeft})
+                    inputRef.current.textContent = partLeft.trim();
+                    insertNewSectionAfterId(id, { html: partRight.trim() })
                 }
-                
+
             }
         }
         else if (ev.key === 'Enter') {
@@ -187,7 +198,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, insertNewSectio
 
     function cleanupContenteditableMarkup() {
         function removeAllTagsExceptBr(html) {
-            html = html.replace(/(<br>|<br\s*\/>)/ig, '---BRLINEBREAK---');
+            html = html.replace(/(<br>|<br(\s+.+?)*>)/ig, '---BRLINEBREAK---');
             const div = document.createElement("div");
             div.innerHTML = html;
             return div.textContent.replace(/---BRLINEBREAK---/g, '<br>')

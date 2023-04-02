@@ -20,6 +20,7 @@ The data is stored in your browsers local storage.
  * `meta`/`ctrl` + `backspace`: remove the current section
  * `meta`/`ctrl` + `enter`: insert a new section
  * `meta`/`ctrl` + `shift` + `arrow-down`: merge this section with next one
+ * `meta`/`ctrl` + `shift` + `arrow-up`: merge this section with previous one
  * `meta`/`ctrl` + `shift` + `enter`: split this section here in two sections
  * `meta`/`ctrl` + `shift` + `U`: uppercase the section, downcase if everthing is uppercase
 
@@ -47,9 +48,8 @@ Other features:
 ## TODOs
 
  * faster cleanup of html/plain-text during text changes
- * make spaces configurable in interface (via metaData)
  * consider word wrap in import
- * more undo
+ * index overview windows
  * https://pagedjs.org/posts/2020-04-15-starterkits-for-pagedjs/
 
 ## Build
