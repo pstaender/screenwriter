@@ -16,15 +16,15 @@ The data is stored in your browsers local storage.
 ## Keyboard Usage
 
  * `tab`: change the type of text in the current secion (text, charater for dialog, dialog text and annotation)
- * `shift` + `enter`: insert a new line in the current section
+ * `shift` + `enter`: insert a new line (line-break)
  * `enter`: break section into parts / insert new section below if at the end of the section / insert above if ath the beginning of the section
- * `enter` + `shift`: enter new line break
  * `meta`/`ctrl` + `backspace`: remove the current section
  * `meta`/`ctrl` + `shift` + `arrow-down`: merge this section with next one
  * `meta`/`ctrl` + `arrow-up`: Jump to previous section
  * `meta`/`ctrl` + `arrow-down`: Jump to next section
- * `meta`/`ctrl` + `shift` + `U`: uppercase the section, downcase if everthing is uppercase
+ * `meta`/`ctrl` + `shift` + `U`: uppercase the section, lowercase if everthing is uppercase
  * `ctrl` + `shift` + `Z`: recover last deletions
+ * `meta`/`ctrl` + `0`: toggle focus mode
 
 ## Features
 
@@ -42,6 +42,14 @@ The data is stored in your browsers local storage.
  * dark-mode
  
 <img width="1189" alt="Screenshot 2023-03-31 at 11 46 53" src="https://user-images.githubusercontent.com/140571/229086759-31aa087d-cb28-443f-82c6-a36200b16a26.png">
+
+## A bit of markdown
+
+You can use very limited markup/markdown:
+
+ * starting with `//` is a comment, i.e. will not be printed and barely visible on screen
+ * starting with `#`, `##`, `###` etc. uses headlines, similar to markdown
+ * starting with `######` will force a page break on printing
 
 ## TODOs
 
