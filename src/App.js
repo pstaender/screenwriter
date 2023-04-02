@@ -64,8 +64,10 @@ export function App() {
         return data;
     }
 
-    function downloadScreenplay() {
-        let format = localStorage.getItem('exportFormat') === 'json' ? 'json' : 'txt';
+    function downloadScreenplay(format = null) {
+        if (!format) {
+            format = localStorage.getItem('exportFormat') === 'json' ? 'json' : 'txt';
+        }
         let data = metaDataAndSections();
         let mimeType = 'text/plain';
         const timesignatur = new Date().toISOString().replace(/\.\d+[A-Z]$/, '').replace(/:/g, '_');

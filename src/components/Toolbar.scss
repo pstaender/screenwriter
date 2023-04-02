@@ -45,8 +45,8 @@
                 top: 0rem;
                 left: 2rem;
                 font-size: 0.8rem;
-                color: #000;
-                background: #fff;
+                color: var(--color-text);
+                background: var(--color-background);
                 z-index: 9999;
                 padding: 0.5rem 1rem;
                 // padding: 1rem;
@@ -418,4 +418,35 @@ gg-notes {
 }
 .gg-layout-list::before {
     top: 4px;
+}
+.gg-font-height {
+    box-sizing: border-box;
+    position: relative;
+    display: block;
+    width: 18px;
+    height: 18px;
+    transform: scale(var(--ggs, 1));
+    border-top: 2px solid;
+    border-bottom: 2px solid;
+    background: linear-gradient(to left, currentColor 10px, transparent 0) no-repeat center 8px/6px 2px;
+}
+.gg-font-height::after,
+.gg-font-height::before {
+    content: "";
+    display: block;
+    box-sizing: border-box;
+    position: absolute;
+    border-radius: 3px;
+    width: 2px;
+    height: 10px;
+    background: currentColor;
+    top: 2px;
+}
+.gg-font-height::before {
+    transform: rotate(25deg);
+    left: 6px;
+}
+.gg-font-height::after {
+    transform: rotate(-25deg);
+    right: 6px;
 }

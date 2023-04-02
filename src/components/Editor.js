@@ -40,11 +40,11 @@ export function Editor({ seed, currentIndex } = {}) {
         }
     }
 
-    const [sections, setSections] = useState(sectionsCurrentScreenplayViaLocalStorageOrPlainText())
+    const [sections, setSections] = useState([])
 
     useEffect(() => {
         // changing seed forces reload
-        sectionsCurrentScreenplayViaLocalStorageOrPlainText()
+        setSections(sectionsCurrentScreenplayViaLocalStorageOrPlainText())
     }, [seed])
 
     function setAllSectionToNotCurrent(sections) {
@@ -123,6 +123,7 @@ export function Editor({ seed, currentIndex } = {}) {
             _sections[nextIndex].current = true;
             setSections([..._sections])
         }
+        localStorage.setItem('lastIndexOfCurrent', nextIndex);
     }
 
     function goPrev({ id, insert } = {}) {
@@ -139,6 +140,7 @@ export function Editor({ seed, currentIndex } = {}) {
             _sections[nextIndex].cursorToEnd = true;
             setSections([..._sections])
         }
+        localStorage.setItem('lastIndexOfCurrent', nextIndex);
     }
 
     function removeSection(id) {

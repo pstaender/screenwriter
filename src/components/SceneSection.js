@@ -36,7 +36,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
             if (inputRef.current.innerHTML) {
                 cleanupContenteditableMarkup();
             }
-            if (!inputRef.current.textContent.trim() && isCurrent) {
+            if (inputRef.current.textContent.trim() === '' && isCurrent) {
                 let previousSection = inputRef.current?.closest('section')?.previousElementSibling
                 if (previousSection) {
                     let sibling = previousSection;
