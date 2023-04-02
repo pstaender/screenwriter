@@ -142,18 +142,15 @@
     }
     section.dialogText + section.description {
         margin-top: 2.5rem;
-    }
-    // &.focus {
-
-    // }
-    
+    }    
 }
 
 .focus {
     > #screenwriter-editor {
         > section > div {
             opacity: 0.25;
-            &:focus {
+            transition: opacity .1s;
+            &:focus, &:hover {
                 opacity: 1;
                 background: none;
             }

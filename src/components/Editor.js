@@ -51,6 +51,7 @@ export function Editor({ seed, currentIndex } = {}) {
     function setAllSectionToNotCurrent(sections) {
         return sections.map(s => {
             s.current = false;
+            s.cursorToEnd = false;
             return s;
         })
     }

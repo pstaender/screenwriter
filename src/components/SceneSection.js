@@ -34,7 +34,11 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
             if (inputRef.current.innerHTML) {
                 cleanupContenteditableMarkup();
                 if (cursorToEnd) {
-                    moveCursor(inputRef.current, inputRef.current.textContent.trim().length)
+                    try {
+                        moveCursor(inputRef.current, inputRef.current.textContent.trim().length)
+                    } catch (e) {
+                        console.error(e)
+                    }
                 }
             }
             if (inputRef.current.textContent.trim() === '' && isCurrent) {
@@ -116,13 +120,17 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
             return
         }
         if (((ev.key === 'ArrowDown' || ev.key === 'ArrowRight') && cursorIsAtEndOfSection) ||
-        (ev.key === 'ArrowDown' && (ev.metaKey || ev.ctrlKey))) {
+            (ev.key === 'ArrowDown' && (ev.metaKey || ev.ctrlKey))) {
             ev.preventDefault();
             if (ev.shiftKey && (ev.metaKey || ev.ctrlKey)) {
                 // merge next section into this
                 let nextSection = ev.target.closest('section').nextElementSibling;
                 if (nextSection && nextSection.innerHTML) {
-                    inputRef.current.innerHTML += '<br>' + nextSection.textContent.trim().replace(/\n/g, '<br>');
+                    let lengthOfText = inputRef.current.textContent.trim().length;
+                    inputRef.current.innerHTML += ' ' + nextSection.textContent.trim().replace(/\n/g, '<br>');
+                    // try {
+                        moveCursor(inputRef.current, lengthOfText)
+                    // } catch (_) {
                     let nextID = getNext(id).id;
                     if (nextID) {
                         removeSection(nextID)
@@ -139,8 +147,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
         }
         else if ((ev.key === 'ArrowUp' || ev.key === 'ArrowLeft') && cursorIsAtBeginOfSection) {
             ev.preventDefault();
-
-            goPrev({ id, insert: (ev.metaKey || ev.ctrlKey) });
+            goPrev({ id, insert: (ev.metaKey || ev.ctrlKey), cursorToEnd: !ev.metaKey && !ev.ctrlKey });
             return;
         }
         else if ((ev.key === 'Backspace') && cursorIsAtBeginOfSection) {
