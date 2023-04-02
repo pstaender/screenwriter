@@ -2,7 +2,7 @@
 export function removeWordWrap(text, maxLength = null) {
     if (!maxLength) {
         // detect max length
-        maxLength = text.split(`\n`).map(l => l.length).reduce((a,b) => a < b ? b : a )
+        maxLength = text.split(`\n`).map(l => l.length).reduce((a, b) => a < b ? b : a)
     }
     let lines = text.split(`\n`)
     let clearedText = [];
@@ -50,4 +50,20 @@ export function getCaretCharacterOffsetWithin(element) {
         caretOffset = preCaretTextRange.text.length;
     }
     return caretOffset;
+}
+
+export function stripHTMLTags(html) {
+    let div = document.createElement("div");
+    div.innerHTML = html;
+    return div.textContent || div.innerText;
+}
+
+export function moveCursor(el, position) {
+    let range = document.createRange();
+    let selection = window.getSelection();
+    range.selectNodeContents(el);
+    range.setStart(el.firstChild,position);
+    range.setEnd(el.firstChild,position);
+    selection.removeAllRanges();
+    selection.addRange(range);
 }

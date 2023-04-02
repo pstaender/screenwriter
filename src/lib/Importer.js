@@ -97,7 +97,7 @@ export function Importer(str) {
             if (dialogParts[0]) {
                 let text = dialogParts.join(`\n`);
                 sections = [...sections, ...[{
-                    text: (options.removeWordWrap) ? removeWordWrap(text) : text,
+                    text: (options.removeWordWrap) ? removeWordWrap(text.replace(/\n\s+/g, `\n`).trim()) : text,
                     classification: 'dialogText'
                 }]];
             }

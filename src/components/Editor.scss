@@ -23,6 +23,7 @@
         }
         &.sceneIntroduction.description {
             counter-increment: scene-counter 1;
+            font-weight: bold;
             &:before {
                 content: counter(scene-counter);
                 font-size: 1rem;

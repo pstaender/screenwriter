@@ -17,12 +17,12 @@ The data is stored in your browsers local storage.
 
  * `tab`: change the type of text in the current secion (text, charater for dialog, dialog text and annotation)
  * `shift` + `enter`: insert a new line in the current section
+ * `enter`: break section into parts / insert new section below if at the end of the section / insert above if ath the beginning of the section
+ * `enter` + `shift`: enter new line break
  * `meta`/`ctrl` + `backspace`: remove the current section
- * `meta`/`ctrl` + `enter`: insert a new section
  * `meta`/`ctrl` + `shift` + `arrow-down`: merge this section with next one
- * `meta`/`ctrl` + `shift` + `arrow-up`: merge this section with previous one
- * `meta`/`ctrl` + `arrow-up`: Previous section (prepend new if at the beginning of document)
- * `meta`/`ctrl` + `arrow-down`: Next section (append new if reached end of the document)
+ * `meta`/`ctrl` + `arrow-up`: Jump to previous section
+ * `meta`/`ctrl` + `arrow-down`: Jump to next section
  * `meta`/`ctrl` + `shift` + `enter`: split this section here in two sections
  * `meta`/`ctrl` + `shift` + `U`: uppercase the section, downcase if everthing is uppercase
  * `ctrl` + `shift` + `Z`: recover last deletions

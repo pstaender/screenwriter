@@ -79,29 +79,14 @@ export function Editor({ seed, currentIndex } = {}) {
         insertNewSectionAtIndex(index + 1, { html });
     }
 
+    function insertNewSectionBeforeId(id, { html } = {}) {
+        let index = sections.indexOf(sections.filter(s => s.id === id)[0])
+        insertNewSectionAtIndex(index, { html });
+    }
+
     function handleKeyDown(ev) {
         if (ev.target?.contentEditable !== 'true') {
             return;
-        }
-        if (ev.key === 'Enter' && !ev.shiftKey) {
-            let _sections = sections;
-            let i = _sections.indexOf(sections.filter(s => s.current)[0])
-            // TODO: always insert
-            if (ev.metaKey || (
-                getCaretCharacterOffsetWithin(ev.target) >= ev.target.textContent.length
-            )) {
-                if (ev.target.closest('section').dataset.index) {
-                    let index = Number(ev.target.closest('section').dataset.index);
-                    insertNewSectionAtIndex(index)
-                }
-            } else {
-                if (_sections[i]) {
-                    goNext({ id: _sections[i].id })
-                }
-            }
-            if (i + 1 === _sections.length) {
-                appendNewSection(_sections)
-            }
         }
     }
 
@@ -129,7 +114,7 @@ export function Editor({ seed, currentIndex } = {}) {
         localStorage.setItem('lastIndexOfCurrent', nextIndex);
     }
 
-    function goPrev({ id, insert } = {}) {
+    function goPrev({ id, insert, cursorToEnd } = {}) {
         let i = sections.indexOf(sections.filter(s => s.id === id)[0])
         let nextIndex = i - 1;
         if (nextIndex < 0) {
@@ -140,7 +125,7 @@ export function Editor({ seed, currentIndex } = {}) {
             let _sections = setAllSectionToNotCurrent(sections);
             _sections[i].current = false;
             _sections[nextIndex].current = true;
-            _sections[nextIndex].cursorToEnd = true;
+            _sections[nextIndex].cursorToEnd = cursorToEnd || false;
             setSections([..._sections])
         }
         localStorage.setItem('lastIndexOfCurrent', nextIndex);
@@ -150,10 +135,9 @@ export function Editor({ seed, currentIndex } = {}) {
         setSections([...sections.filter(s => s.id !== id)])
     }
 
-
     return <div id="screenwriter-editor" onKeyDown={handleKeyDown}>
         {sections.map((section, i) => (
-            <SceneSection current={section.current} key={section.id} id={section.id} next={sections[i + 1]} prev={sections[i + 1]} removeSection={removeSection} goNext={goNext} goPrev={goPrev} getNext={getNext} getPrev={getPrev} index={i} sectionsLength={sections.length} html={section.html} classification={section.classification} cursorToEnd={section.cursorToEnd || false} setCurrentSectionById={setCurrentSectionById} insertNewSectionAfterId={insertNewSectionAfterId} />
+            <SceneSection current={section.current} key={section.id} id={section.id} next={sections[i + 1]} prev={sections[i + 1]} removeSection={removeSection} goNext={goNext} goPrev={goPrev} getNext={getNext} getPrev={getPrev} index={i} sectionsLength={sections.length} html={section.html} classification={section.classification} cursorToEnd={section.cursorToEnd} setCurrentSectionById={setCurrentSectionById} insertNewSectionAfterId={insertNewSectionAfterId} insertNewSectionBeforeId={insertNewSectionBeforeId} />
         ))}
     </div>;
 }
