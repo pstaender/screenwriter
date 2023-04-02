@@ -3,7 +3,7 @@ import './Editor.scss';
 import { useEffect, useState } from "react";
 import { SceneSection } from './SceneSection';
 
-export function Editor({ seed } = {}) {
+export function Editor({ seed, currentIndex } = {}) {
 
     function id() {
         return crypto.randomUUID();
@@ -24,11 +24,11 @@ export function Editor({ seed } = {}) {
             lastScreenPlay = {};
         }
         if (lastScreenPlay.sections) {
-            console.debug(`Loading last used screenplay`);
+            console.debug(`Loading screenplay from local storage`);
             // let importedSections = Importer(lastScreenPlay);
             return [...lastScreenPlay.sections.map((s, i) => {
                 return {
-                    current: i === 0,
+                    current: currentIndex ? i === currentIndex : i === 0,
                     id: id(),
                     html: s.html,
                     classification: s.classification
@@ -148,7 +148,7 @@ export function Editor({ seed } = {}) {
 
     return <div id="screenwriter-editor" onKeyDown={handleKeyDown}>
         {sections.map((section, i) => (
-            <SceneSection current={section.current} key={section.id} id={section.id} next={sections[i + 1]} prev={sections[i + 1]} removeSection={removeSection} goNext={goNext} goPrev={goPrev} getNext={getNext} getPrev={getPrev} getPrev={getPrev} index={i} sectionsLength={sections.length} html={section.html} classification={section.classification} cursorToEnd={section.cursorToEnd || false} setCurrentSectionById={setCurrentSectionById} insertNewSectionAfterId={insertNewSectionAfterId} />
+            <SceneSection current={section.current} key={section.id} id={section.id} next={sections[i + 1]} prev={sections[i + 1]} removeSection={removeSection} goNext={goNext} goPrev={goPrev} getNext={getNext} getPrev={getPrev} index={i} sectionsLength={sections.length} html={section.html} classification={section.classification} cursorToEnd={section.cursorToEnd || false} setCurrentSectionById={setCurrentSectionById} insertNewSectionAfterId={insertNewSectionAfterId} />
         ))}
     </div>;
 }

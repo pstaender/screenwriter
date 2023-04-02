@@ -215,6 +215,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
             return;
         }
         setIsCurrent(true);
+        localStorage.setItem('lastIndexOfCurrent', index);
         setCurrentSectionById(id);
         if (ev.type !== 'Click') {
             cleanupContenteditableMarkup();
@@ -232,12 +233,11 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
         }
     }, [htmlContent])
 
-    return <section className={
-        [
-            isCurrent ? 'selected' : '',
-            editingLevel,
-            (inputRef.current?.textContent && inputRef.current?.textContent.toLocaleUpperCase() === inputRef.current.textContent) ? 'sceneIntroduction' : '',
-        ].filter(e => !!e).join(' ')} onClick={handleFocus} data-index={index + 1}>
+    return <section className={[
+        isCurrent ? 'selected' : '',
+        editingLevel,
+        (inputRef.current?.textContent && inputRef.current?.textContent.toLocaleUpperCase() === inputRef.current.textContent) ? 'sceneIntroduction' : '',
+    ].filter(e => !!e).join(' ')} onClick={handleFocus} data-index={index + 1}>
         <div contentEditable={true} onFocus={handleFocus} onBlur={handleBlur} ref={inputRef} className={editingLevel} onKeyDown={handleKeyDown}>
         </div>
     </section>

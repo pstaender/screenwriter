@@ -14,24 +14,26 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
             reader.onload = function (e) {
                 
                 if (e.target.result) {
+
                     let data = null;
-                    if (file.type === 'application/json') {
-                        try {
+                    try {
+                        if (file.type === 'application/json') {
                             data = JSON.parse(e.target.result);
                             localStorage.setItem('currentScreenplay', JSON.stringify({
                                 sections: data.sections,
                                 metaData: data.metaData
                             }));
-                        } catch (e) {
-                            console.error(e);
-                            alert(e.message);
+                            setDownloadFormat('json')
+                        } else {
+                            // plaintext
+                            data = Importer(e.target.result.replace(/\t/g, '    '));
+                            setDownloadFormat('txt')
+                            localStorage.setItem('currentScreenplay', JSON.stringify(data));
                         }
-                        setDownloadFormat('json')
-                    } else {
-                        // plaintext
-                        data = Importer(e.target.result);
-                        setDownloadFormat('txt')
-                        localStorage.setItem('currentScreenplay', JSON.stringify(data));
+                    } catch (e) {
+                        console.error(e);
+                        alert(`Could not import file '${file.name}'\n\n${e.message.trim()}`);
+                        return;
                     }
                     
                     setMetaData(data.metaData);

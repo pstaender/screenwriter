@@ -3,11 +3,15 @@ import { removeWordWrap } from "./helper";
 const META_DATA_LINE_REGEX = /^\"[a-zA-Z\_]+?\"\:/
 
 export function Importer(str) {
+
+    if (str.match(/\t/g)) {
+        throw new Error('Detected TAB character. Please convert all tabs to spaces before import.');
+    }
+
     let parts = str.split(`\n`)
 
     let options = {
-        spacesDialogCharacter: 21,
-        spacesDialog: 11,
+        spacesDialogCharacter: null, // auto-detect by default
         documentWidth: 61,
         dialogWordWrapLength: 33,
         spacesAnnotation: 30,
@@ -47,6 +51,7 @@ export function Importer(str) {
         }
     }
 
+    
     parts = parts
         .slice(eofMetaDataReached + 1)
         .join(`\n`).replace(/^\n+/, '')
@@ -56,6 +61,18 @@ export function Importer(str) {
 
     let sections = [];
     let i = 0;
+
+    if (options.spacesDialogCharacter === null || options.spacesDialogCharacter === undefined) {
+        //auto-detect/guesses dialog spaces
+        let firstLine = parts.filter(l => {
+            l = l.split(/\n/)[0]
+            return l.match(/^\s+?[A-Z][A-Z\s\(\)\.]+$/) && !l.match(/\:\s*$/)
+        })
+        if (firstLine && firstLine[0]) {
+            options.spacesDialogCharacter = firstLine[0].match(/^\s+/g)[0].length
+        }
+    }
+
 
     for (let part of parts) {
         part = part.replace(/^\n+/, '')

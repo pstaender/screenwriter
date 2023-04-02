@@ -197,3 +197,7 @@ test('import of external txt screenplay', async () => {
     }
   })
 })
+
+test('throw exception on tab content', () => {
+  expect(() => Importer(`	this string contains a tab character`)).toThrow('Detected TAB character. Please convert all tabs to spaces before import.');
+})

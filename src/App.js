@@ -35,6 +35,7 @@ export function App() {
     const [editMetaData, setEditMetaData] = useState(false);
     const [metaData, setMetaData] = useState(currentScreenplay().metaData || {})
     const [focusMode, setFocusMode] = useState(false)
+    const [currentIndex, setCurrentIndex] = useState(0);
 
     useEffect(() => {
         // we need for some elements a glocal focus selector…
@@ -128,6 +129,12 @@ export function App() {
     }, [metaData])
 
     useEffect(() => {
+        if (localStorage.getItem('lastIndexOfCurrent')) {
+            setCurrentIndex(Number(localStorage.getItem('lastIndexOfCurrent')))
+        }
+    }, [seed])
+
+    useEffect(() => {
         if (isVisible) {
             // force reload
             setSeed(Math.random())
@@ -140,6 +147,6 @@ export function App() {
         <Toolbar setSeed={setSeed} downloadScreenplay={downloadScreenplay} setIntervalDownload={setIntervalDownload} setEditMetaData={setEditMetaData} setMetaData={setMetaData} setFocusMode={setFocusMode} focusMode={focusMode}></Toolbar>
         {editMetaData && <MetaDataEdit metaData={metaData} setMetaData={setMetaData} setEditMetaData={setEditMetaData}></MetaDataEdit>}
         <Cover metaData={metaData}></Cover>
-        <Editor key={seed} seed={seed} />
+        <Editor key={seed} seed={seed} currentIndex={currentIndex} />
     </div>;
 }
