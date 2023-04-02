@@ -23,6 +23,7 @@ The data is stored in your browsers local storage.
  * `meta`/`ctrl` + `shift` + `arrow-up`: merge this section with previous one
  * `meta`/`ctrl` + `shift` + `enter`: split this section here in two sections
  * `meta`/`ctrl` + `shift` + `U`: uppercase the section, downcase if everthing is uppercase
+ * `ctrl` + `shift` + `Z`: recover last deletions
 
 ## Features
 

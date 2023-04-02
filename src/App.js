@@ -96,12 +96,18 @@ export function App() {
     }
 
     function handleKeyDown(ev) {
+        if (ev.key === "Escape") {
+            setEditMetaData(false);
+            return;
+        }
         if ((ev.metaKey || ev.ctrlKey)) {
             if (ev.key === '0') {
                 setFocusMode(!focusMode);
             }
+            if (ev.key === 'M') {
+                setEditMetaData(true);
+            }
         }
-        
     }
 
     useInterval(() => {

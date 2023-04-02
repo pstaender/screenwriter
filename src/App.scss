@@ -26,6 +26,7 @@
 }
 body {
   --color-background: #fff;
+  --color-background-rgb: 255, 255, 255;
   --color-text: #222;
   --color-light-grey: #f5f5f5;
   --color-almost-white: #fafafa;
@@ -36,6 +37,7 @@ body {
 }
 body.dark-mode {
   --color-background: #222;
+  --color-background-rgb: 34, 34, 34;
   --color-text: #fff;
   --color-light-grey: #333;
   --color-almost-white: #262626;

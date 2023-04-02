@@ -2,6 +2,7 @@ import './Editor.scss';
 
 import { useEffect, useState } from "react";
 import { SceneSection } from './SceneSection';
+import { getCaretCharacterOffsetWithin } from '../lib/helper';
 
 export function Editor({ seed, currentIndex } = {}) {
 
@@ -86,7 +87,9 @@ export function Editor({ seed, currentIndex } = {}) {
             let _sections = sections;
             let i = _sections.indexOf(sections.filter(s => s.current)[0])
             // TODO: always insert
-            if (ev.metaKey) {
+            if (ev.metaKey || (
+                getCaretCharacterOffsetWithin(ev.target) >= ev.target.textContent.length
+            )) {
                 if (ev.target.closest('section').dataset.index) {
                     let index = Number(ev.target.closest('section').dataset.index);
                     insertNewSectionAtIndex(index)

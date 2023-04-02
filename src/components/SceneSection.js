@@ -1,5 +1,6 @@
 
 import { useEffect, useRef, useState } from "react";
+import { getCaretCharacterOffsetWithin } from "../lib/helper";
 
 const mementos = []
 
@@ -72,33 +73,6 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
     // useEffect(() => {
     //     console.debug(editingLevel);
     // }, [editingLevel]);
-
-    function getCaretCharacterOffsetWithin(element) {
-        var caretOffset = 0;
-        var doc = element.ownerDocument || element.document;
-        var win = doc.defaultView || doc.parentWindow;
-        var sel;
-        if (typeof win.getSelection !== "undefined") {
-            sel = win.getSelection();
-            if (sel.rangeCount > 0) {
-                var range = win.getSelection().getRangeAt(0);
-                var preCaretRange = range.cloneRange();
-                preCaretRange.selectNodeContents(element);
-                preCaretRange.setEnd(range.endContainer, range.endOffset);
-                caretOffset = preCaretRange.toString().length;
-            }
-        } else if ((sel = doc.selection) && sel.type != "Control") {
-            var textRange = sel.createRange();
-            var preCaretTextRange = doc.body.createTextRange();
-            preCaretTextRange.moveToElementText(element);
-            preCaretTextRange.setEndPoint("EndToEnd", textRange);
-            caretOffset = preCaretTextRange.text.length;
-        }
-        return caretOffset;
-    }
-
-
-
     function handleKeyDown(ev) {
         const content = ev.target.textContent;
         if (ev.target?.contentEditable !== 'true') {
@@ -132,7 +106,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
                 inputRef.current.textContent = '';
             }
         }
-        if ((ev.metaKey || ev.ctrlKey) && ev.key === 'z' && inputRef.current?.innerHTML) {
+        if (ev.ctrlKey && ev.key === 'Z') {
             // undo
             insertNewSectionAfterId(id, { html: mementos.pop() || '' })
             return
