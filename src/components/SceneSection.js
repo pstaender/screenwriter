@@ -127,6 +127,13 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
             }
             goNext({ id, insert: (ev.metaKey || ev.ctrlKey) });
             return;
+        } else if (ev.key === 'ArrowDown' && !ev.shiftKey && (ev.metaKey || ev.ctrlKey)) {
+            goNext({ id });
+            return;
+        }
+        else if (ev.key === 'ArrowUp' && !ev.shiftKey && (ev.metaKey || ev.ctrlKey)) {
+            goPrev({ id });
+            return;
         }
         else if ((ev.key === 'ArrowUp' || ev.key === 'ArrowLeft') && getCaretCharacterOffsetWithin(ev.target) === 0) {
             ev.preventDefault();
