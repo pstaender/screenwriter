@@ -18,7 +18,7 @@ test('import of txt screenplay', () => {
         html: 'JOHN'
       },
       {
-        text: "          Well, one can't have everything.",
+        text: "Well, one can't have everything.",
         classification: 'dialogText',
         html: "Well, one can't have everything."
       },
@@ -54,7 +54,7 @@ test('import of txt screenplay', () => {
         html: 'JOHN'
       },
       {
-        text: '          Who on Earth could that be?',
+        text: 'Who on Earth could that be?',
         classification: 'dialogText',
         html: 'Who on Earth could that be?'
       },
@@ -64,7 +64,7 @@ test('import of txt screenplay', () => {
         html: 'MARY'
       },
       {
-        text: "          I'll go and see.",
+        text: "I'll go and see.",
         classification: 'dialogText',
         html: "I'll go and see."
       },
@@ -79,7 +79,7 @@ test('import of txt screenplay', () => {
         html: 'MARY'
       },
       {
-        text: "          Well hello Mike! Come on in!\n          John, Mike's here!",
+        text: "Well hello Mike! Come on in!\nJohn, Mike's here!",
         classification: 'dialogText',
         html: "Well hello Mike! Come on in!<br>John, Mike's here!"
       },
@@ -89,7 +89,7 @@ test('import of txt screenplay', () => {
         html: 'JOHN'
       },
       {
-        text: '          Hiya Mike! What brings you here?',
+        text: 'Hiya Mike! What brings you here?',
         classification: 'dialogText',
         html: 'Hiya Mike! What brings you here?'
       }
@@ -128,12 +128,9 @@ test('import of external txt screenplay', async () => {
         html: 'PICARD V.O.'
       },
       {
-        text: "        Captain's log, stardate 42353.7.\n" +
-          '        Our destination is planet Cygnus\n' +
-          '        IV, beyond which lies the great\n' +
-          '        unexplored mass of the galaxy.',
+        text: "Captain's log, stardate 42353.7.\nOur destination is planet Cygnus IV, beyond which lies the great unexplored mass of the galaxy.",
         classification: 'dialogText',
-        html: "Captain's log, stardate 42353.7.<br>Our destination is planet Cygnus<br>IV, beyond which lies the great<br>unexplored mass of the galaxy."
+        html: "Captain's log, stardate 42353.7.<br>Our destination is planet Cygnus IV, beyond which lies the great unexplored mass of the galaxy."
       },
       {
         text: 'OTHER INTRODUCTORY ANGLES (OPTICAL)',
@@ -151,12 +148,9 @@ test('import of external txt screenplay', async () => {
         html: 'PICARD V.O.'
       },
       {
-        text: '        My orders are to examine Farpoint,\n' +
-          '        a starbase built there by the\n' +
-          '        inhabitants of that world.\n' +
-          '        Meanwhile ...',
+        text: 'My orders are to examine Farpoint, a starbase built there by the inhabitants of that world.\nMeanwhile ...',
         classification: 'dialogText',
-        html: 'My orders are to examine Farpoint,<br>a starbase built there by the<br>inhabitants of that world.<br>Meanwhile ...'
+        html: 'My orders are to examine Farpoint, a starbase built there by the inhabitants of that world.<br>Meanwhile ...'
       },
       {
         text: 'INT. ENGINE ROOM',
@@ -179,12 +173,9 @@ test('import of external txt screenplay', async () => {
         html: 'continuing'
       },
       {
-        text: '        ... I am becoming better\n' +
-          '        acquainted with my new command,\n' +
-          '        this Galaxy Class U.S.S.\n' +
-          '        Enterprise.',
+        text: '... I am becoming better acquainted with my new command, this Galaxy Class U.S.S.\nEnterprise.',
         classification: 'dialogText',
-        html: '... I am becoming better<br>acquainted with my new command,<br>this Galaxy Class U.S.S.<br>Enterprise.'
+        html: '... I am becoming better acquainted with my new command, this Galaxy Class U.S.S.<br>Enterprise.'
       }
     ],
     metaData: {
