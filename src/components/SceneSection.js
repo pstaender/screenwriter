@@ -132,7 +132,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
             return;
         }
         else if (ev.key === 'ArrowUp' && !ev.shiftKey && (ev.metaKey || ev.ctrlKey)) {
-            goPrev({ id });
+            goPrev({ id, insert: index <= 1 });
             return;
         }
         else if ((ev.key === 'ArrowUp' || ev.key === 'ArrowLeft') && getCaretCharacterOffsetWithin(ev.target) === 0) {
@@ -141,7 +141,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
                 // merge previous section into this
                 let prevSection = ev.target.closest('section').previousElementSibling;
                 if (prevSection && prevSection.innerHTML) {
-                    inputRef.current.innerHTML = prevSection.textContent.trim().replace(/\n/g, '<br>') + '<br>' + inputRef.current.innerHTML;
+                    inputRef.current.innerHTML = prevSection.textContent.trim().replace(/\n/g, '<br>') + ' ' + inputRef.current.innerHTML;
                     let nextID = getPrev(id).id;
                     if (nextID) {
                         removeSection(nextID)
@@ -208,6 +208,25 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
         cleanupContenteditableMarkup();
     }
 
+    function additionalTextClass() {
+        if (!inputRef.current?.innerText) {
+            return;
+        }
+        let hLevel = inputRef.current.innerText.match(/^(#{1,6})?.*$/)
+        // console.log(hLevel)
+        if (hLevel && hLevel[1]) {
+            return `h${hLevel[1].length}`;
+        }
+        // not sure we need this… use h6 instead
+        if (/^\*\*[^\*]+.*\*\*$/.test(inputRef.current.innerText)) {
+            return 'strong';
+        }
+        if (/^\/\//.test(inputRef.current.innerText)) {
+            return 'comment';
+        }
+        return null;
+    }
+
     useEffect(() => {
         if (htmlContent) {
             inputRef.current.innerHTML = htmlContent;
@@ -216,8 +235,9 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
 
     return <section className={[
         isCurrent ? 'selected' : '',
+        additionalTextClass(),
         editingLevel,
-        (inputRef.current?.textContent && inputRef.current?.textContent.toLocaleUpperCase() === inputRef.current.textContent) ? 'sceneIntroduction' : '',
+        (inputRef.current?.textContent && inputRef.current?.textContent.toLocaleUpperCase() === inputRef.current.textContent && !additionalTextClass()) ? 'sceneIntroduction' : '',
     ].filter(e => !!e).join(' ')} onClick={handleFocus} data-index={index + 1}>
         <div contentEditable={true} onFocus={handleFocus} onBlur={handleBlur} ref={inputRef} className={editingLevel} onKeyDown={handleKeyDown}>
         </div>

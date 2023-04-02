@@ -22,7 +22,13 @@ body {
             left: inherit;
         }
     }
-    
+    &.comment {
+        display: none;
+    }
+    &.h6 {
+        opacity: 0;
+        page-break-after: always;
+    }
 }
 #screenwriter-editor > section.dialogCharacter {
     padding-top: 1rem !important;

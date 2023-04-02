@@ -91,6 +91,40 @@
             content: ")";
         }
     }
+    section.strong div {
+        font-weight: bold;
+    }
+    section.h1, section.h2, section.h3, section.h4, section.h5 {
+        div {
+            font-weight: bold;
+        }
+    }
+    section.h1 div {
+        font-size: 2rem;
+    }
+    section.h2 div {
+        font-size: 1.5rem;
+    }
+    section.h3 div {
+        font-size: 1.5rem;
+        text-transform: uppercase;
+    }
+    section.h4 div {
+        font-size: 1.5rem;
+        text-transform: normal;
+    }
+    section.h6 div {
+        font-weight: normal;
+        text-transform: uppercase;
+        opacity: 0.5;
+    }
+    section.comment div {
+        opacity: 0.5;
+    }
+    section.h5 div {
+        font-weight: bold;
+        font-size: 1rem;
+    }
     section.dialogAnnotation {
         padding-top: 0;
         padding-bottom: 0;
