@@ -26,29 +26,24 @@ The data is stored in your browsers local storage.
 
 ## Features
 
-To detect the beginning of a new scene, you should write the whole line Uppercase (Meta+Shift+U).
-
-The editor will suggest the next name of the character if you are in a dialog.
-
-Other features:
-
+ * detects the beginning of a new scene; just write the whole line uppercase (meta/ctrl+shift+U)
+ * auto suggests the next name of the character if you are in a dialog
  * exports screenplay as plain-text or json
- * imports screenplay from plain-text (using the same spacing-conventions) or json
- * auto-saves/downloads screenplay to local file every minute (beware, there is no real undo implemented - if a section is deleted, it's gone)
+ * imports screenplay from plain-text or json
+ * auto-saves/downloads screenplay to local file every minute (beware, there is no real undo implemented - if a section is deleted, it may be gone)
  * cover page for printing
  * editing meta data
  * focus mode (inspired by iaWriter)
  
  <img width="879" alt="Screenshot 2023-04-01 at 11 56 29" src="https://user-images.githubusercontent.com/140571/229279371-9cdeae04-28af-41f7-9c47-fee3a34b21aa.png">
  
- * enjoy dark-mode
+ * dark-mode
  
 <img width="1189" alt="Screenshot 2023-03-31 at 11 46 53" src="https://user-images.githubusercontent.com/140571/229086759-31aa087d-cb28-443f-82c6-a36200b16a26.png">
 
 ## TODOs
 
  * faster cleanup of html/plain-text during text changes
- * consider word wrap in import
  * index overview windows
  * https://pagedjs.org/posts/2020-04-15-starterkits-for-pagedjs/
 
