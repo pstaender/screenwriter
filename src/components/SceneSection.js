@@ -76,11 +76,12 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
     }, [inputRef, current]);
 
     function updateCSSClasses() {
+        let addCss = additionalTextClass();
         setCSSClasses([
             isCurrent ? 'selected' : '',
-            additionalTextClass(),
+            addCss,
             editingLevel,
-            (contentFromElementOrProperty() && contentFromElementOrProperty().toLocaleUpperCase() === contentFromElementOrProperty() && stripHTMLTags(contentFromElementOrProperty()).trim() && !additionalTextClass()) ? 'sceneIntroduction' : '',
+            (contentFromElementOrProperty() && contentFromElementOrProperty().toLocaleUpperCase() === contentFromElementOrProperty() && stripHTMLTags(contentFromElementOrProperty()).trim() && !addCss) ? 'sceneIntroduction' : '',
         ])
     }
 
@@ -213,6 +214,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
             }
             inputRef.current.textContent = text;
         }
+        updateCSSClasses()
     }
 
     function cleanupContenteditableMarkup() {
@@ -239,28 +241,26 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
         if (ev.type !== 'Click') {
             cleanupContenteditableMarkup();
         }
-        updateCSSClasses()
     }
 
     function handleBlur() {
         setIsCurrent(false);
         cleanupContenteditableMarkup();
-        updateCSSClasses()
     }
 
     function additionalTextClass() {
-        if (!inputRef.current?.innerText) {
+        if (!inputRef.current?.textContent) {
             return;
         }
-        let hLevel = inputRef.current.innerText.match(/^(#{1,6})?.*$/)
+        let hLevel = inputRef.current.textContent.match(/^(#{1,6})?.*$/)
         if (hLevel && hLevel[1]) {
             return `h${hLevel[1].length}`;
         }
         // not sure we need this… use h6 instead
-        if (/^\*\*[^\*]+.*\*\*$/.test(inputRef.current.innerText)) {
+        if (/^\*\*[^\*]+.*\*\*$/.test(inputRef.current.textContent)) {
             return 'strong';
         }
-        if (/^\/\//.test(inputRef.current.innerText)) {
+        if (/^\/\//.test(inputRef.current.textContent)) {
             return 'comment';
         }
         return null;
