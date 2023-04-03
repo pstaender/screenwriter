@@ -19,6 +19,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
     const [editingLevel, setEditingLevel] = useState(classification || 'description');
     const [isCurrent, setIsCurrent] = useState(current);
     const [htmlContent, setHtmlContent] = useState(html || null)
+    const [cssClasses, setCSSClasses] = useState(null);
 
     useEffect(() => {
         if (current) {
@@ -74,6 +75,15 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
 
     }, [inputRef, current]);
 
+    function updateCSSClasses() {
+        setCSSClasses([
+            isCurrent ? 'selected' : '',
+            additionalTextClass(),
+            editingLevel,
+            (contentFromElementOrProperty() && contentFromElementOrProperty().toLocaleUpperCase() === contentFromElementOrProperty() && stripHTMLTags(contentFromElementOrProperty()).trim() && !additionalTextClass()) ? 'sceneIntroduction' : '',
+        ])
+    }
+
     // useEffect(() => {
     //     console.debug(editingLevel);
     // }, [editingLevel]);
@@ -82,6 +92,8 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
         if (ev.target?.contentEditable !== 'true') {
             return;
         }
+
+        updateCSSClasses()
 
         let cursorIsAtEndOfSection = getCaretCharacterOffsetWithin(ev.target) >= content.trim().length;
         let cursorIsAtBeginOfSection = getCaretCharacterOffsetWithin(ev.target) < 1;
@@ -128,9 +140,11 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
                 if (nextSection && nextSection.innerHTML) {
                     let lengthOfText = inputRef.current.textContent.trim().length;
                     inputRef.current.innerHTML += ' ' + nextSection.textContent.trim().replace(/\n/g, '<br>');
-                    // try {
+                    try {
                         moveCursor(inputRef.current, lengthOfText)
-                    // } catch (_) {
+                    } catch (e) {
+                        console.error(e);
+                    }
                     let nextID = getNext(id).id;
                     if (nextID) {
                         removeSection(nextID)
@@ -157,7 +171,11 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
             if (prevSection && prevSection.innerHTML) {
                 inputRef.current.innerHTML = prevSection.textContent.trim().replace(/\n/g, '<br>') + ' ' + inputRef.current.innerHTML.replace(/\n/g, '<br>');
                 let nextID = getPrev(id).id;
-                moveCursor(inputRef.current, prevSection.textContent.length)
+                try {
+                    moveCursor(inputRef.current, prevSection.textContent.length)
+                } catch (e) {
+                    console.error(e);
+                }
                 if (nextID) {
                     removeSection(nextID)
                     return;
@@ -190,12 +208,14 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
 
             }
         } else if ((ev.metaKey || ev.ctrlKey) && (ev.shiftKey) && ev.key === 'u') {
+            // cleanupContenteditableMarkup();
             let text = inputRef.current.textContent.toLocaleUpperCase()
             if (text === inputRef.current.textContent) {
                 text = inputRef.current.textContent.toLocaleLowerCase()
             }
             inputRef.current.textContent = text;
         }
+        updateCSSClasses()
     }
 
     function cleanupContenteditableMarkup() {
@@ -258,12 +278,13 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
         }
     }, [htmlContent])
 
-    return <section className={[
-        isCurrent ? 'selected' : '',
-        additionalTextClass(),
-        editingLevel,
-        (contentFromElementOrProperty() && contentFromElementOrProperty().toLocaleUpperCase() === contentFromElementOrProperty() && stripHTMLTags(contentFromElementOrProperty()).trim() && !additionalTextClass()) ? 'sceneIntroduction' : '',
-    ].filter(e => !!e).join(' ')} onClick={handleFocus} data-index={index + 1}>
+    useEffect(() => {
+        if (!cssClasses) {
+            updateCSSClasses()
+        }
+    }, [cssClasses])
+
+    return <section className={cssClasses?.filter(e => !!e)?.join(' ')} onClick={handleFocus} data-index={index + 1}>
         <div contentEditable={true} onFocus={handleFocus} onBlur={handleBlur} ref={inputRef} className={editingLevel} onKeyDown={handleKeyDown}>
         </div>
     </section>

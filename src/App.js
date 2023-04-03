@@ -111,7 +111,10 @@ export function App() {
     }
 
     useInterval(() => {
-        storeScreenplayInLocalStorage();
+        // only store, if tab is active
+        if (!document.hidden) {
+            storeScreenplayInLocalStorage();
+        }
     }, 2000);
 
     useInterval(() => {
