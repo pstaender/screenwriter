@@ -11,7 +11,7 @@ body {
 #screenwriter-editor > section {
     padding: 0 !important;
     padding-bottom: 1rem !important;
-    &.description.sceneIntroduction {
+    &.description.uppercase {
         > div:before {
             content: counter(scene-counter) " ";
             text-align: inherit;
@@ -20,6 +20,17 @@ body {
             font-size: inherit;
             top: inherit;
             left: inherit;
+        }
+    }
+    &.dialogCharacter, &.dialogText, &.dialogAnnotation, &.descriptionAnnotation {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    &.description {
+        padding-bottom: 0.5rem !important;
+        &.uppercase {
+            padding-top: 1.5rem !important;
+            page-break-after: avoid;
         }
     }
     &.comment {

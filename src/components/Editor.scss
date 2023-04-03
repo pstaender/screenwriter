@@ -21,7 +21,7 @@
             opacity: 0.25;
             font-size: 0.8rem;
         }
-        &.sceneIntroduction.description {
+        &.uppercase.description {
             counter-increment: scene-counter 1;
             font-weight: bold;
             &:before {

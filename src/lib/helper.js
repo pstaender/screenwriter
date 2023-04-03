@@ -59,6 +59,7 @@ export function stripHTMLTags(html) {
 }
 
 export function moveCursor(el, position) {
+    // DOMException: Failed to execute 'setStart' on 'Range': The offset 220 is larger than the node's length (78)
     let range = document.createRange();
     let selection = window.getSelection();
     range.selectNodeContents(el);

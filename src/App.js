@@ -66,7 +66,7 @@ export function App() {
 
     function downloadScreenplay(format = null) {
         if (!format) {
-            format = localStorage.getItem('exportFormat') === 'json' ? 'json' : 'txt';
+            format = localStorage.getItem('exportFormat') === 'txt' ? 'txt' : 'json';
         }
         let data = metaDataAndSections();
         let mimeType = 'text/plain';

@@ -129,7 +129,7 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
                     </div>
                     <div className='icon' onClick={() => {
                         setSeed(Math.random())
-                        localStorage.setItem('currentScreenplay', '{}')
+                        localStorage.clear()
                         setMetaData({})
                     }} data-help="Clear Document">
                         <i className="gg-trash"></i>
