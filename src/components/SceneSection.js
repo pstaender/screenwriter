@@ -93,8 +93,6 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
             return;
         }
 
-        updateCSSClasses()
-
         let cursorIsAtEndOfSection = getCaretCharacterOffsetWithin(ev.target) >= content.trim().length;
         let cursorIsAtBeginOfSection = getCaretCharacterOffsetWithin(ev.target) < 1;
         if (ev.key === 'Tab') {
@@ -215,7 +213,6 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
             }
             inputRef.current.textContent = text;
         }
-        updateCSSClasses()
     }
 
     function cleanupContenteditableMarkup() {
@@ -242,11 +239,13 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
         if (ev.type !== 'Click') {
             cleanupContenteditableMarkup();
         }
+        updateCSSClasses()
     }
 
     function handleBlur() {
         setIsCurrent(false);
         cleanupContenteditableMarkup();
+        updateCSSClasses()
     }
 
     function additionalTextClass() {
@@ -272,11 +271,19 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
         return inputRef.current ? inputRef.current.textContent : html;
     }
 
+    function handleKeyUp() {
+        updateCSSClasses()
+    }
+
     useEffect(() => {
         if (htmlContent) {
             inputRef.current.innerHTML = htmlContent;
         }
     }, [htmlContent])
+
+    useEffect(() => {
+        updateCSSClasses()
+    }, [isCurrent])
 
     useEffect(() => {
         if (!cssClasses) {
@@ -285,7 +292,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
     }, [cssClasses])
 
     return <section className={cssClasses?.filter(e => !!e)?.join(' ')} onClick={handleFocus} data-index={index + 1}>
-        <div contentEditable={true} onFocus={handleFocus} onBlur={handleBlur} ref={inputRef} className={editingLevel} onKeyDown={handleKeyDown}>
+        <div contentEditable={true} onFocus={handleFocus} onBlur={handleBlur} ref={inputRef} className={editingLevel} onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
         </div>
     </section>
 
