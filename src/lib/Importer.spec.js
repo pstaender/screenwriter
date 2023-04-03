@@ -3,13 +3,8 @@ import { readFile } from 'fs/promises'
 
 import { Importer } from './Importer';
 
-let screenplayText = null;
-
-beforeAll(async () => {
-  screenplayText = (await readFile(new URL('../../spec/screenplay.txt', import.meta.url))).toString();
-});
-
-test('import of txt screenplay', () => {
+test('import of txt screenplay', async () => {
+  let screenplayText = (await readFile(new URL('../../spec/screenplay.txt', import.meta.url))).toString();
   expect(Importer(screenplayText)).toEqual({
     sections: [
       {
@@ -108,7 +103,7 @@ test('import of external txt screenplay', async () => {
   expect(data).toEqual({
     sections: [
       {
-        text: '                            FADE IN:',
+        text: 'FADE IN:',
         classification: 'descriptionAnnotation',
         html: 'FADE IN:'
       },
@@ -183,12 +178,128 @@ test('import of external txt screenplay', async () => {
       author: 'D.C. Fontana and Gene Roddenberry',
       description: '<center>FINAL DRAFT</center>\n<center>April 13, 1987</center>',
       spacesDialogCharacter: 16,
-      spacesDialog: 8,
-      spacesAnnotation: 20
+      spacesDialog: 8
     }
   })
 })
 
 test('throw exception on tab content', () => {
   expect(() => Importer(`	this string contains a tab character`)).toThrow('Detected TAB character. Please convert all tabs to spaces before import.');
+})
+
+test('import another external plain text script', async () => {
+  let screenplay = (await readFile(new URL('../../spec/titanic.txt', import.meta.url))).toString();
+  expect(Importer(screenplay).sections).toEqual([
+    {
+      text: 'EXT. THE BOTTOM OF THE SEA',
+      classification: 'description',
+      html: 'EXT. THE BOTTOM OF THE SEA'
+    },
+    {
+      text: 'A pale, dead-flat lunar landscape. It gets brighter, lit from above, as MIR ONE enters FRAME and drops to the seafloor in a downblast from its thrusters. It hits bottom after its two hour free-fall with a loud BONK.',
+      classification: 'description',
+      html: 'A pale, dead-flat lunar landscape. It gets brighter, lit from above, as MIR ONE enters FRAME and drops to the seafloor in a downblast from its thrusters. It hits bottom after its two hour free-fall with a loud BONK.'
+    },
+    {
+      text: '                                                     CUT TO:',
+      classification: 'descriptionAnnotation',
+      html: 'CUT TO:'
+    },
+    {
+      text: 'INT. MIR ONE',
+      classification: 'description',
+      html: 'INT. MIR ONE'
+    },
+    {
+      text: 'Lovett and Bodine jerk awake at the landing.',
+      classification: 'description',
+      html: 'Lovett and Bodine jerk awake at the landing.'
+    },
+    {
+      text: '                      ANATOLY',
+      classification: 'dialogCharacter',
+      html: 'ANATOLY'
+    },
+    {
+      text: 'heavy Russian accent',
+      classification: 'dialogAnnotation',
+      html: 'heavy Russian accent'
+    },
+    {
+      text: 'We are here.',
+      classification: 'dialogText',
+      html: 'We are here.'
+    },
+    {
+      text: 'EXT. / INT. MIR ONE AND TWO',
+      classification: 'description',
+      html: 'EXT. / INT. MIR ONE AND TWO'
+    },
+    {
+      text: 'MINUTES LATER: THE TWO SUBS',
+      classification: 'description',
+      html: 'MINUTES LATER: THE TWO SUBS'
+    },
+    {
+      text: 'Skim over the seafloor to the sound of sidescan sonar and the THRUM of big thrusters.',
+      classification: 'description',
+      html: 'Skim over the seafloor to the sound of sidescan sonar and the THRUM of big thrusters.'
+    },
+    {
+      text: 'The featureless gray clay of the bottom unrolls in the lights of the subs. Bodine is watching the sidescan sonar display, where the outline of a huge pointed object is visible. Anatoly lies prone, driving the sub, his face pressed to the center port.',
+      classification: 'description',
+      html: 'The featureless gray clay of the bottom unrolls in the lights of the subs. Bodine is watching the sidescan sonar display, where the outline of a huge pointed object is visible. Anatoly lies prone, driving the sub, his face pressed to the center port.'
+    },
+    {
+      text: '                      BODINE',
+      classification: 'dialogCharacter',
+      html: 'BODINE'
+    },
+    {
+      text: "Come left a little. She's right in front of us, eighteen meters. Fifteen. \n" +
+        'Thirteen... you should see it.',
+      classification: 'dialogText',
+      html: "Come left a little. She's right in front of us, eighteen meters. Fifteen.<br>Thirteen... you should see it."
+    },
+    {
+      text: '                      ANATOLY',
+      classification: 'dialogCharacter',
+      html: 'ANATOLY'
+    },
+    {
+      text: "Do you see it? I don't see it... \nthere!",
+      classification: 'dialogText',
+      html: "Do you see it? I don't see it...<br>there!"
+    },
+    {
+      text: 'Out of the darkness, like a ghostly apparition, the bow of the ship appears. Its knife-edge prow is coming straight at us, seeming to plow the bottom sediment like ocean waves. It towers above the seafloor, standing just as it landed 84 years ago.',
+      classification: 'description',
+      html: 'Out of the darkness, like a ghostly apparition, the bow of the ship appears. Its knife-edge prow is coming straight at us, seeming to plow the bottom sediment like ocean waves. It towers above the seafloor, standing just as it landed 84 years ago.'
+    },
+    {
+      text: 'THE TITANIC',
+      classification: 'description',
+      html: 'THE TITANIC'
+    },
+    {
+      text: 'Or what is left of her. Mir One goes up and over the bow railing, intact except for an overgrowth of "rusticles" draping it like mutated Spanish moss.',
+      classification: 'description',
+      html: 'Or what is left of her. Mir One goes up and over the bow railing, intact except for an overgrowth of "rusticles" draping it like mutated Spanish moss.'
+    },
+    {
+      text: "TIGHT ON THE EYEPIECE MONITOR of a video camcorder. Brock Lovett's face fills the BLACK AND WHITE FRAME.",
+      classification: 'description',
+      html: "TIGHT ON THE EYEPIECE MONITOR of a video camcorder. Brock Lovett's face fills the BLACK AND WHITE FRAME."
+    },
+    {
+      text: '                                                   FADE OUT:',
+      classification: 'descriptionAnnotation',
+      html: 'FADE OUT:'
+    },
+    {
+      text: '                          THE END',
+      classification: 'description',
+      html: 'THE END'
+    }
+  ]);
 })

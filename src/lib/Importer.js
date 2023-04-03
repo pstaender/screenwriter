@@ -14,7 +14,7 @@ export function Importer(str) {
         spacesDialogCharacter: null, // auto-detect by default
         documentWidth: 61,
         dialogWordWrapLength: 33,
-        spacesAnnotation: 30,
+        // spacesAnnotation: 30,
         removeWordWrap: 'yes',
     }
 
@@ -76,7 +76,7 @@ export function Importer(str) {
 
     for (let part of parts) {
         part = part.replace(/^\n+/, '')
-        if (new RegExp(`^\\s{${options.spacesAnnotation},${options.spacesAnnotation + 20}}?\\w+`).test(part)) {
+        if (part.trim().at(-1) === ':' && part.toLocaleUpperCase() === part) {
             sections.push({
                 text: part,
                 classification: 'descriptionAnnotation'

@@ -32,7 +32,6 @@ export function Exporter(sections, metaData = {}) {
         spacesDialog: 11,
         documentWidth: 61,
         dialogWordWrapLength: 33,
-        spacesAnnotation: 31,
     }
 
     if (metaData['spacesDialogCharacter'] !== undefined) {

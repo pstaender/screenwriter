@@ -3,9 +3,8 @@
 "description": "<center>FINAL DRAFT</center>\n<center>April 13, 1987</center>"
 "spacesDialogCharacter": 16
 "spacesDialog": 8
-"spacesAnnotation": 20
 
-                            FADE IN:
+FADE IN:
 
 EXT. SPACE - STARSHIP (OPTICAL)
 
