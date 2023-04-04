@@ -1,6 +1,8 @@
 # Screenwriter
 ## Write distraction-free screenplays in your desktop browser
 
+![status](https://github.com/pstaender/screenwriter/actions/workflows/specs.yml/badge.svg)
+
 <img width="1185" alt="Screenshot 2023-03-31 at 11 44 37" src="https://user-images.githubusercontent.com/140571/229086507-b4b63dd7-52ba-4c90-b97c-4dab1fc2bcbb.png">
 
 Stores data as local storage, imports and exports txt files. Made for keyboard-intensive usage (see below).
