@@ -69,6 +69,13 @@ export function App() {
             format = localStorage.getItem('exportFormat') === 'txt' ? 'txt' : 'json';
         }
         let data = metaDataAndSections();
+        data.sections = data.sections.map(s => {
+            // select relevant values only
+            return {
+                html: s.html,
+                classification: s.classification,
+            }
+        })
         let mimeType = 'text/plain';
         const timesignatur = new Date().toISOString().replace(/\.\d+[A-Z]$/, '').replace(/:/g, '_');
         let filename = `screenplay_${timesignatur}`;

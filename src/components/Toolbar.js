@@ -9,6 +9,13 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
 
     const [darkMode, setDarkMode] = useState(localStorage.getItem('darkMode') === 'true')
 
+    function resetDocument() {
+        setSeed(Math.random())
+        localStorage.setItem('currentScreenplay', '{}');
+        localStorage.setItem('mementos', '[]');
+        setMetaData({})
+    }
+
     useEffect(() => {
         if (darkMode) {
             document.querySelector('body').classList.add('dark-mode')
@@ -20,19 +27,25 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
     }, [darkMode])
 
     const onDrop = useCallback(acceptedFiles => {
-        // Loop through accepted files
+        // Loop through accepted file(s)
         acceptedFiles.map(file => {
             const reader = new FileReader();
             reader.onload = function (e) {
 
                 if (e.target.result) {
-
+                    resetDocument();
                     let data = null;
                     try {
                         if (file.type === 'application/json') {
                             data = JSON.parse(e.target.result);
                             localStorage.setItem('currentScreenplay', JSON.stringify({
-                                sections: data.sections,
+                                sections: data.sections.map(s => {
+                                    return {
+                                        classification: s.classification,
+                                        html: s.html,
+                                    }
+                                }),
+                                // TODO: only allow specific fields / value?
                                 metaData: data.metaData
                             }));
                             setDownloadFormat('json')
@@ -127,11 +140,7 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
                     <div className="icon" onClick={() => setDarkMode(!darkMode)} data-help="Dark Mode">
                         <i className="gg-dark-mode"></i>
                     </div>
-                    <div className='icon' onClick={() => {
-                        setSeed(Math.random())
-                        localStorage.clear()
-                        setMetaData({})
-                    }} data-help="Clear Document">
+                    <div className='icon' onClick={() => resetDocument()} data-help="Clear Document">
                         <i className="gg-trash"></i>
                     </div>
                     <div className={["icon", autoSave > 0 ? 'active' : ''].filter(e => !!e).join(' ')} onClick={handleToggleAutoSave} data-help="Download Backup every 60secs">

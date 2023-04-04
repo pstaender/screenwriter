@@ -21,6 +21,7 @@ export function convertDomSectionsToDataStructure(sections) {
         return {
             html: el.innerHTML,
             classification,
+            id: el.dataset.id,
         };
     })
 }
