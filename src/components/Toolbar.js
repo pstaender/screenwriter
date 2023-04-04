@@ -114,14 +114,17 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
 
     return (
         <div id="screenwriter-toolbar">
-            <Dropzone onDrop={onDrop} accept={["plain/txt", "application/json"]} />
+            <Dropzone onDrop={onDrop} accept={{
+                "plain/txt": ['.txt'],
+                "application/json": ['.json']
+            }} />
             <div className="icons">
                 <div className='icon show-more-icons' data-help={`Download`}>
                     <i className="gg-arrow-down-o" onClick={(ev) => {
-                    if (ev.currentTarget === ev.target) {
-                        downloadScreenplay()
-                    }
-                }}></i>
+                        if (ev.currentTarget === ev.target) {
+                            downloadScreenplay()
+                        }
+                    }}></i>
                     <div className='icons'>
                         <div className={['icon', downloadFormat === 'json' ? 'active' : ''].join(' ')} onClick={() => {
                             setDownloadFormat('json');

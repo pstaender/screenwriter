@@ -1,48 +1,83 @@
-#screenwriter-toolbar,
-#github-link, .edit-meta-data {
-    display: none !important;
-}
-:root {
-    --font-size: 12pt !important;
-}
-body {
-    font-size: var(--font-size);
-}
-#screenwriter-editor > section {
-    padding: 0 !important;
-    padding-bottom: 1rem !important;
-    --scene-number-width: 3rem;
-    padding-left: var(--scene-number-width) !important;
-    &.description.uppercase {
-        > div:before {
-            content: counter(scene-counter) " ";
-            text-align: inherit;
-            opacity: inherit;
-            font-size: inherit;
-            top: inherit;
-            left: inherit;
-            margin-left: calc(-1 * var(--scene-number-width)) !important;
-        }
-    }
-    &.dialogCharacter, &.dialogText, &.dialogAnnotation, &.descriptionAnnotation {
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-    &.description {
-        padding-bottom: 0.5rem !important;
-        &.uppercase {
-            padding-top: 1.5rem !important;
-            page-break-after: avoid;
-        }
-    }
-    &.comment {
+@media print {
+    #screenwriter-toolbar,
+    #github-link,
+    .edit-meta-data {
         display: none;
     }
-    &.h7 {
-        opacity: 0;
-        page-break-after: always;
+    :root {
+        --font-size: 10pt;
     }
-}
-#screenwriter-editor > section.dialogCharacter {
-    padding-top: 1rem !important;
+    body {
+        font-size: var(--font-size);
+    }
+    #screenwriter-editor {
+        padding-right: 2rem;
+    }
+    #screenwriter-editor > section {
+        padding: 0;
+        padding-bottom: 1rem;
+        --scene-number-width: 3rem;
+        padding-left: var(--scene-number-width);
+        padding-right: var(--scene-number-width);
+        &.description.uppercase {
+            > div:before {
+                content: counter(scene-counter) " ";
+                text-align: inherit;
+                opacity: inherit;
+                font-size: inherit;
+                top: 1.5rem;
+                left: inherit;
+                margin-left: calc(-1 * var(--scene-number-width));
+            }
+            > div:after {
+                content: counter(scene-counter);
+                display: block;
+                position: absolute;
+                text-align: inherit;
+                opacity: inherit;
+                font-size: inherit;
+                top: inherit;
+                right: 1rem;
+                font-weight: normal;
+                top: 1.5rem;
+                margin-right: calc(-1 * var(--scene-number-width));
+                background: inherit !important;
+                color: inherit !important;
+            }
+        }
+        &.dialogCharacter,
+        &.dialogText,
+        &.dialogAnnotation,
+        &.descriptionAnnotation {
+            margin: 0;
+            padding: 0;
+        }
+        &.description {
+            padding-bottom: 0.5rem;
+            &.uppercase {
+                padding-top: 1.5rem;
+                page-break-after: avoid;
+                page-break-before: avoid;
+            }
+        }
+        &.comment {
+            display: none;
+        }
+        &.dialogCharacter {
+            page-break-after: avoid;
+            page-break-before: avoid;
+        }
+        &.h7 {
+            opacity: 0;
+            page-break-after: always;
+        }
+        &:not(.comment) {
+            > div {
+                opacity: 1;
+            }
+        }
+    }
+    #screenwriter-editor > section.dialogCharacter {
+        padding-top: 1rem;
+    }
 }

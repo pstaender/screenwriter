@@ -36,13 +36,17 @@ export function App() {
     const [metaData, setMetaData] = useState(currentScreenplay().metaData || {})
     const [focusMode, setFocusMode] = useState(false)
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [hideMousePointer, setHideMousePointer] = useState(false);
 
     useEffect(() => {
         // we need for some elements a glocal focus selector…
+        let body = document.querySelector('body');
         if (focusMode) {
-            document.querySelector('body').classList.add('focus');
+            body.classList.add('focus');
+            setHideMousePointer(true);
         } else {
-            document.querySelector('body').classList.remove('focus');
+            body.classList.remove('focus');
+            setHideMousePointer(false);
         }
     }, [focusMode])
 
@@ -107,6 +111,9 @@ export function App() {
             setEditMetaData(false);
             return;
         }
+        if (focusMode) {
+            setHideMousePointer(true);
+        }
         if ((ev.metaKey || ev.ctrlKey)) {
             if (ev.key === '0') {
                 setFocusMode(!focusMode);
@@ -164,10 +171,13 @@ export function App() {
         }
     }, [isVisible])
 
-    return <div className={[focusMode ? 'focus' : ''].join(' ')} onKeyDown={handleKeyDown}>
+    return <div className={[focusMode ? 'focus' : '', hideMousePointer ? 'no-mouse-pointer' : ''].join(' ')} onKeyDown={handleKeyDown} onMouseMove={() => setHideMousePointer(false) }>
         <Toolbar setSeed={setSeed} downloadScreenplay={downloadScreenplay} setIntervalDownload={setIntervalDownload} setEditMetaData={setEditMetaData} setMetaData={setMetaData} setFocusMode={setFocusMode} focusMode={focusMode}></Toolbar>
         {editMetaData && <MetaDataEdit metaData={metaData} setMetaData={setMetaData} setEditMetaData={setEditMetaData}></MetaDataEdit>}
         <Cover metaData={metaData}></Cover>
         <Editor key={seed} seed={seed} currentIndex={currentIndex} />
     </div>;
 }
+
+
+import './Print.scss';

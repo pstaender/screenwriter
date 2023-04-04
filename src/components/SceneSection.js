@@ -60,8 +60,11 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
                                 sibling = sibling.previousElementSibling
                             }
 
-                            if (names.length > 1) {
-                                setHtmlContent(names.at(-1))
+                            // remove first
+                            names.shift()
+
+                            if (names.length >= 1) {
+                                setHtmlContent(names.shift())
                                 setTimeout(() => {
                                     moveCursorToEnd(inputRef.current)
                                 }, 100)
@@ -257,14 +260,12 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
                 return;
             }
             function selectSection(el) {
+
                 if (!el) {
                     return;
                 }
                 //setCurrentSectionById(el.querySelector('div').dataset['id']);
-                setTimeout(() => {
-                    el.click();
-                    el.focus();
-                }, 100)
+                el.querySelector('div') ? el.querySelector('div').focus() : el.focus();
 
             }
             if (jumpTo === '0') {
@@ -399,8 +400,8 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
         }
     }, [cssClasses])
 
-    return <section className={cssClasses?.filter(e => !!e)?.join(' ')} onClick={handleFocus} data-index={index + 1}>
-        <div contentEditable={true} onFocus={handleFocus} onBlur={handleBlur} ref={inputRef} className={editingLevel} onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} data-id={id}>
+    return <section className={cssClasses?.filter(e => !!e)?.join(' ')} data-index={index + 1}>
+        <div contentEditable={true} onClick={handleFocus} onFocus={handleFocus} onBlur={handleBlur} ref={inputRef} className={editingLevel} onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} data-id={id}>
         </div>
     </section>
 

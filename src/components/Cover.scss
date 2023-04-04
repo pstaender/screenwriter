@@ -7,12 +7,12 @@
         font-size: 1rem;
         font-weight: bold;
     }
-    page-break-after: always;
+    // page-break-after: always;
     height: 100svmax;
     display: grid;
     place-content: center;
     .content {
-        padding-left: 10rem;
+        padding-left: 5rem;
     }
     .description {
         margin-top: 4rem;
