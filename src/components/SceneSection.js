@@ -2,9 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { getCaretCharacterOffsetWithin, moveCursor, stripHTMLTags } from "../lib/helper";
 
-const mementos = []
-
-export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insertNewSectionAfterId, insertNewSectionBeforeId, removeSection, id, index, sectionsLength, html, classification, setCurrentSectionById, cursorToEnd } = {}) {
+export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSectionById, insertNewSectionAfterId, insertNewSectionBeforeId, removeSection, id, index, sectionsLength, html, classification, setCurrentSectionById, cursorToEnd, randomID } = {}) {
 
     const inputRef = useRef(null);
 
@@ -35,42 +33,41 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
             if (inputRef.current.innerHTML) {
                 cleanupContenteditableMarkup();
                 if (cursorToEnd) {
-                    try {
-                        moveCursor(inputRef.current, inputRef.current.textContent.trim().length)
-                    } catch (e) {
-                        console.error(e)
-                    }
+                    moveCursor(inputRef.current, inputRef.current.textContent.trim().length)
                 }
             }
-            if (inputRef.current.textContent.trim() === '' && isCurrent) {
-                let previousSection = inputRef.current?.closest('section')?.previousElementSibling
-                if (previousSection) {
-                    let sibling = previousSection;
-                    let names = [];
-                    while (sibling) {
-                        if (sibling.classList.contains('dialogCharacter')) {
-                            names.push(sibling.textContent);
+            // timeout prevents changing content before undo is completly done
+            setTimeout(() => {
+                if (inputRef.current.textContent.trim() === '' && isCurrent) {
+                    let previousSection = inputRef.current?.closest('section')?.previousElementSibling
+                    if (previousSection) {
+                        let sibling = previousSection;
+                        let names = [];
+                        while (sibling) {
+                            if (sibling.classList.contains('dialogCharacter')) {
+                                names.push(sibling.textContent);
+                            }
+                            if ([...new Set(names.map(l => l.toLocaleLowerCase()))].length > 1) {
+                                break;
+                            }
+                            sibling = sibling.previousElementSibling
                         }
-                        if ([...new Set(names.map(l => l.toLocaleLowerCase()))].length > 1) {
-                            break;
+                        if (previousSection.classList.contains('dialogCharacter')) {
+                            return setEditingLevel('dialogText');
                         }
-                        sibling = sibling.previousElementSibling
+                        if (previousSection.classList.contains('dialogAnnotation')) {
+                            return setEditingLevel('dialogText');
+                        }
+                        if (previousSection.classList.contains('dialogText')) {
+                            if (names.length > 1) {
+                                setHtmlContent(names.at(-1))//.match(/[\w]+/)[0])
+                            }
+                            return setEditingLevel('dialogCharacter');
+                        }
                     }
+                }
+            }, 100);
 
-                    if (previousSection.classList.contains('dialogCharacter')) {
-                        return setEditingLevel('dialogText');
-                    }
-                    if (previousSection.classList.contains('dialogAnnotation')) {
-                        return setEditingLevel('dialogText');
-                    }
-                    if (previousSection.classList.contains('dialogText')) {
-                        if (names.length > 1) {
-                            setHtmlContent(names.at(-1))//.match(/[\w]+/)[0])
-                        }
-                        return setEditingLevel('dialogCharacter');
-                    }
-                }
-            }
         }
 
     }, [inputRef, current]);
@@ -81,13 +78,27 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
             isCurrent ? 'selected' : '',
             addCss,
             editingLevel,
-            (contentFromElementOrProperty() && contentFromElementOrProperty().toLocaleUpperCase() === contentFromElementOrProperty() && stripHTMLTags(contentFromElementOrProperty()).trim() && !addCss) ? 'sceneIntroduction' : '',
+            (contentFromElementOrProperty() && contentFromElementOrProperty().toLocaleUpperCase() === contentFromElementOrProperty() && stripHTMLTags(contentFromElementOrProperty()).trim() && !addCss) ? 'uppercase' : '',
         ])
     }
 
-    // useEffect(() => {
-    //     console.debug(editingLevel);
-    // }, [editingLevel]);
+    function pushMementos(step) {
+        let maxDataLength = 6000;
+        let mementos = JSON.parse(localStorage.getItem('mementos') || '[]')
+        mementos.push(step)
+        while (JSON.stringify(mementos).length > maxDataLength) {
+            mementos = mementos.shift()
+        }
+        localStorage.setItem('mementos', JSON.stringify(mementos))
+    }
+
+    function popMementos() {
+        let mementos = JSON.parse(localStorage.getItem('mementos') || '[]')
+        let latestStep = mementos.pop()
+        localStorage.setItem('mementos', JSON.stringify(mementos))
+        return latestStep;
+    }
+
     function handleKeyDown(ev) {
         const content = ev.target.textContent;
         if (ev.target?.contentEditable !== 'true') {
@@ -116,7 +127,14 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
             // only remove if some elements still exists
             if (document.querySelectorAll('#screenwriter-editor > section').length > 1) {
                 if (inputRef.current.innerHTML?.trim()) {
-                    mementos.push(inputRef.current.innerHTML)
+                    pushMementos({
+                        html: inputRef.current.innerHTML,
+                        id,
+                        editingLevel,
+                        classification: editingLevel,
+                        prev: getPrev(id)?.id,
+                        next: getNext(id)?.id,
+                    });
                 }
                 goPrev({ id, cursorToEnd: true })
                 removeSection(id)
@@ -124,11 +142,6 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
             } else if (inputRef.current) {
                 inputRef.current.textContent = '';
             }
-        }
-        if (ev.ctrlKey && ev.key === 'Z') {
-            // undo
-            insertNewSectionAfterId(id, { html: mementos.pop() || '' })
-            return
         }
         if (((ev.key === 'ArrowDown' || ev.key === 'ArrowRight') && cursorIsAtEndOfSection) ||
             (ev.key === 'ArrowDown' && (ev.metaKey || ev.ctrlKey))) {
@@ -139,11 +152,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
                 if (nextSection && nextSection.innerHTML) {
                     let lengthOfText = inputRef.current.textContent.trim().length;
                     inputRef.current.innerHTML += ' ' + nextSection.textContent.trim().replace(/\n/g, '<br>');
-                    try {
-                        moveCursor(inputRef.current, lengthOfText)
-                    } catch (e) {
-                        console.error(e);
-                    }
+                    moveCursor(inputRef.current, lengthOfText)
                     let nextID = getNext(id).id;
                     if (nextID) {
                         removeSection(nextID)
@@ -170,11 +179,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
             if (prevSection && prevSection.innerHTML) {
                 inputRef.current.innerHTML = prevSection.textContent.trim().replace(/\n/g, '<br>') + ' ' + inputRef.current.innerHTML.replace(/\n/g, '<br>');
                 let nextID = getPrev(id).id;
-                try {
-                    moveCursor(inputRef.current, prevSection.textContent.length)
-                } catch (e) {
-                    console.error(e);
-                }
+                moveCursor(inputRef.current, prevSection.textContent.length)
                 if (nextID) {
                     removeSection(nextID)
                     return;
@@ -207,13 +212,45 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
 
             }
         } else if ((ev.metaKey || ev.ctrlKey) && (ev.shiftKey) && ev.key === 'u') {
-            // cleanupContenteditableMarkup();
             let text = inputRef.current.textContent.toLocaleUpperCase()
             if (text === inputRef.current.textContent) {
                 text = inputRef.current.textContent.toLocaleLowerCase()
             }
             inputRef.current.textContent = text;
+        } else if ((ev.metaKey || ev.ctrlKey) && ev.key === 'z') {
+            let beforeLastUndo = inputRef.current.textContent
+            setTimeout(() => {
+                if (beforeLastUndo !== inputRef.current.textContent) {
+                    // something has changed, so the browser did some undo stuff…
+                    return;
+                }
+                let lastDeletedText = popMementos();
+                // console.log(lastDeletedText)
+                if (lastDeletedText) {
+                    let sectionWithIDAlreadyExists = !!(lastDeletedText.id && findSectionById(lastDeletedText.id)) ;
+                    const options = {
+                        html: lastDeletedText.html,
+                        // prevent inserting of duplicate ids
+                        id: sectionWithIDAlreadyExists ? randomID() : lastDeletedText.id,
+                        classification: lastDeletedText.classification,
+                        editingLevel: lastDeletedText.editingLevel,
+                    };
+                    if (lastDeletedText.prev && findSectionById(lastDeletedText.prev)) {
+                        insertNewSectionAfterId(lastDeletedText.prev, options);
+                    } else if (lastDeletedText.next && findSectionById(lastDeletedText.next)) {
+                        insertNewSectionBeforeId(lastDeletedText.next, options);
+                    } else {
+                        console.log(id);
+                        insertNewSectionAfterId(id, options)
+                    }
+                }
+            }, 100);
+
         }
+        updateCSSClasses()
+    }
+
+    function handleKeyUp(ev) {
         updateCSSClasses()
     }
 
@@ -271,10 +308,6 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
         return inputRef.current ? inputRef.current.textContent : html;
     }
 
-    function handleKeyUp() {
-        updateCSSClasses()
-    }
-
     useEffect(() => {
         if (htmlContent) {
             inputRef.current.innerHTML = htmlContent;
@@ -292,7 +325,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, insert
     }, [cssClasses])
 
     return <section className={cssClasses?.filter(e => !!e)?.join(' ')} onClick={handleFocus} data-index={index + 1}>
-        <div contentEditable={true} onFocus={handleFocus} onBlur={handleBlur} ref={inputRef} className={editingLevel} onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
+        <div contentEditable={true} onFocus={handleFocus} onBlur={handleBlur} ref={inputRef} className={editingLevel} onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} data-id={id}>
         </div>
     </section>
 

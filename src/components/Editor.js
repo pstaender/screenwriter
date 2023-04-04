@@ -2,16 +2,16 @@ import './Editor.scss';
 
 import { useEffect, useState } from "react";
 import { SceneSection } from './SceneSection';
-import { getCaretCharacterOffsetWithin } from '../lib/helper';
+import { getCaretCharacterOffsetWithin, sha256Hash } from '../lib/helper';
 
 export function Editor({ seed, currentIndex } = {}) {
 
-    function id() {
-        return crypto.randomUUID();
+    function randomID() {
+        return sha256Hash(crypto.randomUUID().replace(/-/g, '')).substring(0, 8);
     }
 
-    function emptySection({ html } = {}) {
-        return [{ id: id(), current: true, html: html || null, classification: null }]
+    function emptySection({ html, id, classification } = {}) {
+        return [{ id: id || randomID(), current: true, html: html || null, classification: classification || null }]
     }
 
     function sectionsCurrentScreenplayViaLocalStorageOrPlainText() {
@@ -30,7 +30,7 @@ export function Editor({ seed, currentIndex } = {}) {
             return [...lastScreenPlay.sections.map((s, i) => {
                 return {
                     current: currentIndex ? i === currentIndex : i === 0,
-                    id: id(),
+                    id: s.id || randomID(),
                     html: s.html,
                     classification: s.classification
                 }
@@ -71,18 +71,18 @@ export function Editor({ seed, currentIndex } = {}) {
         setSections([...emptySection(), ...setAllSectionToNotCurrent(sections)])
     }
 
-    function insertNewSectionAtIndex(index, { html } = {}) {
-        setSections([...setAllSectionToNotCurrent(sections.slice(0, index)), ...emptySection({ html }), ...setAllSectionToNotCurrent(sections.slice(index))])
+    function insertNewSectionAtIndex(index, { html, id, classification } = {}) {
+        setSections([...setAllSectionToNotCurrent(sections.slice(0, index)), ...emptySection({ html, id, classification }), ...setAllSectionToNotCurrent(sections.slice(index))])
     }
 
-    function insertNewSectionAfterId(id, { html } = {}) {
-        let index = sections.indexOf(sections.filter(s => s.id === id)[0])
-        insertNewSectionAtIndex(index + 1, { html });
+    function insertNewSectionAfterId(currentID, { html, id, classification } = {}) {
+        let index = sections.indexOf(sections.filter(s => s.id === currentID)[0])
+        insertNewSectionAtIndex(index + 1, { html, id, classification });
     }
 
-    function insertNewSectionBeforeId(id, { html } = {}) {
-        let index = sections.indexOf(sections.filter(s => s.id === id)[0])
-        insertNewSectionAtIndex(index, { html });
+    function insertNewSectionBeforeId(currentID, { html, id, classification } = {}) {
+        let index = sections.indexOf(sections.filter(s => s.id === currentID)[0])
+        insertNewSectionAtIndex(index, { html, id, classification });
     }
 
     function handleKeyDown(ev) {
@@ -97,6 +97,10 @@ export function Editor({ seed, currentIndex } = {}) {
 
     function getPrev(id) {
         return sections[sections.indexOf(sections.filter(s => s.id === id)[0]) - 1] || null;
+    }
+
+    function findSectionById(id) {
+        return sections[sections.indexOf(sections.filter(s => s.id === id)[0])];
     }
 
     function goNext({ id, insert } = {}) {
@@ -138,7 +142,7 @@ export function Editor({ seed, currentIndex } = {}) {
 
     return <div id="screenwriter-editor" onKeyDown={handleKeyDown}>
         {sections.map((section, i) => (
-            <SceneSection current={section.current} key={section.id} id={section.id} next={sections[i + 1]} prev={sections[i + 1]} removeSection={removeSection} goNext={goNext} goPrev={goPrev} getNext={getNext} getPrev={getPrev} index={i} sectionsLength={sections.length} html={section.html} classification={section.classification} cursorToEnd={section.cursorToEnd} setCurrentSectionById={setCurrentSectionById} insertNewSectionAfterId={insertNewSectionAfterId} insertNewSectionBeforeId={insertNewSectionBeforeId} />
+            <SceneSection current={section.current} key={section.id} id={section.id} next={sections[i + 1]} prev={sections[i + 1]} removeSection={removeSection} goNext={goNext} goPrev={goPrev} getNext={getNext} getPrev={getPrev} index={i} sectionsLength={sections.length} html={section.html} classification={section.classification} cursorToEnd={section.cursorToEnd} setCurrentSectionById={setCurrentSectionById} insertNewSectionAfterId={insertNewSectionAfterId} insertNewSectionBeforeId={insertNewSectionBeforeId} findSectionById={findSectionById} randomID={randomID} />
         ))}
     </div>;
 }

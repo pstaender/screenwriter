@@ -23,7 +23,6 @@ The data is stored in your browsers local storage.
  * `meta`/`ctrl` + `arrow-up`: Jump to previous section
  * `meta`/`ctrl` + `arrow-down`: Jump to next section
  * `meta`/`ctrl` + `shift` + `U`: uppercase the section, lowercase if everthing is uppercase
- * `ctrl` + `shift` + `Z`: recover last deletions
  * `meta`/`ctrl` + `0`: toggle focus mode
 
 ## Features
@@ -32,7 +31,7 @@ The data is stored in your browsers local storage.
  * auto suggests the next name of the character if you are in a dialog
  * exports screenplay as plain-text or json
  * imports screenplay from plain-text or json
- * auto-saves/downloads screenplay to local file every minute (beware, there is no real undo implemented - if a section is deleted, it may be gone)
+ * auto-saves/downloads screenplay to local file every minute (beware, there is no real undo implemented - if a section is deleted/change it may be for good)
  * cover page for printing
  * editing meta data
  * focus mode (inspired by iaWriter)

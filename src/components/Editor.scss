@@ -38,6 +38,15 @@
             background: var(--color-almost-white);
         }
         > div:not(.dialogAnnotation) {
+            &:before {
+                // content: attr(data-id);
+                position: absolute;
+                left: 0;
+                top: 0;
+                font-size: 0.8rem;
+                font-weight: normal;
+                opacity: 0.5;
+            }
             &:focus:after {
                 content: "Text";
                 display: block;
