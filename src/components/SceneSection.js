@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { getCursorPosition, moveCursor, moveCursorToEnd, stripHTMLTags } from "../lib/helper";
 
-export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSectionById, insertNewSectionAfterId, insertNewSectionBeforeId, removeSection, id, index, sectionsLength, html, classification, setCurrentSectionById, cursorToEnd, randomID } = {}) {
+export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSectionById, insertNewSectionAfterId, insertNewSectionBeforeId, removeSection, id, index, sectionsLength, html, classification, setCurrentSectionById, cursorToEnd, randomID, chooseEditingLevel } = {}) {
 
     const inputRef = useRef(null);
 
@@ -38,7 +38,9 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
             }
             // timeout prevents changing content before undo is completly done
             setTimeout(() => {
-                if (inputRef.current && inputRef.current.textContent.trim() === '' && isCurrent) {
+                if (inputRef.current && inputRef.current.textContent.trim() === '' && isCurrent && chooseEditingLevel && inputRef.current.dataset.chooseEditingLevel === undefined) {
+                    // store on data element, to prevent multiple chooseEditingLevel
+                    inputRef.current.dataset.chooseEditingLevel = 'false';
                     let previousSection = inputRef.current?.closest('section')?.previousElementSibling
                     if (previousSection) {
                         if (previousSection.classList.contains('dialogCharacter')) {
@@ -345,6 +347,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
         if (isCurrent) {
             return;
         }
+        
         setIsCurrent(true);
         localStorage.setItem('lastIndexOfCurrent', index);
         setCurrentSectionById(id);
@@ -356,6 +359,14 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
     function handleBlur() {
         setIsCurrent(false);
         cleanupContenteditableMarkup();
+    }
+
+    function handleClick(ev) {
+        if (ev.target === ev.currentTarget) {
+            // clicked only on section, not the div[contenteditable] inside
+            ev.target.querySelector('div').click()
+            handleFocus(ev)
+        }
     }
 
     function additionalTextClass() {
@@ -400,8 +411,8 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
         }
     }, [cssClasses])
 
-    return <section className={cssClasses?.filter(e => !!e)?.join(' ')} data-index={index + 1}>
-        <div contentEditable={true} onClick={handleFocus} onFocus={handleFocus} onBlur={handleBlur} ref={inputRef} className={editingLevel} onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} data-id={id}>
+    return <section className={cssClasses?.filter(e => !!e)?.join(' ')} data-index={index + 1} data-choose-editing-level={chooseEditingLevel} onClick={handleClick}>
+        <div contentEditable={true} onFocus={handleFocus} onBlur={handleBlur} ref={inputRef} className={editingLevel} onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} data-id={id}>
         </div>
     </section>
 

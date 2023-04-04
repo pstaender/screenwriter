@@ -25,8 +25,10 @@ The data is stored in your browsers local storage.
  * `meta`/`ctrl` + `arrow-up`: Jump to previous section
  * `meta`/`ctrl` + `arrow-down`: Jump to next section
  * `meta`/`ctrl` + `shift` + `U`: uppercase the section, lowercase if everthing is uppercase
+ * `meta`/`ctrl` + `shift` + `S`: download screenplay as txt or json file
  * `meta`/`ctrl` + `0`: toggle focus mode
  * `ctrl` + `shift` + `G`: Jump to scene by number (`0` jumps to beginning of the document, numbers higher than existing scenes to the last scene, `end` to the end of the document)
+ * 
 
 ## Features
 

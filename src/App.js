@@ -121,6 +121,9 @@ export function App() {
             if (ev.key === 'M') {
                 setEditMetaData(true);
             }
+            if (ev.shiftKey && ev.key === 'S') {
+                downloadScreenplay();
+            }
         }
     }
 
