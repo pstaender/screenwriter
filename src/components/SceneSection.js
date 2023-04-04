@@ -41,17 +41,6 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
                 if (inputRef.current && inputRef.current.textContent.trim() === '' && isCurrent) {
                     let previousSection = inputRef.current?.closest('section')?.previousElementSibling
                     if (previousSection) {
-                        let sibling = previousSection;
-                        let names = [];
-                        while (sibling) {
-                            if (sibling.classList.contains('dialogCharacter')) {
-                                names.push(sibling.textContent);
-                            }
-                            if ([...new Set(names.map(l => l.toLocaleLowerCase()))].length > 1) {
-                                break;
-                            }
-                            sibling = sibling.previousElementSibling
-                        }
                         if (previousSection.classList.contains('dialogCharacter')) {
                             return setEditingLevel('dialogText');
                         }
@@ -59,6 +48,18 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
                             return setEditingLevel('dialogText');
                         }
                         if (previousSection.classList.contains('dialogText')) {
+                            let sibling = previousSection;
+                            let names = [];
+
+                            // find last relevant character name
+                            while (sibling && names.length <= 2) {
+                                if (sibling.classList.contains('dialogCharacter')) {
+                                    names.push(sibling.textContent.trim().replace(/\s*\(.*$/, '').toLocaleUpperCase());
+                                }
+                                names = [...new Set(names)]
+                                sibling = sibling.previousElementSibling
+                            }
+
                             if (names.length > 1) {
                                 setHtmlContent(names.at(-1))
                                 setTimeout(() => {
@@ -264,7 +265,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
                     el.click();
                     el.focus();
                 }, 100)
-   
+
             }
             if (jumpTo === '0') {
                 // jump to 1st element
