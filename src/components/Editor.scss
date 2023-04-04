@@ -27,6 +27,7 @@
             &:before {
                 content: counter(scene-counter);
                 font-size: 1rem;
+                font-weight: normal;
             }
         }
         padding: 1rem 2rem;
