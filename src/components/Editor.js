@@ -2,7 +2,7 @@ import './Editor.scss';
 
 import { useEffect, useState } from "react";
 import { SceneSection } from './SceneSection';
-import { getCaretCharacterOffsetWithin, sha256Hash } from '../lib/helper';
+import { getCursorPosition, sha256Hash } from '../lib/helper';
 
 export function Editor({ seed, currentIndex } = {}) {
 

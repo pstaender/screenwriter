@@ -4,7 +4,6 @@ import Dropzone from "./Dropzone"
 
 import './Toolbar.scss';
 
-
 export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setEditMetaData, setMetaData, focusMode, setFocusMode } = {}) {
 
     const [darkMode, setDarkMode] = useState(localStorage.getItem('darkMode') === 'true')
@@ -13,6 +12,7 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
         setSeed(Math.random())
         localStorage.setItem('currentScreenplay', '{}');
         localStorage.setItem('mementos', '[]');
+        localStorage.setItem('lastIndexOfCurrent', 0);
         setMetaData({})
     }
 
@@ -79,6 +79,7 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
 
     const [autoSave, setAutoSave] = useState(autoSaveIntervalInMilliSeconds > 0);
     const [downloadFormat, setDownloadFormat] = useState(localStorage.getItem('exportFormat') || null);
+    const [autoScroll, setAutoScroll] = useState(localStorage.getItem('autoScrollToCurrentElement') === 'true')
 
     function handleToggleAutoSave() {
         setAutoSave(!autoSave)
@@ -97,6 +98,10 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
             autoSave ? downloadIntervalInSeconds * 1000 : null
         );
     }, [autoSave])
+
+    useEffect(() => {
+        localStorage.setItem('autoScrollToCurrentElement', autoScroll ? 'true' : 'false')
+    }, [autoScroll])
 
     useEffect(() => {
         if (downloadFormat) {
@@ -146,6 +151,11 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
                     <div className={["icon", autoSave > 0 ? 'active' : ''].filter(e => !!e).join(' ')} onClick={handleToggleAutoSave} data-help="Download Backup every 60secs">
                         <i className="gg-timer"></i>
                     </div>
+                    <div className={["icon", autoScroll ? 'active' : ''].join(' ')} onClick={() => setAutoScroll(!autoScroll)} data-help="Smooth auto scroll to current section">
+                        <div style={{ transform: 'translateX(5px) translateY(5px)' }}>
+                            <i className="gg-scroll-v"></i>
+                        </div>
+                    </div>
                     <div className={["icon", focusMode ? 'active' : ''].join(' ')} onClick={toggleFocusMode} data-help="Focus Mode (CTRL/META + 0)">
                         <div style={{ transform: 'translateX(-3px) translateY(-3px)' }}>
                             <i className="gg-eye"></i>
@@ -161,3 +171,5 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
         </div>
     )
 }
+
+// localStorage.getItem('autoScrollToCurrentElement') === 'true'

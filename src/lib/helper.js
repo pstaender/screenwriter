@@ -28,7 +28,7 @@ export function removeWordWrap(text, maxLength = null) {
     return clearedText.join('');
 }
 
-export function getCaretCharacterOffsetWithin(element) {
+export function getCursorPosition(element) {
     var caretOffset = 0;
     var doc = element.ownerDocument || element.document;
     var win = doc.defaultView || doc.parentWindow;
@@ -62,7 +62,6 @@ export function moveCursor(el, position) {
     try {
         moveCursorToPosition(el, position);
     } catch (e) {
-        console.log(e.message)
         if (!e.message.match(/offset/)) {
             throw e;
         }
@@ -169,6 +168,10 @@ export function sha256Hash(ascii) {
     }
     return result;
 };
+
+export function moveCursorToEnd(el) {
+    moveCursor(el, el.textContent?.length)
+}
 
 function moveCursorToPosition(el, position) {
     // DOMException: Failed to execute 'setStart' on 'Range': The offset 220 is larger than the node's length (78)

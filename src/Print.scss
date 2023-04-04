@@ -11,15 +11,17 @@ body {
 #screenwriter-editor > section {
     padding: 0 !important;
     padding-bottom: 1rem !important;
+    --scene-number-width: 3rem;
+    padding-left: var(--scene-number-width) !important;
     &.description.uppercase {
         > div:before {
             content: counter(scene-counter) " ";
             text-align: inherit;
-            position: relative;
             opacity: inherit;
             font-size: inherit;
             top: inherit;
             left: inherit;
+            margin-left: calc(-1 * var(--scene-number-width)) !important;
         }
     }
     &.dialogCharacter, &.dialogText, &.dialogAnnotation, &.descriptionAnnotation {
@@ -36,7 +38,7 @@ body {
     &.comment {
         display: none;
     }
-    &.h6 {
+    &.h7 {
         opacity: 0;
         page-break-after: always;
     }

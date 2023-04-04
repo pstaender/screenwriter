@@ -1,6 +1,6 @@
 
 import { useEffect, useRef, useState } from "react";
-import { getCaretCharacterOffsetWithin, moveCursor, stripHTMLTags } from "../lib/helper";
+import { getCursorPosition, moveCursor, moveCursorToEnd, stripHTMLTags } from "../lib/helper";
 
 export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSectionById, insertNewSectionAfterId, insertNewSectionBeforeId, removeSection, id, index, sectionsLength, html, classification, setCurrentSectionById, cursorToEnd, randomID } = {}) {
 
@@ -38,7 +38,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
             }
             // timeout prevents changing content before undo is completly done
             setTimeout(() => {
-                if (inputRef.current.textContent.trim() === '' && isCurrent) {
+                if (inputRef.current && inputRef.current.textContent.trim() === '' && isCurrent) {
                     let previousSection = inputRef.current?.closest('section')?.previousElementSibling
                     if (previousSection) {
                         let sibling = previousSection;
@@ -60,13 +60,16 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
                         }
                         if (previousSection.classList.contains('dialogText')) {
                             if (names.length > 1) {
-                                setHtmlContent(names.at(-1))//.match(/[\w]+/)[0])
+                                setHtmlContent(names.at(-1))
+                                setTimeout(() => {
+                                    moveCursorToEnd(inputRef.current)
+                                }, 100)
                             }
                             return setEditingLevel('dialogCharacter');
                         }
                     }
                 }
-            }, 100);
+            }, 50);
 
         }
 
@@ -87,7 +90,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
         let mementos = JSON.parse(localStorage.getItem('mementos') || '[]')
         mementos.push(step)
         while (JSON.stringify(mementos).length > maxDataLength) {
-            mementos = mementos.shift()
+            mementos.shift()
         }
         localStorage.setItem('mementos', JSON.stringify(mementos))
     }
@@ -105,8 +108,8 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
             return;
         }
 
-        let cursorIsAtEndOfSection = getCaretCharacterOffsetWithin(ev.target) >= content.trim().length;
-        let cursorIsAtBeginOfSection = getCaretCharacterOffsetWithin(ev.target) < 1;
+        let cursorIsAtEndOfSection = getCursorPosition(ev.target) >= content.trim().length;
+        let cursorIsAtBeginOfSection = getCursorPosition(ev.target) < 1;
         if (ev.key === 'Tab') {
             const direction = ev.shiftKey ? -1 : 1;
             ev.preventDefault();
@@ -115,6 +118,14 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
             if (ev.shiftKey && !nextLevel) {
                 setEditingLevel(editingLevels[editingLevels.length - 1]);
             }
+            let cursorPos = getCursorPosition(ev.target);
+            setTimeout(() => {
+                try {
+                    moveCursor(ev.target, cursorPos)
+                } catch (_) {
+                    // TypeError: Failed to execute 'setStart' on 'Range': parameter 1 is not of type 'Node'.
+                }
+            }, 110);
             cleanupContenteditableMarkup()
         }
         if (ev.key === 'Backspace' && (ev.metaKey || ev.ctrlKey || inputRef.current.textContent.trim() === '')) {
@@ -199,7 +210,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
             } else if (cursorIsAtBeginOfSection) {
                 insertNewSectionBeforeId(id)
             } else {
-                let splitUpAt = getCaretCharacterOffsetWithin(inputRef.current);
+                let splitUpAt = getCursorPosition(inputRef.current);
                 if (splitUpAt > 0) {
                     let partRight = inputRef.current.textContent.substring(splitUpAt)
                     let partLeft = inputRef.current.textContent.substring(0, splitUpAt);
@@ -217,17 +228,70 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
                 text = inputRef.current.textContent.toLocaleLowerCase()
             }
             inputRef.current.textContent = text;
+        } else if (ev.ctrlKey && ev.key === 'G') {
+            // GOTO scene
+            let previous = inputRef.current.closest('section')
+
+            let scenes = [];
+            document.querySelectorAll('#screenwriter-editor > section.uppercase.description').forEach((el) => {
+                scenes.push(Number(el.getAttribute('data-index')))
+            })
+
+            let sceneNumberBefore = null;
+
+            while (previous) {
+                if (previous.classList.contains('description') && previous.classList.contains('uppercase')) {
+                    sceneNumberBefore = previous.getAttribute('data-index');
+                    break;
+                }
+                previous = previous.previousElementSibling;
+            }
+
+            let nearestScene = previous ? scenes.indexOf(Number(sceneNumberBefore)) + 1 : ''
+
+            let jumpTo = prompt(`Which number of scene jump to?`, nearestScene || '1')
+            let jumpToSceneNumber = scenes[Number(jumpTo) - 1];
+
+            if (!jumpTo) {
+                return;
+            }
+            function selectSection(el) {
+                if (!el) {
+                    return;
+                }
+                el.click();
+                el.focus();
+            }
+            if (jumpTo === '0') {
+                selectSection(
+                    document.querySelector(`#screenwriter-editor > section:first-child`)
+                )
+            }
+            else if (jumpToSceneNumber) {
+                selectSection(
+                    document.querySelector(`#screenwriter-editor > section.uppercase.description[data-index="${jumpToSceneNumber}"]`)
+                )
+
+            } else if (jumpTo.trim() === 'end') {
+                selectSection(
+                    document.querySelector(`#screenwriter-editor > section:last-child`)
+                )
+            } else {
+                selectSection(
+                    document.querySelector(`#screenwriter-editor > section.uppercase.description[data-index="${scenes.at(-1)}"]`)
+                )
+            }
+            return;
         } else if ((ev.metaKey || ev.ctrlKey) && ev.key === 'z') {
             let beforeLastUndo = inputRef.current.textContent
             setTimeout(() => {
-                if (beforeLastUndo !== inputRef.current.textContent) {
+                if (!inputRef.current || beforeLastUndo !== inputRef.current.textContent) {
                     // something has changed, so the browser did some undo stuff…
                     return;
                 }
                 let lastDeletedText = popMementos();
-                // console.log(lastDeletedText)
                 if (lastDeletedText) {
-                    let sectionWithIDAlreadyExists = !!(lastDeletedText.id && findSectionById(lastDeletedText.id)) ;
+                    let sectionWithIDAlreadyExists = !!(lastDeletedText.id && findSectionById(lastDeletedText.id));
                     const options = {
                         html: lastDeletedText.html,
                         // prevent inserting of duplicate ids
@@ -240,11 +304,10 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
                     } else if (lastDeletedText.next && findSectionById(lastDeletedText.next)) {
                         insertNewSectionBeforeId(lastDeletedText.next, options);
                     } else {
-                        console.log(id);
                         insertNewSectionAfterId(id, options)
                     }
                 }
-            }, 100);
+            }, 50);
 
         }
         updateCSSClasses()
@@ -289,7 +352,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
         if (!inputRef.current?.textContent) {
             return;
         }
-        let hLevel = inputRef.current.textContent.match(/^(#{1,6})?.*$/)
+        let hLevel = inputRef.current.textContent.match(/^(#{1,7})?.*$/)
         if (hLevel && hLevel[1]) {
             return `h${hLevel[1].length}`;
         }
@@ -316,7 +379,10 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
 
     useEffect(() => {
         updateCSSClasses()
-    }, [isCurrent])
+        if (isCurrent && inputRef.current && localStorage.getItem('autoScrollToCurrentElement') === 'true') {
+            inputRef.current?.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+        }
+    }, [isCurrent, editingLevel])
 
     useEffect(() => {
         if (!cssClasses) {

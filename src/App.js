@@ -147,7 +147,7 @@ export function App() {
     }, [metaData])
 
     useEffect(() => {
-        if (localStorage.getItem('lastIndexOfCurrent')) {
+        if (Number(localStorage.getItem('lastIndexOfCurrent')) >= 0) {
             setCurrentIndex(Number(localStorage.getItem('lastIndexOfCurrent')))
         }
     }, [seed])
@@ -156,6 +156,9 @@ export function App() {
         if (isVisible) {
             // force reload
             setSeed(Math.random())
+            // setTimeout(() => {
+            //     element.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
+            // }, 200)
         } else {
             storeScreenplayInLocalStorage()
         }
