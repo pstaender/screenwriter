@@ -259,24 +259,32 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
                 if (!el) {
                     return;
                 }
-                el.click();
-                el.focus();
+                //setCurrentSectionById(el.querySelector('div').dataset['id']);
+                setTimeout(() => {
+                    el.click();
+                    el.focus();
+                }, 100)
+   
             }
             if (jumpTo === '0') {
+                // jump to 1st element
                 selectSection(
                     document.querySelector(`#screenwriter-editor > section:first-child`)
                 )
             }
             else if (jumpToSceneNumber) {
+                // jump to specified section
                 selectSection(
                     document.querySelector(`#screenwriter-editor > section.uppercase.description[data-index="${jumpToSceneNumber}"]`)
                 )
 
-            } else if (jumpTo.trim() === 'end') {
+            } else if (jumpTo.trim().toLocaleLowerCase().startsWith('e')) {
+                // jump to last element
                 selectSection(
                     document.querySelector(`#screenwriter-editor > section:last-child`)
                 )
-            } else {
+            } else if (Number(jumpTo) > 1) {
+                // jump to last scene
                 selectSection(
                     document.querySelector(`#screenwriter-editor > section.uppercase.description[data-index="${scenes.at(-1)}"]`)
                 )
