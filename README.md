@@ -17,7 +17,7 @@ The data is stored in your browsers local storage.
 
 ## Keyboard Usage
 
- * `tab`: change the type of text in the current secion (text, charater for dialog, dialog text and annotation)
+ * `tab`: change the type of text in the current secion (text, charater for dialog, dialog text, dialog annotation and scene annotation)
  * `shift` + `enter`: insert a new line (line-break)
  * `enter`: break section into parts / insert new section below if at the end of the section / insert above if ath the beginning of the section
  * `meta`/`ctrl` + `backspace`: remove the current section
