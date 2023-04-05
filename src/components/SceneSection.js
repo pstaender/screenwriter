@@ -38,7 +38,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
             }
             // timeout prevents changing content before undo is completly done
             setTimeout(() => {
-                if (inputRef.current && inputRef.current.textContent.trim() === '' && isCurrent && chooseEditingLevel && inputRef.current.dataset.chooseEditingLevel === undefined) {
+                if (inputRef.current && inputRef.current.textContent.trim() === '' && isCurrent && chooseEditingLevel && !inputRef.current.dataset.chooseEditingLevel) {
                     // store on data element, to prevent multiple chooseEditingLevel
                     inputRef.current.dataset.chooseEditingLevel = 'editingLevelAlreadyChoosen';
                     let previousSection = inputRef.current?.closest('section')?.previousElementSibling
@@ -123,9 +123,14 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
             const direction = ev.shiftKey ? -1 : 1;
             ev.preventDefault();
             let nextLevel = editingLevels[editingLevels.indexOf(editingLevel) + direction];
-            if (inputRef.current.dataset.chooseEditingLevel && direction === 1 && editingLevel === 'dialogCharacter') {
+
+            if (inputRef.current.dataset.chooseEditingLevel && inputRef.current.dataset.chooseEditingLevel !== 'false') {
                 inputRef.current.dataset.chooseEditingLevel = '';
                 inputRef.current.textContent = '';
+            }
+
+            if (inputRef.current.dataset.chooseEditingLevel && direction === 1 && editingLevel === 'dialogCharacter') {
+                
                 nextLevel = 'dialogAnnotation'
             }
             setEditingLevel(nextLevel || editingLevels[0]);
@@ -370,6 +375,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
 
     function handleBlur() {
         setIsCurrent(false);
+        inputRef.current.dataset.chooseEditingLevel = '';
         cleanupContenteditableMarkup();
     }
 

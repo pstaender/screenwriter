@@ -166,9 +166,6 @@ export function App() {
         if (isVisible) {
             // force reload
             setSeed(Math.random())
-            // setTimeout(() => {
-            //     element.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
-            // }, 200)
         } else {
             storeScreenplayInLocalStorage()
         }
