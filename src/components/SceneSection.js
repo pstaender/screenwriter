@@ -40,7 +40,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
             setTimeout(() => {
                 if (inputRef.current && inputRef.current.textContent.trim() === '' && isCurrent && chooseEditingLevel && inputRef.current.dataset.chooseEditingLevel === undefined) {
                     // store on data element, to prevent multiple chooseEditingLevel
-                    inputRef.current.dataset.chooseEditingLevel = 'false';
+                    inputRef.current.dataset.chooseEditingLevel = 'editingLevelAlreadyChoosen';
                     let previousSection = inputRef.current?.closest('section')?.previousElementSibling
                     if (previousSection) {
                         if (previousSection.classList.contains('dialogCharacter')) {
@@ -66,7 +66,10 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
                             names.shift()
 
                             if (names.length >= 1) {
-                                setHtmlContent(names.shift())
+                                let name = names.shift();
+                                inputRef.current.dataset.chooseEditingLevel = name
+                                setHtmlContent(name)
+                                inputRef.current.textContent.trim()
                                 setTimeout(() => {
                                     moveCursorToEnd(inputRef.current)
                                 }, 100)
@@ -120,7 +123,16 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
             const direction = ev.shiftKey ? -1 : 1;
             ev.preventDefault();
             let nextLevel = editingLevels[editingLevels.indexOf(editingLevel) + direction];
+            if (inputRef.current.dataset.chooseEditingLevel && direction === 1 && editingLevel === 'dialogCharacter') {
+                inputRef.current.dataset.chooseEditingLevel = '';
+                inputRef.current.textContent = '';
+                nextLevel = 'dialogAnnotation'
+            }
             setEditingLevel(nextLevel || editingLevels[0]);
+            if (inputRef.current?.dataset.chooseEditingLevel && inputRef.current?.dataset.chooseEditingLevel === inputRef.current.textContent) {
+                // delete suggested name/text
+                inputRef.current.textContent = '';
+            }
             if (ev.shiftKey && !nextLevel) {
                 setEditingLevel(editingLevels[editingLevels.length - 1]);
             }

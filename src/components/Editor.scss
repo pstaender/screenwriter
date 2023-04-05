@@ -34,7 +34,7 @@
         }
         padding: 1rem 2rem;
         &.selected {
-            background: var(--color-light-grey) !important;
+            background: var(--color-light-grey-opaque) !important;
             outline: none;
         }
         transition: background-color 0.1s;
@@ -162,19 +162,17 @@
 }
 
 .focus {
-    .no-mouse-pointer {
-        cursor: none;
-    }
+    --opacity-out-of-focus: .25;
     > #screenwriter-editor {
         > section > div {
-            opacity: 0.25;
+            opacity: var(--opacity-out-of-focus);
             transition: opacity .1s;
             &:focus, &:hover {
                 opacity: 1;
                 background: none;
-                // &.comment {
-                //     opacity: 1 !important;
-                // }
+            }
+            &:focus {
+                opacity: 1 !important;
             }
         }
         > section > div:not(.dialogAnnotation) {
@@ -185,6 +183,15 @@
         }
         > section:hover, > section.selected {
             background: none;
+        }
+    }
+
+    .no-mouse-pointer {
+        cursor: none;
+        > #screenwriter-editor > section > div {
+            &:hover {
+                opacity: var(--opacity-out-of-focus);
+            }
         }
     }
    
