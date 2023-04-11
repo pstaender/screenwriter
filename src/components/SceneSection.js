@@ -204,7 +204,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
             }
         }
         // control SuggestionBox
-        if (showSuggestions && (!ev.metaKey && !ev.ctrlKey && !ev.shiftKey) && (ev.key === 'ArrowDown' || ev.key === 'ArrowUp' || ev.key === 'Enter' || ev.key === 'Escape')) {
+        if (showSuggestions && !ev.metaKey && !ev.ctrlKey && !ev.shiftKey && (ev.key === 'ArrowDown' || ev.key === 'ArrowUp' || ev.key === 'Enter' || ev.key === 'Escape')) {
             // this will be handeld by SuggestionBox, see useEffect
             if (ev.key === 'Escape') {
                 ev.key
@@ -212,7 +212,6 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
                 return
             }
             if (ev.key === 'Enter' && !cursorIsAtEndOfSection) {
-                // setShowSuggestions(false)
                 ev.preventDefault();
                 return
             }
