@@ -27,6 +27,10 @@ export function SuggestionBox({ keyPressed, editingLevel, sections, searchText, 
         let sections = JSON.parse(localStorage.getItem('currentScreenplay')).sections
         let records = [];
         let _searchText = searchText || '';
+        if (!sections) {
+            setSearchableRecords([])
+            return
+        }
         if (editingLevel === 'description') {
             // build searches
             records = sections
@@ -63,7 +67,6 @@ export function SuggestionBox({ keyPressed, editingLevel, sections, searchText, 
         if (!keyPressed) {
             return;
         }
-        // console.log(keyPressed.key)
         let resultsCount = results?.length || 0;
         if (keyPressed.key === "ArrowDown") {
             if (selectedResult === null) {
@@ -75,7 +78,7 @@ export function SuggestionBox({ keyPressed, editingLevel, sections, searchText, 
             if (selectedResult === null) {
                 setSelectedResult(resultsCount - 1)
             } else {
-                setSelectedResult(selectedResult - 1 < 0 ? selectedResult - 1 : selectedResult - 1);
+                setSelectedResult(selectedResult - 1 < 0 ? resultsCount - 1  : selectedResult - 1);
             }
         } else if (keyPressed.key === 'Enter') {
             chooseResultForSection(results[selectedResult]?.target)

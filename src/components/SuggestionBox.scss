@@ -2,20 +2,15 @@
     position: absolute;
     left: 0;
     width: 100%;
-    // width: min(46rem, calc(100% - 1rem));
     z-index: 999;
     margin: 0;
     background: var(--color-white-opaque);
-    // backdrop-filter: blur(20px);
-    // background: var(--color-background);
-    // opacity: 0.5;
     backdrop-filter: blur(2px);
     > div {
         border: 2px solid var(--color-light-grey);
         padding: 1rem 2rem;
     }
     > .empty {
-        
         display: none;
     }
     ul {
@@ -37,10 +32,7 @@
             &:hover {
                 cursor: pointer;
             }
-            // &:hover,
             &.selected {
-                
-                
                 &:before {
                     content: '';
                     position: absolute;
@@ -54,6 +46,5 @@
                 }
             }
         }
-        // ;
     }
 }

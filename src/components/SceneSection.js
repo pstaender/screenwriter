@@ -242,9 +242,13 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
             goPrev({ id, insert: index <= 1 });
             return;
         }
-        else if ((ev.key === 'ArrowUp' || ev.key === 'ArrowLeft') && cursorIsAtBeginOfSection) {
+        else if ((ev.key === 'ArrowUp' || ev.key === 'ArrowLeft') && !allowToShowSuggestionBox && cursorIsAtBeginOfSection) {
             ev.preventDefault();
             goPrev({ id, insert: (ev.metaKey || ev.ctrlKey), cursorToEnd: !ev.metaKey && !ev.ctrlKey });
+            return;
+        }
+        else if (ev.key === 'ArrowRight' && cursorIsAtEndOfSection && !allowToShowSuggestionBox) {
+            goNext({ id, insert: (ev.metaKey || ev.ctrlKey), cursorToEnd: false });
             return;
         }
         else if ((ev.key === 'Backspace') && cursorIsAtBeginOfSection) {
@@ -464,7 +468,6 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
     }, [htmlContent])
 
     useEffect(() => {
-        // console.log(searchTextForSuggestionBox, htmlContent);
         let content = inputRef.current?.textContent
         if (content !== null &&
             //(searchTextForSuggestionBox !== content) &&
@@ -493,7 +496,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
     }, [cssClasses])
 
     return <>
-        <section className={cssClasses?.filter(e => !!e)?.join(' ')} data-index={index + 1} data-choose-editing-level={chooseEditingLevel} onClick={handleClick}>
+        <section className={(cssClasses ? [...cssClasses, allowToShowSuggestionBox && showSuggestions ? 'with-suggestions' : '' ] : []).filter(e => !!e)?.join(' ')} data-index={index + 1} data-choose-editing-level={chooseEditingLevel} onClick={handleClick}>
             <div contentEditable={true} onFocus={handleFocus} onBlur={handleBlur} ref={inputRef} className={['edit-field', editingLevel].join(' ')} onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} data-id={id}>
             </div>
             {allowToShowSuggestionBox && showSuggestions && (
