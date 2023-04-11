@@ -20,7 +20,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
     const [isCurrent, setIsCurrent] = useState(current);
     const [htmlContent, setHtmlContent] = useState(html || null)
     const [cssClasses, setCSSClasses] = useState(null);
-    const [allowToShowSuggestionBox, setAllowToShowSuggest] = useState(false);
+    const [allowToShowSuggestionBox, setAllowToShowSuggestionBox] = useState(false);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [searchTextForSuggestionBox, setSearchTextForSuggestionBox] = useState(null);
     const [keyPressed, setKeyPressed] = useState(null);
@@ -216,7 +216,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
                 ev.preventDefault();
                 return
             }
-            
+
         }
         if ((ev.key === 'ArrowRight' && cursorIsAtEndOfSection) ||
             (ev.key === 'ArrowDown' && (ev.metaKey || ev.ctrlKey))) {
@@ -247,7 +247,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
             goPrev({ id, insert: (ev.metaKey || ev.ctrlKey), cursorToEnd: !ev.metaKey && !ev.ctrlKey });
             return;
         }
-        else if (ev.key === 'ArrowRight' && cursorIsAtEndOfSection && !allowToShowSuggestionBox) {
+        else if ((ev.key === 'ArrowRight' || ev.key === 'ArrowDown') && cursorIsAtEndOfSection && !allowToShowSuggestionBox) {
             goNext({ id, insert: (ev.metaKey || ev.ctrlKey), cursorToEnd: false });
             return;
         }
@@ -470,12 +470,11 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
     useEffect(() => {
         let content = inputRef.current?.textContent
         if (content !== null &&
-            //(searchTextForSuggestionBox !== content) &&
             (((editingLevel === 'description' && content === content.toLocaleUpperCase()) || editingLevel === 'dialogCharacter'))
-         ) {
-            setAllowToShowSuggest(true);
+        ) {
+            setAllowToShowSuggestionBox(localStorage.getItem('showSuggestionBox') === 'true');
         } else {
-            setAllowToShowSuggest(false);
+            setAllowToShowSuggestionBox(false);
         }
     }, [editingLevel, inputRef, keyPressed])
 
@@ -496,7 +495,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
     }, [cssClasses])
 
     return <>
-        <section className={(cssClasses ? [...cssClasses, allowToShowSuggestionBox && showSuggestions ? 'with-suggestions' : '' ] : []).filter(e => !!e)?.join(' ')} data-index={index + 1} data-choose-editing-level={chooseEditingLevel} onClick={handleClick}>
+        <section className={(cssClasses ? [...cssClasses, allowToShowSuggestionBox && showSuggestions ? 'with-suggestions' : ''] : []).filter(e => !!e)?.join(' ')} data-index={index + 1} data-choose-editing-level={chooseEditingLevel} onClick={handleClick}>
             <div contentEditable={true} onFocus={handleFocus} onBlur={handleBlur} ref={inputRef} className={['edit-field', editingLevel].join(' ')} onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} data-id={id}>
             </div>
             {allowToShowSuggestionBox && showSuggestions && (

@@ -52,7 +52,7 @@ export function SuggestionBox({ keyPressed, editingLevel, sections, searchText, 
     }, [sections, searchText, editingLevel])
 
     useEffect(() => {
-        
+
         if (searchableRecords.length > 0 && searchText) {
             let result = fuzzysort.go(searchText.toLocaleUpperCase().trim(), searchableRecords, {
                 all: true,
@@ -61,7 +61,7 @@ export function SuggestionBox({ keyPressed, editingLevel, sections, searchText, 
             });
             setResults(result);
         }
-    },  [searchText])
+    }, [searchText])
 
     useEffect(() => {
         if (!keyPressed) {
@@ -78,12 +78,11 @@ export function SuggestionBox({ keyPressed, editingLevel, sections, searchText, 
             if (selectedResult === null) {
                 setSelectedResult(resultsCount - 1)
             } else {
-                setSelectedResult(selectedResult - 1 < 0 ? resultsCount - 1  : selectedResult - 1);
+                setSelectedResult(selectedResult - 1 < 0 ? resultsCount - 1 : selectedResult - 1);
             }
         } else if (keyPressed.key === 'Enter') {
             chooseResultForSection(results[selectedResult]?.target)
         }
-        
     }, [keyPressed])
 
     useEffect(() => {
@@ -91,6 +90,9 @@ export function SuggestionBox({ keyPressed, editingLevel, sections, searchText, 
             return
         }
         suggestionBoxRef.current.querySelector('ul li.selected')?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" })
+        if (!suggestionBoxRef.current?.closest('section').nextElementSibling) {
+            suggestionBoxRef.current.scrollIntoView({ behavior: 'smooth' })
+        }
     }, [selectedResult, suggestionBoxRef])
 
     return (
@@ -99,7 +101,7 @@ export function SuggestionBox({ keyPressed, editingLevel, sections, searchText, 
                 {results.length > 0 && (
                     <ul>
                         {results.map((r, i) => <li className={i === selectedResult ? 'selected' : ''} onClick={handleSelectResult} key={i}>
-                            {fuzzysort.highlight(r, (m, i) => <em key={`r${i}`} onClick={handleSelectResult}>
+                            {fuzzysort.highlight(r, (m, i) => <em key={`${searchText}${i}`} onClick={handleSelectResult}>
                                 {m}
                             </em>)}
                         </li>)}

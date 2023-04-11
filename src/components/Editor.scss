@@ -15,7 +15,7 @@
         &:before {
             // content: attr(data-index);
             position: absolute;
-            
+
             font-size: 0.8rem;
             // top: 1rem;
             left: -5.5rem;
@@ -60,7 +60,7 @@
                 left: calc(100% + 1rem);
                 text-align: left;
                 text-transform: uppercase;
-                top: calc(50% - .75rem);
+                top: calc(50% - 0.75rem);
                 background: var(--color-text);
                 color: var(--color-background);
                 padding: 0 0.25rem;
@@ -86,7 +86,8 @@
     div.descriptionAnnotation {
         text-align: right;
     }
-    div.dialogCharacter, div.dialogCharacter + .suggestion-box ul {
+    div.dialogCharacter,
+    div.dialogCharacter + .suggestion-box ul {
         padding-left: 20rem;
         text-transform: uppercase;
         font-weight: bold;
@@ -108,7 +109,11 @@
     section.strong div {
         font-weight: bold;
     }
-    section.h1, section.h2, section.h3, section.h4, section.h5 {
+    section.h1,
+    section.h2,
+    section.h3,
+    section.h4,
+    section.h5 {
         div {
             line-height: 1.4em;
             font-weight: bold;
@@ -159,22 +164,20 @@
     section.dialogText + section.description {
         margin-top: 2.5rem;
     }
-    section.with-suggestions {
-        margin-bottom: 4rem;
-        > .suggestion-box {
-            opacity: 1;
-        }
-    }
+    // section:last-of-type.with-suggestions {
+    //     margin-bottom: 12rem;
+    // }
 }
 
 .focus {
-    --opacity-out-of-focus: .25;
-    
+    --opacity-out-of-focus: 0.25;
+
     > #screenwriter-editor {
         > section > div {
             opacity: var(--opacity-out-of-focus);
-            transition: opacity .1s;
-            &:focus, &:hover {
+            transition: opacity 0.1s;
+            &:focus,
+            &:hover {
                 opacity: 1;
                 background: none;
             }
@@ -188,7 +191,8 @@
                 display: none;
             }
         }
-        > section:hover, > section.selected {
+        > section:hover,
+        > section.selected {
             background: none;
         }
     }
@@ -201,8 +205,9 @@
             }
         }
     }
-   
-    #github-link, .edit-meta-data {
+
+    #github-link,
+    .edit-meta-data {
         display: none;
     }
     #screenwriter-toolbar {
@@ -211,5 +216,5 @@
         &:hover {
             opacity: 1;
         }
-    } 
+    }
 }

@@ -7,6 +7,7 @@ import './Toolbar.scss';
 export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setEditMetaData, setMetaData, focusMode, setFocusMode } = {}) {
 
     const [darkMode, setDarkMode] = useState(localStorage.getItem('darkMode') === 'true')
+    const [showSuggestionBox, setShowSuggestionBox] = useState(localStorage.getItem('showSuggestionBox') === 'true')
 
     function resetDocument() {
         setSeed(Math.random())
@@ -112,6 +113,10 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
         }
     }, [downloadFormat])
 
+    useEffect(() => {
+        localStorage.setItem('showSuggestionBox', showSuggestionBox ? 'true' : '')
+    }, [showSuggestionBox])
+
     return (
         <div id="screenwriter-toolbar">
             <Dropzone onDrop={onDrop} accept={{
@@ -157,6 +162,11 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
                     <div className={["icon", autoScroll ? 'active' : ''].join(' ')} onClick={() => setAutoScroll(!autoScroll)} data-help="Smooth auto scroll to current section">
                         <div style={{ transform: 'translateX(5px) translateY(5px)' }}>
                             <i className="gg-scroll-v"></i>
+                        </div>
+                    </div>
+                    <div className={["icon", localStorage.getItem('showSuggestionBox') === 'true' ? 'active' : ''].join(' ')} onClick={() => setShowSuggestionBox(!showSuggestionBox)} data-help="Show/Hide suggestions">
+                        <div>
+                            <i className="gg-menu-boxed"></i>
                         </div>
                     </div>
                     <div className={["icon", focusMode ? 'active' : ''].join(' ')} onClick={toggleFocusMode} data-help="Focus Mode (CTRL/META + 0)">
