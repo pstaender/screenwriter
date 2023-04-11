@@ -16,6 +16,19 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
         'descriptionAnnotation',
     ];
 
+    // const editingLevels = {
+    //     default: [
+    //         'description',
+    //         'dialogCharacter',
+    //         'dialogText',
+    //         'dialogAnnotation',
+    //         'descriptionAnnotation',
+    //     ],
+    //     description: [
+    //         'text'
+    //     ]
+    // ];
+
     const [editingLevel, setEditingLevel] = useState(classification || 'description');
     const [isCurrent, setIsCurrent] = useState(current);
     const [htmlContent, setHtmlContent] = useState(html || null)

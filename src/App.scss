@@ -32,6 +32,11 @@ body {
   --color-almost-white: #fafafa;
   --color-light-grey-opaque: rgba(200, 200, 200, 0.2) !important;
   --color-white-opaque: rgba(255, 255, 255, 0.8);
+  --max-dialog-width: 33rem;
+  --max-dialog-annotation-width: 30rem;
+  --dialog-character-indent: 20rem;
+  --dialog-text-indent: 10rem;
+  --dialog-annotation-indent: 12rem;
   background: var(--color-background);
   transition: background 0.4s;
   color: var(--color-text);

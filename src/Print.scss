@@ -1,11 +1,22 @@
 @media print {
+    :root {
+        --line-height: 1.25em;
+        --font-size: 11pt;
+    }
     #screenwriter-toolbar,
     #github-link,
     .edit-meta-data {
         display: none;
     }
-    :root {
-        --font-size: 10pt;
+    body {
+        --extra-top-padding: 1.25rem;
+        --color-background: #fff !important;
+        --color-text: #000 !important;
+        --max-dialog-width: 28rem;
+        --max-dialog-annotation-width: 25rem;
+        --dialog-character-indent: 15rem;
+        --dialog-text-indent: 9rem;
+        --dialog-annotation-indent: 12rem;
     }
     body {
         font-size: var(--font-size);
@@ -25,7 +36,7 @@
                 text-align: inherit;
                 opacity: inherit;
                 font-size: inherit;
-                top: 1.5rem;
+                top: var(--extra-top-padding);
                 left: inherit;
                 margin-left: calc(-1 * var(--scene-number-width));
             }
@@ -39,7 +50,7 @@
                 top: inherit;
                 right: 1rem;
                 font-weight: normal;
-                top: 1.5rem;
+                top: var(--extra-top-padding);
                 margin-right: calc(-1 * var(--scene-number-width));
                 background: inherit !important;
                 color: inherit !important;
@@ -53,19 +64,20 @@
             padding: 0;
         }
         &.description {
+            margin: 0;
             padding-bottom: 0.5rem;
             &.uppercase {
-                padding-top: 1.5rem;
+                padding-top: var(--extra-top-padding);
                 page-break-after: avoid;
                 page-break-before: avoid;
             }
         }
+        &.dialogCharacter,
+        &.dialogAnnotation {
+            page-break-after: avoid;
+        }
         &.comment {
             display: none;
-        }
-        &.dialogCharacter {
-            page-break-after: avoid;
-            page-break-before: avoid;
         }
         &.h7 {
             opacity: 0;
@@ -75,6 +87,14 @@
             > div {
                 opacity: 1;
             }
+        }
+    }
+    #screenwriter-editor {
+        section.dialogText + section.description {
+            margin-top: 1.25rem;
+        }
+        section.description + section.dialogCharacter {
+            margin-top: 0rem;
         }
     }
     #screenwriter-editor > section.dialogCharacter {
