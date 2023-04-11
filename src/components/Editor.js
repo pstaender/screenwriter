@@ -150,7 +150,7 @@ export function Editor({ seed, currentIndex } = {}) {
 
     return <div id="screenwriter-editor" onKeyDown={handleKeyDown}>
         {sections.map((section, i) => (
-            <SceneSection current={section.current} key={section.key} id={section.id} next={sections[i + 1]} prev={sections[i + 1]} removeSection={removeSection} goNext={goNext} goPrev={goPrev} getNext={getNext} getPrev={getPrev} index={i} sectionsLength={sections.length} html={section.html} classification={section.classification} cursorToEnd={section.cursorToEnd} setCurrentSectionById={setCurrentSectionById} insertNewSectionAfterId={insertNewSectionAfterId} insertNewSectionBeforeId={insertNewSectionBeforeId} findSectionById={findSectionById} randomID={randomID} chooseEditingLevel={section.chooseEditingLevel || false} />
+            <SceneSection current={section.current} key={section.key} id={section.id} next={sections[i + 1]} prev={sections[i + 1]} removeSection={removeSection} goNext={goNext} goPrev={goPrev} getNext={getNext} getPrev={getPrev} index={i} sectionsLength={sections.length} html={section.html} classification={section.classification} cursorToEnd={section.cursorToEnd} setCurrentSectionById={setCurrentSectionById} insertNewSectionAfterId={insertNewSectionAfterId} insertNewSectionBeforeId={insertNewSectionBeforeId} findSectionById={findSectionById} randomID={randomID} chooseEditingLevel={section.chooseEditingLevel || false} sections={sections} />
         ))}
     </div>;
 }

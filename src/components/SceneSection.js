@@ -2,7 +2,9 @@
 import { useEffect, useRef, useState } from "react";
 import { getCursorPosition, moveCursor, moveCursorToEnd, stripHTMLTags } from "../lib/helper";
 
-export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSectionById, insertNewSectionAfterId, insertNewSectionBeforeId, removeSection, id, index, sectionsLength, html, classification, setCurrentSectionById, cursorToEnd, randomID, chooseEditingLevel } = {}) {
+import { SuggestionBox } from './SuggestionBox.js'
+
+export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSectionById, insertNewSectionAfterId, insertNewSectionBeforeId, removeSection, id, index, sectionsLength, html, classification, setCurrentSectionById, cursorToEnd, randomID, chooseEditingLevel, sections } = {}) {
 
     const inputRef = useRef(null);
 
@@ -18,6 +20,10 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
     const [isCurrent, setIsCurrent] = useState(current);
     const [htmlContent, setHtmlContent] = useState(html || null)
     const [cssClasses, setCSSClasses] = useState(null);
+    const [allowToShowSuggestionBox, setAllowToShowSuggest] = useState(false);
+    const [showSuggestions, setShowSuggestions] = useState(false);
+    const [searchTextForSuggestionBox, setSearchTextForSuggestionBox] = useState(null);
+    const [keyPressed, setKeyPressed] = useState(null);
 
     useEffect(() => {
         if (current) {
@@ -56,7 +62,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
                             // find last relevant character name
                             while (sibling && names.length <= 2) {
                                 if (sibling.classList.contains('dialogCharacter')) {
-                                    names.push(sibling.textContent.trim().replace(/\s*\(.*$/, '').toLocaleUpperCase());
+                                    names.push(sibling.querySelector('.edit-field').textContent.trim().replace(/\s*\(.*$/, '').toLocaleUpperCase());
                                 }
                                 names = [...new Set(names)]
                                 sibling = sibling.previousElementSibling
@@ -71,7 +77,11 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
                                 setHtmlContent(name)
                                 inputRef.current.textContent.trim()
                                 setTimeout(() => {
-                                    moveCursorToEnd(inputRef.current)
+                                    try {
+                                        moveCursorToEnd(inputRef.current)
+                                    } catch (e) {
+                                        // TypeError: Failed to execute 'setStart' on 'Range': parameter 1 is not of type 'Node'.
+                                    }
                                 }, 100)
                             }
                             return setEditingLevel('dialogCharacter');
@@ -111,8 +121,24 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
         return latestStep;
     }
 
+    function getContentFromEvent(ev) {
+        return ev.target.querySelector('.edit-field') ? ev.target.querySelector('.edit-field').textContent : ev.target.textContent;
+    }
+
+    function handleKeyUp(ev) {
+        updateCSSClasses()
+        const content = getContentFromEvent(ev);
+        if (content && allowToShowSuggestionBox && content.trim() !== searchTextForSuggestionBox) {
+            setSearchTextForSuggestionBox(content.trim())
+            setTimeout(() => {
+                setShowSuggestions(true);
+            }, 200)
+        }
+    }
+
     function handleKeyDown(ev) {
-        const content = ev.target.textContent;
+        setKeyPressed({ ...ev });
+        const content = getContentFromEvent(ev);
         if (ev.target?.contentEditable !== 'true') {
             return;
         }
@@ -130,7 +156,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
             }
 
             if (inputRef.current.dataset.chooseEditingLevel && direction === 1 && editingLevel === 'dialogCharacter') {
-                
+
                 nextLevel = 'dialogAnnotation'
             }
             setEditingLevel(nextLevel || editingLevels[0]);
@@ -177,15 +203,30 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
                 inputRef.current.textContent = '';
             }
         }
-        if (((ev.key === 'ArrowDown' || ev.key === 'ArrowRight') && cursorIsAtEndOfSection) ||
+        // control SuggestionBox
+        if (showSuggestions && (!ev.metaKey && !ev.ctrlKey && !ev.shiftKey) && (ev.key === 'ArrowDown' || ev.key === 'ArrowUp' || ev.key === 'Enter' || ev.key === 'Escape')) {
+            // this will be handeld by SuggestionBox, see useEffect
+            if (ev.key === 'Escape') {
+                ev.key
+                setShowSuggestions(false)
+                return
+            }
+            if (ev.key === 'Enter' && !cursorIsAtEndOfSection) {
+                // setShowSuggestions(false)
+                ev.preventDefault();
+                return
+            }
+            
+        }
+        if ((ev.key === 'ArrowRight' && cursorIsAtEndOfSection) ||
             (ev.key === 'ArrowDown' && (ev.metaKey || ev.ctrlKey))) {
             ev.preventDefault();
             if (ev.shiftKey && (ev.metaKey || ev.ctrlKey)) {
                 // merge next section into this
-                let nextSection = ev.target.closest('section').nextElementSibling;
-                if (nextSection && nextSection.innerHTML) {
+                let editField = ev.target.closest('section').nextElementSibling?.querySelector('.edit-field')
+                if (editField && editField.innerHTML) {
                     let lengthOfText = inputRef.current.textContent.trim().length;
-                    inputRef.current.innerHTML += ' ' + nextSection.textContent.trim().replace(/\n/g, '<br>');
+                    inputRef.current.innerHTML += ' ' + editField.textContent.trim().replace(/\n/g, '<br>');
                     moveCursor(inputRef.current, lengthOfText)
                     let nextID = getNext(id).id;
                     if (nextID) {
@@ -209,11 +250,11 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
         else if ((ev.key === 'Backspace') && cursorIsAtBeginOfSection) {
             ev.preventDefault();
             // merge previous section into this
-            let prevSection = ev.target.closest('section').previousElementSibling;
-            if (prevSection && prevSection.innerHTML) {
-                inputRef.current.innerHTML = prevSection.textContent.trim().replace(/\n/g, '<br>') + ' ' + inputRef.current.innerHTML.replace(/\n/g, '<br>');
+            let editField = ev.target.closest('section').previousElementSibling?.querySelector('.edit-field')
+            if (editField && editField.innerHTML) {
+                inputRef.current.innerHTML = editField.textContent.trim().replace(/\n/g, '<br>') + ' ' + inputRef.current.innerHTML.replace(/\n/g, '<br>');
                 let nextID = getPrev(id).id;
-                moveCursor(inputRef.current, prevSection.textContent.length)
+                moveCursor(inputRef.current, editField.textContent.length)
                 if (nextID) {
                     removeSection(nextID)
                     return;
@@ -342,10 +383,6 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
         updateCSSClasses()
     }
 
-    function handleKeyUp(ev) {
-        updateCSSClasses()
-    }
-
     function cleanupContenteditableMarkup() {
         function removeAllTagsExceptBr(html) {
             html = html.replace(/(<br>|<br(\s+.+?)*>)/ig, '---BRLINEBREAK---');
@@ -364,19 +401,29 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
         if (isCurrent) {
             return;
         }
-        
+
         setIsCurrent(true);
         localStorage.setItem('lastIndexOfCurrent', index);
         setCurrentSectionById(id);
         if (ev.type !== 'Click') {
             cleanupContenteditableMarkup();
         }
+        if (allowToShowSuggestionBox) {
+            setTimeout(() => {
+                setShowSuggestions(true);
+            }, 500);
+        }
+
+
     }
 
     function handleBlur() {
         setIsCurrent(false);
         inputRef.current.dataset.chooseEditingLevel = '';
         cleanupContenteditableMarkup();
+        setTimeout(() => {
+            setShowSuggestions(false);
+        }, 200);
     }
 
     function handleClick(ev) {
@@ -411,15 +458,31 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
     }
 
     useEffect(() => {
-        if (htmlContent) {
+        if (htmlContent !== null) {
             inputRef.current.innerHTML = htmlContent;
         }
     }, [htmlContent])
 
     useEffect(() => {
+        // console.log(searchTextForSuggestionBox, htmlContent);
+        let content = inputRef.current?.textContent
+        if (content !== null &&
+            //(searchTextForSuggestionBox !== content) &&
+            (((editingLevel === 'description' && content === content.toLocaleUpperCase()) || editingLevel === 'dialogCharacter'))
+         ) {
+            setAllowToShowSuggest(true);
+        } else {
+            setAllowToShowSuggest(false);
+        }
+    }, [editingLevel, inputRef, keyPressed])
+
+    useEffect(() => {
         updateCSSClasses()
         if (isCurrent && inputRef.current && localStorage.getItem('autoScrollToCurrentElement') === 'true') {
             inputRef.current?.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+        }
+        if (isCurrent && allowToShowSuggestionBox) {
+            setShowSuggestions(true);
         }
     }, [isCurrent, editingLevel])
 
@@ -429,9 +492,16 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
         }
     }, [cssClasses])
 
-    return <section className={cssClasses?.filter(e => !!e)?.join(' ')} data-index={index + 1} data-choose-editing-level={chooseEditingLevel} onClick={handleClick}>
-        <div contentEditable={true} onFocus={handleFocus} onBlur={handleBlur} ref={inputRef} className={editingLevel} onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} data-id={id}>
-        </div>
-    </section>
+    return <>
+        <section className={cssClasses?.filter(e => !!e)?.join(' ')} data-index={index + 1} data-choose-editing-level={chooseEditingLevel} onClick={handleClick}>
+            <div contentEditable={true} onFocus={handleFocus} onBlur={handleBlur} ref={inputRef} className={['edit-field', editingLevel].join(' ')} onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} data-id={id}>
+            </div>
+            {allowToShowSuggestionBox && showSuggestions && (
+                <SuggestionBox keyPressed={keyPressed} sections={sections} editingLevel={editingLevel} searchText={searchTextForSuggestionBox} setShowSuggestions={setShowSuggestions} setHtmlContent={setHtmlContent} insertNewSectionAfterId={insertNewSectionAfterId} sectionId={id}>
+                </SuggestionBox>
+            )}
+        </section>
+
+    </>
 
 }

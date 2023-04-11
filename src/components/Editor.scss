@@ -86,7 +86,7 @@
     div.descriptionAnnotation {
         text-align: right;
     }
-    div.dialogCharacter {
+    div.dialogCharacter, div.dialogCharacter + .suggestion-box ul {
         padding-left: 20rem;
         text-transform: uppercase;
         font-weight: bold;
@@ -163,7 +163,11 @@
 
 .focus {
     --opacity-out-of-focus: .25;
+    
     > #screenwriter-editor {
+        .suggestion-box {
+            display: none !important;
+        }
         > section > div {
             opacity: var(--opacity-out-of-focus);
             transition: opacity .1s;
