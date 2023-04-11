@@ -164,16 +164,13 @@
     section.dialogText + section.description {
         margin-top: 2.5rem;
     }
-    // section:last-of-type.with-suggestions {
-    //     margin-bottom: 12rem;
-    // }
 }
 
 .focus {
     --opacity-out-of-focus: 0.25;
 
     > #screenwriter-editor {
-        > section > div {
+        > section > div:not(.suggestion-box) {
             opacity: var(--opacity-out-of-focus);
             transition: opacity 0.1s;
             &:focus,
@@ -195,6 +192,9 @@
         > section.selected {
             background: none;
         }
+        // > section > div.suggestion-box {
+        //     opacity: 1;
+        // }
     }
 
     .no-mouse-pointer {

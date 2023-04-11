@@ -204,14 +204,13 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
             }
         }
         // control SuggestionBox
-        if (showSuggestions && !ev.metaKey && !ev.ctrlKey && !ev.shiftKey && (ev.key === 'ArrowDown' || ev.key === 'ArrowUp' || ev.key === 'Enter' || ev.key === 'Escape')) {
+        if (showSuggestions && !ev.metaKey && !ev.ctrlKey && !ev.shiftKey && (ev.key === 'Enter' || ev.key === 'Escape')) {
             // this will be handeld by SuggestionBox, see useEffect
             if (ev.key === 'Escape') {
-                ev.key
                 setShowSuggestions(false)
                 return
             }
-            if (ev.key === 'Enter' && !cursorIsAtEndOfSection) {
+            if (ev.key === 'Enter' && cursorIsAtEndOfSection) {
                 ev.preventDefault();
                 return
             }
@@ -498,7 +497,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
             <div contentEditable={true} onFocus={handleFocus} onBlur={handleBlur} ref={inputRef} className={['edit-field', editingLevel].join(' ')} onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} data-id={id}>
             </div>
             {allowToShowSuggestionBox && showSuggestions && (
-                <SuggestionBox keyPressed={keyPressed} sections={sections} editingLevel={editingLevel} searchText={searchTextForSuggestionBox} setShowSuggestions={setShowSuggestions} setHtmlContent={setHtmlContent} insertNewSectionAfterId={insertNewSectionAfterId} sectionId={id}>
+                <SuggestionBox keyPressed={keyPressed} sections={sections} editingLevel={editingLevel} searchText={searchTextForSuggestionBox} setShowSuggestions={setShowSuggestions} setHtmlContent={setHtmlContent} insertNewSectionAfterId={insertNewSectionAfterId} sectionId={id} goNext={goNext}>
                 </SuggestionBox>
             )}
         </section>

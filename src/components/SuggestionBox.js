@@ -2,20 +2,24 @@ import { useEffect, useRef, useState } from 'react';
 import './SuggestionBox.scss';
 import fuzzysort from 'fuzzysort'
 
-export function SuggestionBox({ keyPressed, editingLevel, sections, searchText, setShowSuggestions, setHtmlContent, insertNewSectionAfterId, sectionId } = {}) {
+export function SuggestionBox({ keyPressed, editingLevel, sections, searchText, setShowSuggestions, setHtmlContent, insertNewSectionAfterId, sectionId, goNext } = {}) {
 
     const [searchableRecords, setSearchableRecords] = useState([]);
     const [results, setResults] = useState([]);
     const [selectedResult, setSelectedResult] = useState(null);
     const suggestionBoxRef = useRef(null);
 
-    function chooseResultForSection(content) {
+    function chooseResultForSection(content, { insertNewSectionAfter } = {}) {
         if (content === undefined) {
             return;
         }
         setHtmlContent(content)
         setShowSuggestions(false)
-        insertNewSectionAfterId(sectionId);
+        if (insertNewSectionAfter) {
+            insertNewSectionAfterId(sectionId);
+        } else {
+            goNext({id: sectionId});
+        }
     }
 
     function handleSelectResult(ev) {
@@ -81,7 +85,10 @@ export function SuggestionBox({ keyPressed, editingLevel, sections, searchText, 
                 setSelectedResult(selectedResult - 1 < 0 ? resultsCount - 1 : selectedResult - 1);
             }
         } else if (keyPressed.key === 'Enter') {
-            chooseResultForSection(results[selectedResult]?.target)
+            // w/o timout the text is not selected yet 
+            setTimeout(() => {
+                chooseResultForSection(results[selectedResult]?.target, {insertNewSectionAfter: !suggestionBoxRef.current?.closest('section').nextElementSibling})
+            }, 200)
         }
     }, [keyPressed])
 

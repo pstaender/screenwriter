@@ -114,7 +114,7 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
     }, [downloadFormat])
 
     useEffect(() => {
-        localStorage.setItem('showSuggestionBox', showSuggestionBox ? 'true' : '')
+        localStorage.setItem('showSuggestionBox', showSuggestionBox ? 'true' : 'false')
     }, [showSuggestionBox])
 
     return (
@@ -164,7 +164,7 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
                             <i className="gg-scroll-v"></i>
                         </div>
                     </div>
-                    <div className={["icon", localStorage.getItem('showSuggestionBox') === 'true' ? 'active' : ''].join(' ')} onClick={() => setShowSuggestionBox(!showSuggestionBox)} data-help="Show/Hide suggestions">
+                    <div className={["icon", showSuggestionBox ? 'active' : ''].join(' ')} onClick={() => setShowSuggestionBox(!showSuggestionBox)} data-help="Show/Hide suggestions">
                         <div>
                             <i className="gg-menu-boxed"></i>
                         </div>
