@@ -17,6 +17,8 @@
     "test": "NODE_OPTIONS=--experimental-vm-modules npx jest"
   },
   "dependencies": {
+    "fuse.js": "^6.6.2",
+    "fuzzysort": "^2.0.4",
     "html-react-parser": "^3.0.15",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

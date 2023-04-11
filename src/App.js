@@ -51,7 +51,7 @@ export function App() {
     }, [focusMode])
 
     function metaDataAndSections() {
-        let sections = convertDomSectionsToDataStructure([...document.querySelectorAll('#screenwriter-editor > section > div')]);
+        let sections = convertDomSectionsToDataStructure([...document.querySelectorAll('#screenwriter-editor > section > div.edit-field')]);
         return {
             sections,
             metaData,
