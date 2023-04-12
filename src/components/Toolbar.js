@@ -168,7 +168,7 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
                             <i className="gg-scroll-v"></i>
                         </div>
                     </div>
-                    <div className={["icon", showSuggestionBox ? 'active' : ''].join(' ')} onClick={toggleShowSuggestionBox} data-help="Show/Hide suggestions">
+                    <div className={["icon", showSuggestionBox ? 'active' : ''].join(' ')} onClick={toggleShowSuggestionBox} data-help="Show/Hide suggestions (CTRL/META+.)" id="toggle-show-hide-suggestion-box">
                         {/* <div style={{ transform: 'scale(0.8) translateX(-0px) translateY(-1px)' }}>
                             <i className="gg-menu-boxed"></i>
                         </div> */}
@@ -176,7 +176,7 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
                             <i className="gg-format-separator"></i>
                         </div>
                     </div>
-                    <div className={["icon", focusMode ? 'active' : ''].join(' ')} onClick={toggleFocusMode} data-help="Focus Mode (CTRL/META + 0)">
+                    <div className={["icon", focusMode ? 'active' : ''].join(' ')} onClick={toggleFocusMode} data-help="Focus Mode (CTRL/META+0)">
                         <div style={{ transform: 'scale(0.8) translateX(-5px) translateY(-1px)' }}>
                             <i className="gg-eye"></i>
                         </div>

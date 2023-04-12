@@ -27,6 +27,7 @@ The data is stored in your browsers local storage.
  * `meta`/`ctrl` + `shift` + `U`: uppercase the section, lowercase if everthing is uppercase
  * `meta`/`ctrl` + `shift` + `S`: download screenplay as txt or json file
  * `meta`/`ctrl` + `0`: toggle focus mode
+ * `meta`/`ctrl` + `.`: toggle suggestions for character names and scene introductions
  * `ctrl` + `shift` + `G`: Jump to scene by number (`0` jumps to beginning of the document, numbers higher than existing scenes to the last scene, `end` to the end of the document)
  * 
 

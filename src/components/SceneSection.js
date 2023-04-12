@@ -16,19 +16,6 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
         'descriptionAnnotation',
     ];
 
-    // const editingLevels = {
-    //     default: [
-    //         'description',
-    //         'dialogCharacter',
-    //         'dialogText',
-    //         'dialogAnnotation',
-    //         'descriptionAnnotation',
-    //     ],
-    //     description: [
-    //         'text'
-    //     ]
-    // ];
-
     const [editingLevel, setEditingLevel] = useState(classification || 'description');
     const [isCurrent, setIsCurrent] = useState(current);
     const [htmlContent, setHtmlContent] = useState(html || null)
@@ -307,6 +294,8 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
                 text = inputRef.current.textContent.toLocaleLowerCase()
             }
             inputRef.current.textContent = text;
+        } else if ((ev.ctrlKey || ev.metaKey) && ev.key === '.') {
+            document.getElementById('toggle-show-hide-suggestion-box').click()
         } else if (ev.ctrlKey && ev.key === 'G') {
             // GOTO scene
             let previous = inputRef.current.closest('section')
