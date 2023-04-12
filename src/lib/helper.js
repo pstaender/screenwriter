@@ -1,4 +1,59 @@
 
+// export function plainTextLineBreaksToHtml(text) {
+//     return text.replace(/\n/g, '<br>');
+// }
+
+// export function htmlLineBreaksToPlainText(text) {
+//     return text.replace(/<br>/g, '\n');
+// }
+
+export function splitPositionForHtmlLikePlainText(html, pos) {
+    let chars = html.split('');
+    let isInsideTag = false;
+    let isInsideHtmlEntity = false;
+    let plainTextCharsCount = 0;
+    let actualSplitAt = null;
+    for (let i = 0; i <= chars.length; i++) {
+        let char = chars[i];
+        if (isInsideTag) {
+            if (char === '>') {
+                isInsideTag = false
+            }
+            continue;
+        }
+
+        if (isInsideHtmlEntity) {
+            if (char === ';') {
+                isInsideHtmlEntity = false
+            }
+            continue;
+        }
+
+        let prev = chars[i - 1];
+        let isNotEscaped = prev !== `\\`;
+        
+        if (isNotEscaped && char === '<') {
+            isInsideTag = true;
+            continue;
+        }
+
+        if (isNotEscaped && char === '&') {
+            isInsideHtmlEntity = true;
+            if (chars.slice(i,i+6).join('') === '&nbsp;') {
+                // counts as space
+                plainTextCharsCount++;
+            }
+            continue;
+        }
+        plainTextCharsCount++;
+        if (plainTextCharsCount >= pos) {
+            actualSplitAt = i;
+            break;
+        }
+    }
+    return actualSplitAt + 1;
+}
+
 export function removeWordWrap(text, maxLength = null) {
     if (!maxLength) {
         // detect max length

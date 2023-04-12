@@ -1,6 +1,6 @@
 
 import { useEffect, useRef, useState } from "react";
-import { getCursorPosition, moveCursor, moveCursorToEnd, stripHTMLTags } from "../lib/helper";
+import { getCursorPosition, moveCursor, moveCursorToEnd, splitPositionForHtmlLikePlainText, stripHTMLTags } from "../lib/helper";
 
 import { SuggestionBox } from './SuggestionBox.js'
 
@@ -223,9 +223,8 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
                 // merge next section into this
                 let editField = ev.target.closest('section').nextElementSibling?.querySelector('.edit-field')
                 if (editField && editField.innerHTML) {
-                    let lengthOfText = inputRef.current.textContent.trim().length;
-                    inputRef.current.innerHTML += ' ' + editField.textContent.trim().replace(/\n/g, '<br>');
-                    moveCursor(inputRef.current, lengthOfText)
+                    inputRef.current.innerHTML += '<br>' + editField.innerHTML
+                    moveCursor(inputRef.current, inputRef.current.textContent.trim().length)
                     let nextID = getNext(id).id;
                     if (nextID) {
                         removeSection(nextID)
@@ -254,7 +253,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
             // merge previous section into this
             let editField = ev.target.closest('section').previousElementSibling?.querySelector('.edit-field')
             if (editField && editField.innerHTML) {
-                inputRef.current.innerHTML = editField.textContent.trim().replace(/\n/g, '<br>') + ' ' + inputRef.current.innerHTML.replace(/\n/g, '<br>');
+                inputRef.current.innerHTML = editField.innerHTML + '<br>' + inputRef.current.innerHTML;
                 let nextID = getPrev(id).id;
                 moveCursor(inputRef.current, editField.textContent.length)
                 if (nextID) {
@@ -278,11 +277,12 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
             } else {
                 let splitUpAt = getCursorPosition(inputRef.current);
                 if (splitUpAt > 0) {
-                    let partRight = inputRef.current.textContent.substring(splitUpAt)
-                    let partLeft = inputRef.current.textContent.substring(0, splitUpAt);
+                    let splitHtmlAt = splitPositionForHtmlLikePlainText(inputRef.current.innerHTML, splitUpAt);
+                    let partRight = inputRef.current.innerHTML.substring(splitHtmlAt)
+                    let partLeft = inputRef.current.innerHTML.substring(0, splitHtmlAt)
                     if (partLeft && partRight) {
-                        inputRef.current.textContent = partLeft.trim();
-                        insertNewSectionAfterId(id, { html: partRight.trim() })
+                        inputRef.current.innerHTML = partLeft;
+                        insertNewSectionAfterId(id, { html: partRight })
                     }
                     return
                 }

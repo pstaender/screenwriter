@@ -16,7 +16,7 @@ export function Toc({ sections, show, setShow } = {}) {
         setTimeout(() => {
             el.click()
             el.focus()
-        }, 200)   
+        }, 200)
     }
 
     useEffect(() => {
@@ -32,23 +32,24 @@ export function Toc({ sections, show, setShow } = {}) {
         }
     }, [show])
 
-    return <>{show && (<div className="toc-overview">
-        <ul>
-            {sections && sections.map((section, i) => (
-                <>
-                {section.html && section.html.trim() && (!section.classification || section.classification === 'description') && section.html === section.html.toLocaleUpperCase() && (
-                    <li key={section.id}>
-                    <a href={`#${section.id}`} className={section.current ? 'current' : ''} onMouseEnter={handleMouseEnter} onClick={handleClick}>
-                        {section.html}
-                    </a>
-                </li>
-                )}
-                </>
-                
-            ))}
-        </ul>
-    </div>
-    )
-    }
+    return <>
+        {show && (<div className="toc-overview">
+            <ul>
+                {sections && sections.map((section, i) => (
+                    <>
+                        {section.html && section.html.trim() && (!section.classification || section.classification === 'description') && section.html === section.html.toLocaleUpperCase() && (
+                            <li key={section.id}>
+                                <a href={`#${section.id}`} className={section.current ? 'current' : ''} onMouseEnter={handleMouseEnter} onClick={handleClick}>
+                                    {section.html}
+                                </a>
+                            </li>
+                        )}
+                    </>
+
+                ))}
+            </ul>
+        </div>
+        )
+        }
     </>
 }
