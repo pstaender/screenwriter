@@ -3,23 +3,11 @@
     z-index: 999;
     display: flex;
     .icons {
-        display: flex;
+        display: block;
         align-items: center;
     }
-    .show-more-icons {
-        position: relative;
-        > .icons {
-            display: none;
-            position: absolute;
-            left: 0;
-            top: 1.75rem;
-        }
-        &:hover {
-            .icons {
-                display: block;
-            }
-        }
-    }
+    
+    
     .icon {
         font-size: 20px;
         width: 30px;
@@ -42,13 +30,13 @@
                 content: attr(data-help);
                 position: absolute;
                 width: 10rem;
-                top: 0rem;
-                left: 2rem;
+                top: 2rem;
+                left: 0;
                 font-size: 0.8rem;
                 color: var(--color-text);
                 background: var(--color-background);
                 z-index: 99999;
-                padding: 0.5rem 1rem;
+                padding: 0.25rem 0.25rem;
             }
         }
         &.active {
@@ -56,6 +44,37 @@
             color: var(--color-background);
             &:hover {
                 background: var(--color-text);
+            }
+        }
+    }
+
+    .show-more-icons {
+        position: relative;
+        > .icons {
+            display: none;
+            position: absolute;
+            left: 0;
+            top: 0.5rem;
+        }
+        &:hover {
+            .icons {
+                display: flex;
+            }
+            .gg-more-alt {
+                display: none;
+            }
+        }
+        &.vertical {
+            > .icons {
+                top: 1.85rem;
+            }
+            &:hover .icons {
+                display: block;
+            }
+            &:hover:before {
+                padding: 0.5rem 1rem;
+                top: 0;
+                left: 2rem;
             }
         }
     }

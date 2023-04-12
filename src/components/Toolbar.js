@@ -88,6 +88,9 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
 
     function handleEditMetadata() {
         setEditMetaData(true);
+        if (focusMode) {
+            toggleFocusMode();
+        }
     }
 
     function toggleFocusMode() {
@@ -113,9 +116,10 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
         }
     }, [downloadFormat])
 
-    useEffect(() => {
-        localStorage.setItem('showSuggestionBox', showSuggestionBox ? 'true' : 'false')
-    }, [showSuggestionBox])
+    function toggleShowSuggestionBox() {
+        setShowSuggestionBox(!showSuggestionBox);
+        localStorage.setItem('showSuggestionBox', showSuggestionBox ? 'false' : 'true')
+    }
 
     return (
         <div id="screenwriter-toolbar">
@@ -124,7 +128,7 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
                 "application/json": ['.json']
             }} />
             <div className="icons">
-                <div className='icon show-more-icons' data-help={`Download`}>
+                <div className='icon show-more-icons vertical' data-help={`Download`}>
                     <i className="gg-arrow-down-o" onClick={(ev) => {
                         if (ev.currentTarget === ev.target) {
                             downloadScreenplay()
@@ -164,13 +168,13 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
                             <i className="gg-scroll-v"></i>
                         </div>
                     </div>
-                    <div className={["icon", showSuggestionBox ? 'active' : ''].join(' ')} onClick={() => setShowSuggestionBox(!showSuggestionBox)} data-help="Show/Hide suggestions">
-                        <div>
+                    <div className={["icon", showSuggestionBox ? 'active' : ''].join(' ')} onClick={toggleShowSuggestionBox} data-help="Show/Hide suggestions">
+                        <div style={{ transform: 'scale(0.8) translateX(-0px) translateY(-1px)' }}>
                             <i className="gg-menu-boxed"></i>
                         </div>
                     </div>
                     <div className={["icon", focusMode ? 'active' : ''].join(' ')} onClick={toggleFocusMode} data-help="Focus Mode (CTRL/META + 0)">
-                        <div style={{ transform: 'translateX(-3px) translateY(-3px)' }}>
+                        <div style={{ transform: 'scale(0.8) translateX(-5px) translateY(-1px)' }}>
                             <i className="gg-eye"></i>
                         </div>
                     </div>
