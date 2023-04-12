@@ -3,6 +3,7 @@ import './Editor.scss';
 import { useEffect, useState } from "react";
 import { SceneSection } from './SceneSection';
 import { getCursorPosition, sha256Hash } from '../lib/helper';
+import { Toc } from './Toc';
 
 export function Editor({ seed, currentIndex } = {}) {
 
@@ -50,6 +51,7 @@ export function Editor({ seed, currentIndex } = {}) {
     }
 
     const [sections, setSections] = useState([])
+    const [showToc, setShowToc] = useState(false);
 
     useEffect(() => {
         // changing seed forces reload
@@ -83,6 +85,16 @@ export function Editor({ seed, currentIndex } = {}) {
         setSections([...setAllSectionToNotCurrent(sections.slice(0, index)), ...emptySection({ html, id, classification, chooseEditingLevel: true }), ...setAllSectionToNotCurrent(sections.slice(index))])
     }
 
+    function updateSectionById(id, {html} = {}) {
+        let index = sections.indexOf(sections.filter(s => s.id === id)[0])
+        if (!index || !sections[index]) {
+            return;
+            // console.error(`Section ${id} not found`);
+        }
+        sections[index].html = html;
+        setSections([...sections])
+    }
+
     function insertNewSectionAfterId(currentID, { html, id, classification } = {}) {
         let index = sections.indexOf(sections.filter(s => s.id === currentID)[0])
         insertNewSectionAtIndex(index + 1, { html, id, classification });
@@ -94,6 +106,9 @@ export function Editor({ seed, currentIndex } = {}) {
     }
 
     function handleKeyDown(ev) {
+        if ((ev.ctrlKey || ev.metaKey) && ev.key === '.') {
+            setShowToc(!showToc);
+        }
         if (ev.target?.contentEditable !== 'true') {
             return;
         }
@@ -148,9 +163,12 @@ export function Editor({ seed, currentIndex } = {}) {
         setSections([...sections.filter(s => s.id !== id)])
     }
 
-    return <div id="screenwriter-editor" onKeyDown={handleKeyDown}>
-        {sections.map((section, i) => (
-            <SceneSection current={section.current} key={section.key} id={section.id} next={sections[i + 1]} prev={sections[i + 1]} removeSection={removeSection} goNext={goNext} goPrev={goPrev} getNext={getNext} getPrev={getPrev} index={i} sectionsLength={sections.length} html={section.html} classification={section.classification} cursorToEnd={section.cursorToEnd} setCurrentSectionById={setCurrentSectionById} insertNewSectionAfterId={insertNewSectionAfterId} insertNewSectionBeforeId={insertNewSectionBeforeId} findSectionById={findSectionById} randomID={randomID} chooseEditingLevel={section.chooseEditingLevel || false} sections={sections} />
-        ))}
-    </div>;
+    return <>
+        <div id="screenwriter-editor" onKeyDown={handleKeyDown}>
+            {sections.map((section, i) => (
+                <SceneSection current={section.current} key={section.key} id={section.id} next={sections[i + 1]} prev={sections[i + 1]} removeSection={removeSection} goNext={goNext} goPrev={goPrev} getNext={getNext} getPrev={getPrev} index={i} sectionsLength={sections.length} html={section.html} classification={section.classification} cursorToEnd={section.cursorToEnd} setCurrentSectionById={setCurrentSectionById} insertNewSectionAfterId={insertNewSectionAfterId} insertNewSectionBeforeId={insertNewSectionBeforeId} findSectionById={findSectionById} randomID={randomID} chooseEditingLevel={section.chooseEditingLevel || false} sections={sections} updateSectionById={updateSectionById} />
+            ))}
+        </div>
+        {sections && sections.length > 0 && (<Toc sections={sections} show={showToc} setShow={setShowToc}></Toc>)}
+    </>;
 }

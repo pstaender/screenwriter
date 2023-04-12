@@ -149,7 +149,6 @@ export function App() {
     }, [intervalDownload])
 
     useEffect(() => {
-        console.log(metaData)
         if (Object.keys(metaData).length > 0) {
             let screenplay = currentScreenplay();
             screenplay.metaData = metaData;

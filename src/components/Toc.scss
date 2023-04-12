@@ -1,0 +1,30 @@
+.toc-overview {
+    position: fixed;
+    top: 10%;
+    width: min(30rem,calc(0.5 * calc(100% - calc(var(--max-editor-with)))));
+    height: 80%;
+    background: var(--color-almost-white);
+    border-radius: 5px;
+    border: 1rem solid var(--color-almost-white);
+    overflow-y: scroll;
+    ul, li {
+        padding: 0;
+        margin: 0;
+    }
+    li {
+        list-style: none;
+    }
+    a {
+        color: var(--color-text);
+        text-decoration: none;
+        display: block;
+        &.current {
+            background: var(--color-text);
+            color: var(--color-background);
+        }
+        &:hover {
+            background: var(--color-light-grey-opaque);
+            color: var(--color-text);
+        }
+    }
+}

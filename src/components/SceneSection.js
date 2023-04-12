@@ -4,7 +4,7 @@ import { getCursorPosition, moveCursor, moveCursorToEnd, stripHTMLTags } from ".
 
 import { SuggestionBox } from './SuggestionBox.js'
 
-export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSectionById, insertNewSectionAfterId, insertNewSectionBeforeId, removeSection, id, index, sectionsLength, html, classification, setCurrentSectionById, cursorToEnd, randomID, chooseEditingLevel, sections } = {}) {
+export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSectionById, insertNewSectionAfterId, insertNewSectionBeforeId, removeSection, id, index, sectionsLength, html, classification, setCurrentSectionById, cursorToEnd, randomID, chooseEditingLevel, sections, updateSectionById } = {}) {
 
     const inputRef = useRef(null);
 
@@ -294,7 +294,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
                 text = inputRef.current.textContent.toLocaleLowerCase()
             }
             inputRef.current.textContent = text;
-        } else if ((ev.ctrlKey || ev.metaKey) && ev.key === '.') {
+        } else if ((ev.ctrlKey || ev.metaKey) && ev.shiftKey && ev.key === ',') {
             document.getElementById('toggle-show-hide-suggestion-box').click()
         } else if (ev.ctrlKey && ev.key === 'G') {
             // GOTO scene
@@ -425,6 +425,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
         setIsCurrent(false);
         inputRef.current.dataset.chooseEditingLevel = '';
         cleanupContenteditableMarkup();
+        updateSectionById(id, {html: inputRef.current.textContent})
         setTimeout(() => {
             setShowSuggestions(false);
         }, 200);
@@ -494,16 +495,14 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
         }
     }, [cssClasses])
 
-    return <>
-        <section className={(cssClasses ? [...cssClasses, allowToShowSuggestionBox && showSuggestions ? 'with-suggestions' : ''] : []).filter(e => !!e)?.join(' ')} data-index={index + 1} data-choose-editing-level={chooseEditingLevel} onClick={handleClick}>
-            <div contentEditable={true} onFocus={handleFocus} onBlur={handleBlur} ref={inputRef} className={['edit-field', editingLevel].join(' ')} onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} data-id={id}>
-            </div>
-            {allowToShowSuggestionBox && showSuggestions && (
-                <SuggestionBox keyPressed={keyPressed} sections={sections} editingLevel={editingLevel} searchText={searchTextForSuggestionBox} setShowSuggestions={setShowSuggestions} setHtmlContent={setHtmlContent} insertNewSectionAfterId={insertNewSectionAfterId} sectionId={id} goNext={goNext}>
-                </SuggestionBox>
-            )}
-        </section>
+    return <section className={(cssClasses ? [...cssClasses, allowToShowSuggestionBox && showSuggestions ? 'with-suggestions' : ''] : []).filter(e => !!e)?.join(' ')} data-index={index + 1} data-choose-editing-level={chooseEditingLevel} onClick={handleClick} id={id}>
+        <div contentEditable={true} onFocus={handleFocus} onBlur={handleBlur} ref={inputRef} className={['edit-field', editingLevel].join(' ')} onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} data-id={id}>
+        </div>
+        {allowToShowSuggestionBox && showSuggestions && (
+            <SuggestionBox keyPressed={keyPressed} sections={sections} editingLevel={editingLevel} searchText={searchTextForSuggestionBox} setShowSuggestions={setShowSuggestions} setHtmlContent={setHtmlContent} insertNewSectionAfterId={insertNewSectionAfterId} sectionId={id} goNext={goNext}>
+            </SuggestionBox>
+        )}
+    </section>
 
-    </>
 
 }

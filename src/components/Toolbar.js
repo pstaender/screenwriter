@@ -168,7 +168,7 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
                             <i className="gg-scroll-v"></i>
                         </div>
                     </div>
-                    <div className={["icon", showSuggestionBox ? 'active' : ''].join(' ')} onClick={toggleShowSuggestionBox} data-help="Show/Hide suggestions (CTRL/META+.)" id="toggle-show-hide-suggestion-box">
+                    <div className={["icon", showSuggestionBox ? 'active' : ''].join(' ')} onClick={toggleShowSuggestionBox} data-help="Show/Hide suggestions (CTRL/META+shift+,)" id="toggle-show-hide-suggestion-box">
                         {/* <div style={{ transform: 'scale(0.8) translateX(-0px) translateY(-1px)' }}>
                             <i className="gg-menu-boxed"></i>
                         </div> */}

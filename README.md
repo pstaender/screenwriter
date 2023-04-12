@@ -18,18 +18,18 @@ The data is stored in your browsers local storage.
 ## Keyboard Usage
 
  * `tab`: change the type of text in the current secion (text, charater for dialog, dialog text, dialog annotation and scene annotation)
- * `shift` + `enter`: insert a new line (line-break)
- * `enter`: break section into parts / insert new section below if at the end of the section / insert above if ath the beginning of the section
- * `meta`/`ctrl` + `backspace`: remove the current section
- * `meta`/`ctrl` + `shift` + `arrow-down`: merge this section with next one
- * `meta`/`ctrl` + `arrow-up`: Jump to previous section
- * `meta`/`ctrl` + `arrow-down`: Jump to next section
- * `meta`/`ctrl` + `shift` + `U`: uppercase the section, lowercase if everthing is uppercase
- * `meta`/`ctrl` + `shift` + `S`: download screenplay as txt or json file
- * `meta`/`ctrl` + `0`: toggle focus mode
- * `meta`/`ctrl` + `.`: toggle suggestions for character names and scene introductions
- * `ctrl` + `shift` + `G`: Jump to scene by number (`0` jumps to beginning of the document, numbers higher than existing scenes to the last scene, `end` to the end of the document)
- * 
+ * `shift` + `enter`: inserts a new line (line-break)
+ * `enter`: breaks section into parts / inserts new section below if at the end of the section / inserts above if ath the beginning of the section
+ * `meta`/`ctrl` + `backspace`: removes the current section
+ * `meta`/`ctrl` + `shift` + `arrow-down`: merges this section with next one
+ * `meta`/`ctrl` + `arrow-up`: jumps to previous section
+ * `meta`/`ctrl` + `arrow-down`: jumps to next section
+ * `meta`/`ctrl` + `shift` + `U`: uppercases the section, lowercases if everthing is uppercase
+ * `meta`/`ctrl` + `shift` + `S`: downloads screenplay as txt or json file
+ * `meta`/`ctrl` + `0`: toggles focus mode
+ * `meta`/`ctrl` + `shift` + `,`: toggles suggestions for character names and scene introductions
+ * `meta`/`ctrl` + `.`: toggles TOC (tabel of content)
+ * `ctrl` + `shift` + `G`: jumps to scene by number (`0` jumps to beginning of the document, numbers higher than existing scenes to the last scene, `e` to the end of the document)
 
 ## Features
 

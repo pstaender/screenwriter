@@ -1,7 +1,7 @@
 #screenwriter-editor {
     font-size: var(--font-size);
     line-height: var(--line-height);
-    max-width: 46rem;
+    max-width: var(--max-editor-with);
     margin: 0 auto;
     letter-spacing: 0px;
     counter-reset: scene-counter 0;
