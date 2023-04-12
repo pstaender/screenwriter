@@ -149,10 +149,13 @@ export function App() {
     }, [intervalDownload])
 
     useEffect(() => {
+        console.log(metaData)
         if (Object.keys(metaData).length > 0) {
             let screenplay = currentScreenplay();
             screenplay.metaData = metaData;
             localStorage.setItem('currentScreenplay', JSON.stringify(screenplay))
+            let documentTitle = [metaData.author, metaData.title].filter(s => !!s).join(' - ')
+            document.title = documentTitle;
         }
     }, [metaData])
 

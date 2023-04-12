@@ -169,8 +169,11 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
                         </div>
                     </div>
                     <div className={["icon", showSuggestionBox ? 'active' : ''].join(' ')} onClick={toggleShowSuggestionBox} data-help="Show/Hide suggestions">
-                        <div style={{ transform: 'scale(0.8) translateX(-0px) translateY(-1px)' }}>
+                        {/* <div style={{ transform: 'scale(0.8) translateX(-0px) translateY(-1px)' }}>
                             <i className="gg-menu-boxed"></i>
+                        </div> */}
+                        <div style={{ transform: 'scale(0.8) translateX(-1px) translateY(10px)' }}>
+                            <i className="gg-format-separator"></i>
                         </div>
                     </div>
                     <div className={["icon", focusMode ? 'active' : ''].join(' ')} onClick={toggleFocusMode} data-help="Focus Mode (CTRL/META + 0)">
