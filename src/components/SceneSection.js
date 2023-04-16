@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { getCursorPosition, moveCursor, moveCursorToEnd, splitPositionForHtmlLikePlainText, stripHTMLTags } from "../lib/helper";
 
 import { SuggestionBox } from './SuggestionBox.js'
+import { popMementos, pushRedo, popRedo, addMemento } from '../lib/mementos.js';
 
 export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSectionById, insertNewSectionAfterId, insertNewSectionBeforeId, removeSection, id, index, sectionsLength, html, classification, setCurrentSectionById, cursorToEnd, randomID, chooseEditingLevel, sections, updateSectionById } = {}) {
 
@@ -104,21 +105,73 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
         ])
     }
 
-    function pushMementos(step) {
-        let maxDataLength = 6000;
-        let mementos = JSON.parse(localStorage.getItem('mementos') || '[]')
-        mementos.push(step)
-        while (JSON.stringify(mementos).length > maxDataLength) {
-            mementos.shift()
+    function redoLastStep() {
+        let lastRedo = popRedo();
+        while (lastRedo && !lastRedo.html.trim()) {
+            lastRedo = popRedo();
         }
-        localStorage.setItem('mementos', JSON.stringify(mementos))
+
+        if (!lastRedo) {
+            return;
+        }
+        let section = document.querySelector(`section[id="${lastRedo.id}"] > .edit-field`)
+
+        if (!section) {
+            return;
+        }
+        //addMemento('delete', { html: inputRef.current.textContent, id, editingLevel, getPrev, getNext })
+        addMemento('onRedo', { html: section.innerHTML, id: lastRedo.id, editingLevel: lastRedo.editingLevel, getPrev, getNext })
+        updateSectionById(lastRedo.id, { html: lastRedo.html })
+        section.innerHTML = lastRedo.html;
+        section.dataset.excludeFromMemento = true;
+        section.focus()
     }
 
-    function popMementos() {
-        let mementos = JSON.parse(localStorage.getItem('mementos') || '[]')
-        let latestStep = mementos.pop()
-        localStorage.setItem('mementos', JSON.stringify(mementos))
-        return latestStep;
+    function undoLastStep() {
+        let memento = popMementos();
+        while (memento) {
+            if (memento.action === 'delete') {
+                let sectionWithIDAlreadyExists = !!(memento.id && findSectionById(memento.id));
+                const options = {
+                    html: memento.html,
+                    // prevent inserting of duplicate ids
+                    id: sectionWithIDAlreadyExists ? randomID() : memento.id,
+                    classification: memento.classification,
+                    editingLevel: memento.editingLevel,
+                };
+                if (memento.prev && findSectionById(memento.prev)) {
+                    insertNewSectionAfterId(memento.prev, options);
+                } else if (memento.next && findSectionById(memento.next)) {
+                    insertNewSectionBeforeId(memento.next, options);
+                } else {
+                    insertNewSectionAfterId(id, options)
+                }
+                break;
+            } else {
+                if (memento.id) {
+                    let section = document.querySelector(`section[id="${memento.id}"] > .edit-field`)
+                    if (!section) {
+                        break;
+                    }
+                    if (section && (section.innerHTML.trim() !== memento.html.trim() && section.textContent.trim() !== memento.html.trim())) {
+                        pushRedo({
+                            html: section.innerHTML,
+                            id: memento.id,
+                            editingLevel: memento.editingLevel,
+                            // classification: editingLevel,
+                            action: 'undo',
+                        })
+                        section.innerHTML = memento.html;
+                        // prevents to set undo on next blur
+                        section.dataset.excludeFromMemento = true;
+                        section.focus()
+                        updateSectionById(memento.id, { html: memento.html })
+                        break;
+                    }
+                }
+            }
+            memento = popMementos();
+        }
     }
 
     function getContentFromEvent(ev) {
@@ -187,14 +240,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
             // only remove if some elements still exists
             if (document.querySelectorAll('#screenwriter-editor > section').length > 1) {
                 if (inputRef.current.innerHTML?.trim()) {
-                    pushMementos({
-                        html: inputRef.current.innerHTML,
-                        id,
-                        editingLevel,
-                        classification: editingLevel,
-                        prev: getPrev(id)?.id,
-                        next: getNext(id)?.id,
-                    });
+                    addMemento('delete', { html: inputRef.current.innerHTML, id, editingLevel, getPrev, getNext })
                 }
                 goPrev({ id, cursorToEnd: true })
                 removeSection(id)
@@ -357,31 +403,12 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
             }
             return;
         } else if ((ev.metaKey || ev.ctrlKey) && ev.key === 'z') {
-            let beforeLastUndo = inputRef.current.textContent
-            setTimeout(() => {
-                if (!inputRef.current || beforeLastUndo !== inputRef.current.textContent) {
-                    // something has changed, so the browser did some undo stuff…
-                    return;
-                }
-                let lastDeletedText = popMementos();
-                if (lastDeletedText) {
-                    let sectionWithIDAlreadyExists = !!(lastDeletedText.id && findSectionById(lastDeletedText.id));
-                    const options = {
-                        html: lastDeletedText.html,
-                        // prevent inserting of duplicate ids
-                        id: sectionWithIDAlreadyExists ? randomID() : lastDeletedText.id,
-                        classification: lastDeletedText.classification,
-                        editingLevel: lastDeletedText.editingLevel,
-                    };
-                    if (lastDeletedText.prev && findSectionById(lastDeletedText.prev)) {
-                        insertNewSectionAfterId(lastDeletedText.prev, options);
-                    } else if (lastDeletedText.next && findSectionById(lastDeletedText.next)) {
-                        insertNewSectionBeforeId(lastDeletedText.next, options);
-                    } else {
-                        insertNewSectionAfterId(id, options)
-                    }
-                }
-            }, 50);
+            ev.preventDefault();
+            if (ev.shiftKey) {
+                redoLastStep()
+            } else {
+                undoLastStep()
+            }
 
         }
         updateCSSClasses()
@@ -406,6 +433,12 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
             return;
         }
 
+        if (inputRef.current.dataset.excludeFromMemento) {
+            inputRef.current.dataset.excludeFromMemento = false;
+        } else {
+            inputRef.current.dataset.innerHTMLBeforeFocus = inputRef.current.innerHTML;
+        }
+
         setIsCurrent(true);
         localStorage.setItem('lastIndexOfCurrent', index);
         setCurrentSectionById(id);
@@ -422,10 +455,16 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
     }
 
     function handleBlur() {
+        if (inputRef.current.dataset.excludeFromMemento) {
+            inputRef.current.dataset.excludeFromMemento = false;
+        } else {
+            addMemento('onBlur', { html: inputRef.current.dataset.innerHTMLBeforeFocus || inputRef.current.textContent, id, editingLevel, getPrev, getNext })
+            inputRef.current.dataset.innerHTMLBeforeFocus = null;
+        }
         setIsCurrent(false);
         inputRef.current.dataset.chooseEditingLevel = '';
         cleanupContenteditableMarkup();
-        updateSectionById(id, {html: inputRef.current.textContent})
+        updateSectionById(id, { html: inputRef.current.innerHTML })
         setTimeout(() => {
             setShowSuggestions(false);
         }, 200);
@@ -463,12 +502,6 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
     }
 
     useEffect(() => {
-        if (htmlContent !== null) {
-            inputRef.current.innerHTML = htmlContent;
-        }
-    }, [htmlContent])
-
-    useEffect(() => {
         let content = inputRef.current?.textContent
         if (content !== null &&
             (((editingLevel === 'description' && content === content.toLocaleUpperCase()) || editingLevel === 'dialogCharacter'))
@@ -494,6 +527,20 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
             updateCSSClasses()
         }
     }, [cssClasses])
+
+    useEffect(() => {
+        if (inputRef?.current) {
+            inputRef.current.innerHTML = html
+            updateCSSClasses();
+        }
+    }, [html, inputRef])
+
+    useEffect(() => {
+        if (htmlContent !== null && inputRef.current) {
+            inputRef.current.innerHTML = htmlContent;
+            updateCSSClasses();
+        }
+    }, [htmlContent, inputRef])
 
     return <section className={(cssClasses ? [...cssClasses, allowToShowSuggestionBox && showSuggestions ? 'with-suggestions' : ''] : []).filter(e => !!e)?.join(' ')} data-index={index + 1} data-choose-editing-level={chooseEditingLevel} onClick={handleClick} id={id}>
         <div contentEditable={true} onFocus={handleFocus} onBlur={handleBlur} ref={inputRef} className={['edit-field', editingLevel].join(' ')} onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} data-id={id}>
