@@ -85,13 +85,16 @@ export function Editor({ seed, currentIndex } = {}) {
         setSections([...setAllSectionToNotCurrent(sections.slice(0, index)), ...emptySection({ html, id, classification, chooseEditingLevel: true }), ...setAllSectionToNotCurrent(sections.slice(index))])
     }
 
-    function updateSectionById(id, {html} = {}) {
+    function updateSectionById(id, {html, current} = {}) {
         let index = sections.indexOf(sections.filter(s => s.id === id)[0])
         if (!index || !sections[index]) {
-            return;
             // console.error(`Section ${id} not found`);
+            return;
         }
-        sections[index].html = html;
+        if (html !== sections[index].html) {
+            sections[index].html = html;
+        }
+        
         setSections([...sections])
     }
 
