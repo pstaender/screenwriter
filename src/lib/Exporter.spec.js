@@ -1,7 +1,7 @@
 import { expect, jest, test } from '@jest/globals';
 import { readFile } from 'fs/promises'
 
-import { Exporter } from './Exporter';
+import { Exporter, deltaOfData, reverseDeltaPatch } from './Exporter';
 import { Importer } from './Importer';
 
 const exampleScreenplaySections = [
@@ -48,9 +48,30 @@ test('export to txt format of screenplay without any exceptions', () => {
 test('import exported txt format and export again, without changing the structure', () => {
     let result = Exporter(exampleScreenplaySections, exampleScreenplayMetaData);
     let resultImportAndExportAgain = Exporter(Importer(result).sections, Importer(result).metaData)
-    
+
     expect(result).toEqual(resultImportAndExportAgain)
 });
+
+test('export with diff', () => {
+    let previousSections = [
+        {
+            html: 'John',
+            classification: 'dialogCharacter',
+        },
+        {
+            html: 'Well, one can\'t have everything…',
+            classification: 'dialogText',
+        }
+    ];
+    let previousMetaData = {
+        title: 'draft',
+    };
+    let delta = deltaOfData(exampleScreenplaySections, exampleScreenplayMetaData, previousSections, previousMetaData);
+    expect(reverseDeltaPatch(exampleScreenplaySections, exampleScreenplayMetaData, delta)).toEqual({
+        sections: previousSections,
+        metaData: previousMetaData,
+    })
+})
 
 xit('export and import without any losses', () => {
     let result = Exporter(exampleScreenplaySections, exampleScreenplayMetaData);
