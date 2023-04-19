@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import './App.scss';
 
-import { Editor } from './components/Editor.js'
+import { Editor } from './components/Editor'
 import { Exporter, convertDomSectionsToDataStructure } from './lib/Exporter';
 import { useInterval } from 'usehooks-ts';
 import { Toolbar } from './components/Toolbar';
@@ -9,10 +9,13 @@ import slugify from 'slugify';
 import { MetaDataEdit } from './components/MetaDataEdit';
 import { Cover } from './components/Cover';
 import { useVisibilityChange } from './components/useVisibilityChange';
+import { saveScreenwriterFile } from './lib/tauri';
+
+import { confirm as confirmDialog, message as messageDialog } from "@tauri-apps/api/dialog";
 
 let lastSavedExport = null;
 
-export function App() {
+export function App({fileImportAndExport} = {}) {
 
     function currentScreenplay() {
         try {
@@ -27,6 +30,7 @@ export function App() {
         };
     }
 
+    fileImportAndExport = !!fileImportAndExport;
    
     const isVisible = useVisibilityChange();
 
@@ -51,9 +55,8 @@ export function App() {
     }, [focusMode])
 
     function metaDataAndSections() {
-        let sections = convertDomSectionsToDataStructure([...document.querySelectorAll('#screenwriter-editor > section > div.edit-field')]);
         return {
-            sections,
+            sections: sectionsFromDocument(),
             metaData,
         }
     }
@@ -61,8 +64,7 @@ export function App() {
     function storeScreenplayInLocalStorage() {
         let data = metaDataAndSections();
         if (data.sections?.length > 0 && document.querySelector('#screenwriter-editor').textContent) {
-            // if error occurs, this may be empty…
-            // console.debug(`Autosave`)
+            data.metaData = {...metaData};
             localStorage.setItem('currentScreenplay', JSON.stringify(data))
         }
         return data;
@@ -72,6 +74,7 @@ export function App() {
         if (!format) {
             format = localStorage.getItem('exportFormat') === 'txt' ? 'txt' : 'json';
         }
+
         let data = metaDataAndSections();
         data.sections = data.sections.map(s => {
             // select relevant values only
@@ -106,6 +109,31 @@ export function App() {
         a.click();
     }
 
+    async function handleKeyDownForTauri(ev) {
+        if ((ev.metaKey || ev.ctrlKey)) {
+            if (ev.key === 'o') {
+                let data = await openAndReadScreenwriterFile()
+                // console.log(data)
+                setMetaData(data?.metaData || {});
+                setSeed(Math.random());
+            } else if (ev.key === 'p') {
+                window.print();
+            } else if (ev.key === 'n') {
+                let yes = await confirmDialog('Do you want to clear the document?')
+                if (yes) {
+                    resetDocument({setMetaData, setSeed});
+                }
+            } else if (ev.key === 's') {
+                if (ev.shiftKey) {
+                    await saveScreenwriterFile(null, metaDataAndSections())
+                } else {
+                    await saveScreenwriterFile(localStorage.getItem('lastImportFile'), metaDataAndSections());
+                }
+            }
+        }
+    }
+
+
     function handleKeyDown(ev) {
         if (ev.key === "Escape") {
             setEditMetaData(false);
@@ -114,6 +142,18 @@ export function App() {
         if (focusMode) {
             setHideMousePointer(true);
         }
+        // shortcuts for app
+        if (window.__TAURI__) {
+            try {
+                handleKeyDownForTauri(ev).catch((err) => {
+                    console.error(err);
+                    messageDialog(err.message, { title: 'Error', type: 'error'});
+                })
+            } catch(e) {
+                console.error(e);
+                messageDialog(e.message, { title: 'Error', type: 'error'});
+            }
+        }
         if ((ev.metaKey || ev.ctrlKey)) {
             if (ev.key === '0') {
                 setFocusMode(!focusMode);
@@ -121,7 +161,7 @@ export function App() {
             if (ev.key === 'M') {
                 setEditMetaData(true);
             }
-            if (ev.shiftKey && ev.key === 'S') {
+            if (ev.shiftKey && ev.key === 'S' && fileImportAndExport) {
                 downloadScreenplay();
             }
         }
@@ -174,7 +214,7 @@ export function App() {
     }, [isVisible])
 
     return <div className={[focusMode ? 'focus' : '', hideMousePointer ? 'no-mouse-pointer' : ''].join(' ')} onKeyDown={handleKeyDown} onMouseMove={() => setHideMousePointer(false) }>
-        <Toolbar setSeed={setSeed} downloadScreenplay={downloadScreenplay} setIntervalDownload={setIntervalDownload} setEditMetaData={setEditMetaData} setMetaData={setMetaData} setFocusMode={setFocusMode} focusMode={focusMode}></Toolbar>
+        <Toolbar setSeed={setSeed} downloadScreenplay={downloadScreenplay} setIntervalDownload={setIntervalDownload} setEditMetaData={setEditMetaData} setMetaData={setMetaData} setFocusMode={setFocusMode} focusMode={focusMode} fileImportAndExport={fileImportAndExport}></Toolbar>
         {editMetaData && <MetaDataEdit metaData={metaData} setMetaData={setMetaData} setEditMetaData={setEditMetaData}></MetaDataEdit>}
         <Cover metaData={metaData}></Cover>
         <Editor key={seed} seed={seed} currentIndex={currentIndex} />
@@ -182,4 +222,6 @@ export function App() {
 }
 
 
-import './Print.scss';
+import './Print.scss';import { openAndReadScreenwriterFile } from './lib/tauri';
+import { resetDocument, sectionsFromDocument } from './lib/helper';
+

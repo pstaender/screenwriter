@@ -1,7 +1,6 @@
 import { expect, jest, test } from '@jest/globals';
 
-import { Exporter } from './Exporter';
-import { Importer } from './Importer';
+import { deltaOfData, reverseDeltaPatch } from './JsonDiff';
 
 const exampleScreenplaySections = [
     {
@@ -40,19 +39,24 @@ const exampleScreenplayMetaData = {
     author: 'John Doe'
 };
 
-test('export to txt format of screenplay without any exceptions', () => {
-    Exporter(exampleScreenplaySections, exampleScreenplayMetaData);
-});
 
-test('import exported txt format and export again, without changing the structure', () => {
-    let result = Exporter(exampleScreenplaySections, exampleScreenplayMetaData);
-    let resultImportAndExportAgain = Exporter(Importer(result).sections, Importer(result).metaData)
-
-    expect(result).toEqual(resultImportAndExportAgain)
-});
-
-xit('export and import without any losses', () => {
-    let result = Exporter(exampleScreenplaySections, exampleScreenplayMetaData);
-    expect(Importer(result).sections).toEqual(exampleScreenplaySections)
-    expect(Importer(result).metaData).toEqual(exampleScreenplayMetaData)
+test('export with diff', () => {
+    let previousSections = [
+        {
+            html: 'John',
+            classification: 'dialogCharacter',
+        },
+        {
+            html: 'Well, one can\'t have everything…',
+            classification: 'dialogText',
+        }
+    ];
+    let previousMetaData = {
+        title: 'draft',
+    };
+    let delta = deltaOfData(exampleScreenplaySections, exampleScreenplayMetaData, previousSections, previousMetaData);
+    expect(reverseDeltaPatch(exampleScreenplaySections, exampleScreenplayMetaData, delta)).toEqual({
+        sections: previousSections,
+        metaData: previousMetaData,
+    })
 })

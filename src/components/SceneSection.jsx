@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { getCursorPosition, moveCursor, moveCursorToEnd, splitPositionForHtmlLikePlainText, stripHTMLTags } from "../lib/helper";
 
-import { SuggestionBox } from './SuggestionBox.js'
+import { SuggestionBox } from './SuggestionBox'
 import { popMementos, pushRedo, popRedo, addMemento } from '../lib/mementos.js';
 
 export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSectionById, insertNewSectionAfterId, insertNewSectionBeforeId, removeSection, id, index, sectionsLength, html, classification, setCurrentSectionById, cursorToEnd, randomID, chooseEditingLevel, sections, updateSectionById } = {}) {

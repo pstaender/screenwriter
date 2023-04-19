@@ -3,18 +3,15 @@ import { Importer } from "../lib/Importer";
 import Dropzone from "./Dropzone"
 
 import './Toolbar.scss';
+import { loadJSONDataToLocalStorage, loadPlainTextToLocalStorage, resetDocument } from "../lib/helper";
 
-export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setEditMetaData, setMetaData, focusMode, setFocusMode } = {}) {
+export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setEditMetaData, setMetaData, focusMode, setFocusMode, fileImportAndExport } = {}) {
 
     const [darkMode, setDarkMode] = useState(localStorage.getItem('darkMode') === 'true')
     const [showSuggestionBox, setShowSuggestionBox] = useState(localStorage.getItem('showSuggestionBox') === 'true')
 
-    function resetDocument() {
-        setSeed(Math.random())
-        localStorage.setItem('currentScreenplay', '{}');
-        localStorage.setItem('mementos', '[]');
-        localStorage.setItem('lastIndexOfCurrent', 0);
-        setMetaData({})
+    function resetCurrentDocument() {
+        resetDocument({setMetaData, setSeed});
     }
 
     useEffect(() => {
@@ -34,27 +31,17 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
             reader.onload = function (e) {
 
                 if (e.target.result) {
-                    resetDocument();
+                    resetCurrentDocument();
                     let data = null;
                     try {
                         if (file.type === 'application/json') {
                             data = JSON.parse(e.target.result);
-                            localStorage.setItem('currentScreenplay', JSON.stringify({
-                                sections: data.sections.map(s => {
-                                    return {
-                                        classification: s.classification,
-                                        html: s.html,
-                                    }
-                                }),
-                                // TODO: only allow specific fields / value?
-                                metaData: data.metaData
-                            }));
+                            loadJSONDataToLocalStorage(data);
                             setDownloadFormat('json')
                         } else {
                             // plaintext
-                            data = Importer(e.target.result.replace(/\t/g, '    '));
+                            loadPlainTextToLocalStorage(e.target.result)
                             setDownloadFormat('txt')
-                            localStorage.setItem('currentScreenplay', JSON.stringify(data));
                         }
                     } catch (e) {
                         console.error(e);
@@ -67,7 +54,6 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
                 }
             };
             // onload callback gets called after the reader reads the file data
-            // Read the file as Data URL (since we accept only images)
             reader.readAsText(file);
 
             return file;
@@ -123,33 +109,38 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
 
     return (
         <div id="screenwriter-toolbar">
-            <Dropzone onDrop={onDrop} accept={{
-                "plain/txt": ['.txt'],
-                "application/json": ['.json']
-            }} />
-            <div className="icons">
-                <div className='icon show-more-icons vertical' data-help={`Download`}>
-                    <i className="gg-arrow-down-o" onClick={(ev) => {
-                        if (ev.currentTarget === ev.target) {
-                            downloadScreenplay()
-                        }
-                    }}></i>
-                    <div className='icons'>
-                        <div className={['icon', downloadFormat === 'json' ? 'active' : ''].join(' ')} onClick={() => {
-                            setDownloadFormat('json');
-                            downloadScreenplay('json');
-                        }} data-help="as JSON file">
-                            <i className="gg-brackets"></i>
-                        </div>
-                        <div className={['icon', downloadFormat === 'txt' ? 'active' : ''].join(' ')} onClick={() => {
-                            setDownloadFormat('txt');
-                            downloadScreenplay('txt');
-                        }} data-help="as plain-text file">
-                            <i className="gg-font-height"></i>
+            {fileImportAndExport && (
+                <>
+                    <Dropzone onDrop={onDrop} accept={{
+                        "plain/txt": ['.txt'],
+                        "application/json": ['.json']
+                    }} />
+                    <div className="icons">
+                        <div className='icon show-more-icons vertical' data-help={`Download`}>
+                            <i className="gg-arrow-down-o" onClick={(ev) => {
+                                if (ev.currentTarget === ev.target) {
+                                    downloadScreenplay()
+                                }
+                            }}></i>
+                            <div className='icons'>
+                                <div className={['icon', downloadFormat === 'json' ? 'active' : ''].join(' ')} onClick={() => {
+                                    setDownloadFormat('json');
+                                    downloadScreenplay('json');
+                                }} data-help="as JSON file">
+                                    <i className="gg-brackets"></i>
+                                </div>
+                                <div className={['icon', downloadFormat === 'txt' ? 'active' : ''].join(' ')} onClick={() => {
+                                    setDownloadFormat('txt');
+                                    downloadScreenplay('txt');
+                                }} data-help="as plain-text file">
+                                    <i className="gg-font-height"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                </>
+            )}
+            
 
             <div className='icon show-more-icons'>
                 <i className="gg-more-alt"></i>
@@ -157,7 +148,7 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
                     <div className="icon" onClick={() => setDarkMode(!darkMode)} data-help="Dark Mode">
                         <i className="gg-dark-mode"></i>
                     </div>
-                    <div className='icon' onClick={() => resetDocument()} data-help="Clear Document">
+                    <div className='icon' onClick={() => resetCurrentDocument()} data-help="Clear Document">
                         <i className="gg-trash"></i>
                     </div>
                     <div className={["icon", autoSave > 0 ? 'active' : ''].filter(e => !!e).join(' ')} onClick={handleToggleAutoSave} data-help="Download Backup every 60secs">
