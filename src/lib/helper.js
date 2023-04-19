@@ -1,14 +1,5 @@
-
-// export function plainTextLineBreaksToHtml(text) {
-//     return text.replace(/\n/g, '<br>');
-// }
-
-import { Exporter, convertDomSectionsToDataStructure } from "./Exporter";
+import { convertDomSectionsToDataStructure } from "./Exporter";
 import { Importer } from "./Importer";
-
-// export function htmlLineBreaksToPlainText(text) {
-//     return text.replace(/<br>/g, '\n');
-// }
 
 export function splitPositionForHtmlLikePlainText(html, pos) {
     let chars = html.split('');
@@ -263,8 +254,6 @@ export function sectionsFromDocument() {
     return convertDomSectionsToDataStructure([...document.querySelectorAll('#screenwriter-editor > section > div.edit-field')]);
 }
 
-
-
 function moveCursorToPosition(el, position) {
     // DOMException: Failed to execute 'setStart' on 'Range': The offset 220 is larger than the node's length (78)
     let range = document.createRange();
@@ -274,4 +263,9 @@ function moveCursorToPosition(el, position) {
     range.setEnd(el.firstChild, position);
     selection.removeAllRanges();
     selection.addRange(range);
+}
+
+export function basenameOfPath(str) {
+    let li = Math.max(str.lastIndexOf('/'), str.lastIndexOf('\\'));
+    return new String(str).substring(li + 1);
 }

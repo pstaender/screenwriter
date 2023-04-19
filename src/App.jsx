@@ -3,15 +3,16 @@ import './App.scss';
 
 import { Editor } from './components/Editor'
 import { Exporter, convertDomSectionsToDataStructure } from './lib/Exporter';
-import { useInterval } from 'usehooks-ts';
+import { useEventListener, useInterval } from 'usehooks-ts';
 import { Toolbar } from './components/Toolbar';
 import slugify from 'slugify';
 import { MetaDataEdit } from './components/MetaDataEdit';
 import { Cover } from './components/Cover';
 import { useVisibilityChange } from './components/useVisibilityChange';
-import { saveScreenwriterFile } from './lib/tauri';
+import { saveScreenwriterFile, ensureAppDir } from './lib/tauri';
 
 import { confirm as confirmDialog, message as messageDialog } from "@tauri-apps/api/dialog";
+import { basenameOfPath } from './lib/helper';
 
 let lastSavedExport = null;
 
@@ -109,13 +110,19 @@ export function App({fileImportAndExport} = {}) {
         a.click();
     }
 
+    async function autoSaveTauri(lastImportFile) {
+        let appDataDir = await ensureAppDir()
+        await saveScreenwriterFile(`${appDataDir}${basenameOfPath(lastImportFile)}`, metaDataAndSections())
+    }
+
     async function handleKeyDownForTauri(ev) {
         if ((ev.metaKey || ev.ctrlKey)) {
             if (ev.key === 'o') {
                 let data = await openAndReadScreenwriterFile()
-                // console.log(data)
-                setMetaData(data?.metaData || {});
-                setSeed(Math.random());
+                if (data) {
+                    setMetaData(data.metaData || {});
+                    setSeed(Math.random());
+                }
             } else if (ev.key === 'p') {
                 window.print();
             } else if (ev.key === 'n') {
@@ -125,10 +132,20 @@ export function App({fileImportAndExport} = {}) {
                 }
             } else if (ev.key === 's') {
                 if (ev.shiftKey) {
-                    await saveScreenwriterFile(null, metaDataAndSections())
+                    let {newFilename} = await saveScreenwriterFile(null, metaDataAndSections())
+                    if (newFilename) {
+                        localStorage.setItem('lastImportFile', newFilename);
+                    }
                 } else {
-                    await saveScreenwriterFile(localStorage.getItem('lastImportFile'), metaDataAndSections());
+                    let {newFilename} = await saveScreenwriterFile(localStorage.getItem('lastImportFile'), metaDataAndSections());
+                    if (newFilename) {
+                        localStorage.setItem('lastImportFile', newFilename);
+                    }
                 }
+            } else if (ev.key === 'r') {
+                console.debug('reload')
+                storeScreenplayInLocalStorage();
+                setSeed(Math.random());
             }
         }
     }
@@ -160,7 +177,7 @@ export function App({fileImportAndExport} = {}) {
             }
             if (ev.key === 'M') {
                 setEditMetaData(true);
-            }
+            }            
             if (ev.shiftKey && ev.key === 'S' && fileImportAndExport) {
                 downloadScreenplay();
             }
@@ -172,17 +189,31 @@ export function App({fileImportAndExport} = {}) {
         if (!document.hidden) {
             storeScreenplayInLocalStorage();
         }
-    }, 2000);
+    }, 10000);
 
     useInterval(() => {
         let data = metaDataAndSections();
         let content = Exporter(data.sections, data.metaData);
-        // only download if something has changed
-        if (data.sections.filter(s => !!s.html.trim())?.length > 0 && content !== lastSavedExport) {
+        let sections = data.sections.filter(s => !!s.html.trim());
+        if (sections?.length == 0 || content === lastSavedExport) {
+            return;
+        }
+        if (window.__TAURI__) {
+            // creates an autosave in /$HOME/Library/Application Support/com.screenwriter.dev 
+            let lastImportFile = localStorage.getItem('lastImportFile');
+            if (lastImportFile) {
+                autoSaveTauri(lastImportFile).then(() => {
+                    lastSavedExport = content;
+                })
+            }
+        } else {
             downloadScreenplay();
             lastSavedExport = content;
         }
+        
     }, Number(intervalDownload) > 0 ? Number(intervalDownload) : null);
+    
+    useEventListener('keydown', handleKeyDown);
 
     useEffect(() => {
         localStorage.setItem('autosave', String(Number(intervalDownload)));
@@ -213,7 +244,7 @@ export function App({fileImportAndExport} = {}) {
         }
     }, [isVisible])
 
-    return <div className={[focusMode ? 'focus' : '', hideMousePointer ? 'no-mouse-pointer' : ''].join(' ')} onKeyDown={handleKeyDown} onMouseMove={() => setHideMousePointer(false) }>
+    return <div className={[focusMode ? 'focus' : '', hideMousePointer ? 'no-mouse-pointer' : ''].join(' ')}  onMouseMove={() => setHideMousePointer(false) }>
         <Toolbar setSeed={setSeed} downloadScreenplay={downloadScreenplay} setIntervalDownload={setIntervalDownload} setEditMetaData={setEditMetaData} setMetaData={setMetaData} setFocusMode={setFocusMode} focusMode={focusMode} fileImportAndExport={fileImportAndExport}></Toolbar>
         {editMetaData && <MetaDataEdit metaData={metaData} setMetaData={setMetaData} setEditMetaData={setEditMetaData}></MetaDataEdit>}
         <Cover metaData={metaData}></Cover>

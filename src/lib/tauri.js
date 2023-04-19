@@ -1,5 +1,6 @@
 import { open, save } from '@tauri-apps/api/dialog';
-import { readTextFile, readBinaryFile, writeTextFile, writeBinaryFile } from '@tauri-apps/api/fs';
+import { appDataDir } from '@tauri-apps/api/path';
+import { readTextFile, readBinaryFile, writeTextFile, writeBinaryFile, createDir, exists, BaseDirectory } from '@tauri-apps/api/fs';
 import { loadJSONDataToLocalStorage, loadPlainTextToLocalStorage } from './helper';
 import JSZip from 'jszip';
 import { Exporter } from './Exporter';
@@ -44,7 +45,6 @@ export async function openAndReadScreenwriterFile() {
 
 export async function saveScreenwriterFile(fileName = null, { metaData, sections } = {}) {
 
-
     async function exportDataOfCurrentScreenplay(format) {
         let data = { sections, metaData };// : JSON.parse(localStorage.getItem('currentScreenplay'));
 
@@ -55,8 +55,6 @@ export async function saveScreenwriterFile(fileName = null, { metaData, sections
             content = Exporter(data.sections, data.metaData);
         }
         return content;
-
-
     }
 
     let format = 'screenwriter';
@@ -70,6 +68,7 @@ export async function saveScreenwriterFile(fileName = null, { metaData, sections
         }
     }
 
+    let newFilename = null;
 
     if (!fileName) {
         fileName = await save({
@@ -78,9 +77,11 @@ export async function saveScreenwriterFile(fileName = null, { metaData, sections
                 extensions: ['screenwriter', 'json', 'txt']
             }],
         });
-        if (fileName) {
-            localStorage.setItem('lastImportFile', fileName);
+        if (!fileName) {
+            // canceled
+            return {};
         }
+        newFilename = fileName;
     }
 
     let content = await exportDataOfCurrentScreenplay(format);
@@ -94,6 +95,16 @@ export async function saveScreenwriterFile(fileName = null, { metaData, sections
     } else {
         await writeTextFile(fileName, content);
     }
+    return {
+        newFilename
+    }
 }
 
+export async function ensureAppDir() {
+    let appDir = await appDataDir();
+    if (!await exists(appDir)) {
+        createDir('', { dir: BaseDirectory.AppData, recursive: true })
+    }
+    return appDir;
+}
 

@@ -2,8 +2,10 @@ import './Editor.scss';
 
 import { useEffect, useState } from "react";
 import { SceneSection } from './SceneSection';
-import { getCursorPosition, sha256Hash } from '../lib/helper';
+import { sha256Hash } from '../lib/helper';
 import { Toc } from './Toc';
+import { useInterval } from 'usehooks-ts';
+import { ScreenwriterDemo } from '../lib/Demo';
 
 export function Editor({ seed, currentIndex } = {}) {
 
@@ -53,10 +55,41 @@ export function Editor({ seed, currentIndex } = {}) {
     const [sections, setSections] = useState([])
     const [showToc, setShowToc] = useState(false);
 
+    const [playDemo, setPlayDemo] = useState(false);
+
     useEffect(() => {
         // changing seed forces reload
         setSections(sectionsCurrentScreenplayViaLocalStorageOrPlainText())
     }, [seed])
+
+    useEffect(() => {
+        if (window.location.hash === '#demo') {
+            // reset for demo
+            document.querySelector('body').classList.remove('dark-mode')
+            document.querySelector('body').classList.remove('focus')
+            document.querySelector('#screenwriter > .focus')?.classList?.remove('focus')
+            // clear document
+            setSections([{
+                html: ''
+            }])
+            setPlayDemo(true)
+        } else {
+            setPlayDemo(false)
+        }
+    }, [window.location.hash])
+
+    useInterval(() => {
+        if (window.location.hash !== '#demo') {
+            return;
+        }
+        if (Math.random() > 0.5) {
+            return;
+        }
+        if (sections && sections.length > 0) {
+            ScreenwriterDemo({sections, appendNewSection})
+        }
+
+    }, playDemo ? 30 : null)
 
     function setAllSectionToNotCurrent(sections) {
         return sections.map(s => {

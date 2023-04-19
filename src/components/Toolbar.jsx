@@ -151,7 +151,7 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
                     <div className='icon' onClick={() => resetCurrentDocument()} data-help="Clear Document">
                         <i className="gg-trash"></i>
                     </div>
-                    <div className={["icon", autoSave > 0 ? 'active' : ''].filter(e => !!e).join(' ')} onClick={handleToggleAutoSave} data-help="Download Backup every 60secs">
+                    <div className={["icon", autoSave > 0 ? 'active' : ''].filter(e => !!e).join(' ')} onClick={handleToggleAutoSave} data-help={window.__TAURI__ ? 'Backup every 60secs': 'Download Backup every 60secs'}>
                         <i className="gg-timer"></i>
                     </div>
                     <div className={["icon", autoScroll ? 'active' : ''].join(' ')} onClick={() => setAutoScroll(!autoScroll)} data-help="Smooth auto scroll to current section">
