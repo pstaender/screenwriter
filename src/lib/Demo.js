@@ -1,9 +1,9 @@
 import { moveCursorToEnd } from "./helper";
 
 let originalText = `
-## Screenwriter Demo Play
+// Screenwriter Demo Play
 
-[descriptionAnnotation]by Philipp Staender
+[descriptionAnnotation]// by Philipp Staender
 
 [pause] 
 
@@ -55,7 +55,7 @@ The COMPUTER wakes up. Its screen turns from dark black into bright white. The s
 
 [dialogText]A software, that provides actual value to your work.
 
-[dialogText]Don't let your creativity disrupted by unneeded features. Write your story at high pace and stay focused.
+[dialogText]Don't let your creativity disrupted by unneeded features so that you can write your story at high pace and stay focused.
 
 
 The AUTHOR smiles. He now realises, that he is already looking at a software which might be capable of these challanges.
@@ -72,15 +72,17 @@ The AUTHOR smiles. He now realises, that he is already looking at a software whi
 
 [pause] ★ Editing classifications for characters, dialogs, descriptions etc.
 
-[pause] ★ (Optional) auto-suggestions for characters and scene description
-
 [pause] ★ free and open source
 
 [pause] ★ runs in modern browsers
 
 [pause] ★ export as pdf/print
 
-[descriptionAnnotation]THE END ?
+[pause] ★ Optional: auto-suggestions for characters and scene description
+
+[descriptionAnnotation]THE END
+
+To view the print/pdf-version, hit (⌘/CTRL + P)
 
 
 `.trim().replace(/\n{3,}/g,`\n\n`)

@@ -1,18 +1,20 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './App.scss';
 
 import { Editor } from './components/Editor'
-import { Exporter, convertDomSectionsToDataStructure } from './lib/Exporter';
+import { Exporter } from './lib/Exporter';
 import { useEventListener, useInterval } from 'usehooks-ts';
 import { Toolbar } from './components/Toolbar';
 import slugify from 'slugify';
 import { MetaDataEdit } from './components/MetaDataEdit';
 import { Cover } from './components/Cover';
 import { useVisibilityChange } from './components/useVisibilityChange';
-import { saveScreenwriterFile, ensureAppDir } from './lib/tauri';
+
+import { saveScreenwriterFile, ensureAppDir, importFileToLocalStorage, openAndReadScreenwriterFile } from './lib/tauri';
+import { listen as listenOnTauriApp } from '@tauri-apps/api/event'
+import { resetDocument, sectionsFromDocument, basenameOfPath } from './lib/helper';
 
 import { confirm as confirmDialog, message as messageDialog } from "@tauri-apps/api/dialog";
-import { basenameOfPath } from './lib/helper';
 
 let lastSavedExport = null;
 
@@ -42,6 +44,7 @@ export function App({fileImportAndExport} = {}) {
     const [focusMode, setFocusMode] = useState(false)
     const [currentIndex, setCurrentIndex] = useState(0);
     const [hideMousePointer, setHideMousePointer] = useState(false);
+    const appRef = useRef(null);
 
     useEffect(() => {
         // we need for some elements a glocal focus selector…
@@ -137,7 +140,7 @@ export function App({fileImportAndExport} = {}) {
                         localStorage.setItem('lastImportFile', newFilename);
                     }
                 } else {
-                    let {newFilename} = await saveScreenwriterFile(localStorage.getItem('lastImportFile'), metaDataAndSections());
+                    let {newFilename} = await saveScreenwriterFile(localStorage.getItem('lastImportFile'), metaDataAndSections(), { saveHistory: true });
                     if (newFilename) {
                         localStorage.setItem('lastImportFile', newFilename);
                     }
@@ -235,6 +238,22 @@ export function App({fileImportAndExport} = {}) {
         }
     }, [seed])
 
+
+    useEffect(() => {
+        if (!appRef) {
+            return;
+        }
+        // https://github.com/tauri-apps/tauri/discussions/4736
+        listenOnTauriApp('tauri://file-drop', async (event) => {
+            let filePath = event.payload[0];
+            if (filePath) {
+                let data = await importFileToLocalStorage(filePath)
+                setSeed(Math.random())
+                setMetaData(data.metaData || {});
+            }
+        })
+    }, [appRef])
+
     useEffect(() => {
         if (isVisible) {
             // force reload
@@ -244,7 +263,7 @@ export function App({fileImportAndExport} = {}) {
         }
     }, [isVisible])
 
-    return <div className={[focusMode ? 'focus' : '', hideMousePointer ? 'no-mouse-pointer' : ''].join(' ')}  onMouseMove={() => setHideMousePointer(false) }>
+    return <div className={[focusMode ? 'focus' : '', hideMousePointer ? 'no-mouse-pointer' : ''].join(' ')}  onMouseMove={() => setHideMousePointer(false) } ref={appRef}>
         <Toolbar setSeed={setSeed} downloadScreenplay={downloadScreenplay} setIntervalDownload={setIntervalDownload} setEditMetaData={setEditMetaData} setMetaData={setMetaData} setFocusMode={setFocusMode} focusMode={focusMode} fileImportAndExport={fileImportAndExport}></Toolbar>
         {editMetaData && <MetaDataEdit metaData={metaData} setMetaData={setMetaData} setEditMetaData={setEditMetaData}></MetaDataEdit>}
         <Cover metaData={metaData}></Cover>
@@ -252,7 +271,4 @@ export function App({fileImportAndExport} = {}) {
     </div>;
 }
 
-
-import './Print.scss';import { openAndReadScreenwriterFile } from './lib/tauri';
-import { resetDocument, sectionsFromDocument } from './lib/helper';
-
+import './Print.scss';
