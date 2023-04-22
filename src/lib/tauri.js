@@ -21,6 +21,32 @@ export async function openAndReadScreenwriterFile() {
     return data;
 }
 
+export async function importFile(filename) {
+    if (filename.endsWith('.json')) {
+        let content = await readTextFile(filename);
+        return {
+            screenplay: JSON.parse(content)
+        }
+    } else if (filename.endsWith('.txt')) {
+        let content = await readTextFile(filename);
+        return {
+            screenplay: loadPlainTextToLocalStorage(content)
+        }
+    } else if (filename.endsWith('.screenwriter')) {
+        let {screenplay, history} = await readScreenwriterFile(filename);
+        if (!screenplay.sections || Object.keys(screenplay.sections).length === 0) {
+            screenplay = {
+                sections: [{
+                    html: '',
+                    classification: 'text',
+                }],
+                metaData: screenplay.metaData || {},
+            }
+        }
+        return { screenplay, history }
+    }
+}
+
 export async function importFileToLocalStorage(filename) {
     localStorage.setItem('lastImportFile', filename);
     let data = null;
@@ -144,7 +170,12 @@ async function saveScreenwriterFormat(filename, content, { saveHistory } = {}) {
             console.debug('saving history')
             let newHistoryEntry = {
                 created: new Date().toISOString(),
-                payload: deltaOfData(currentScreenplay.sections, currentScreenplay.metaData, screenplay.sections, screenplay.metaData)
+                payload: deltaOfData(currentScreenplay.sections.map(s => {
+                    return {
+                        html: s.html,
+                        classification: s.classification,
+                    }
+                }), currentScreenplay.metaData, screenplay.sections, screenplay.metaData)
             }
             history.push(newHistoryEntry)
             zip.file("history.json", JSON.stringify(history));

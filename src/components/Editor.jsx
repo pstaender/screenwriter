@@ -7,7 +7,7 @@ import { Toc } from './Toc';
 import { useInterval } from 'usehooks-ts';
 import { ScreenwriterDemo } from '../lib/Demo';
 
-export function Editor({ seed, currentIndex } = {}) {
+export function Editor({ seed, currentIndex, showDocumentHistory } = {}) {
 
     function randomID() {
         return sha256Hash(crypto.randomUUID().replace(/-/g, '')).substring(0, 8);
@@ -37,6 +37,14 @@ export function Editor({ seed, currentIndex } = {}) {
         if (lastScreenPlay.sections) {
             console.debug(`Loading screenplay from local storage`);
             // let importedSections = Importer(lastScreenPlay);
+            if (lastScreenPlay.sections.constructor !== Array) {
+                console.error(`lastScreenPlay.sections is not an array (there is something broken). We reset the local storage here`)
+                console.error(lastScreenPlay.sections)
+                localStorage.setItem('lastImportFile', '');
+                localStorage.setItem('currentScreenplay', '{}')
+                return [];
+            }
+
             return [...lastScreenPlay.sections.map((s, i) => {
                 return {
                     current: currentIndex ? i === currentIndex : i === 0,
@@ -53,7 +61,6 @@ export function Editor({ seed, currentIndex } = {}) {
     }
 
     function resetDocumentAndStartDemo() {
-        // reset for demo
         document.querySelector('body').classList.remove('dark-mode')
         document.querySelector('body').classList.remove('focus')
         document.querySelector('#screenwriter > .focus')?.classList?.remove('focus')
@@ -76,6 +83,9 @@ export function Editor({ seed, currentIndex } = {}) {
     }, [seed])
 
     useEffect(() => {
+        if (window.__TAUR__) {
+            return;
+        }
         if (window.location.hash === '#demo') {
             resetDocumentAndStartDemo()
         } else {
@@ -203,7 +213,7 @@ export function Editor({ seed, currentIndex } = {}) {
     }
 
     return <>
-        <div id="screenwriter-editor" onKeyDown={handleKeyDown} className={isLocked ? 'locked' : ''}>
+        <div id="screenwriter-editor" onKeyDown={handleKeyDown} className={isLocked || showDocumentHistory ? 'locked' : ''}>
             {sections.map((section, i) => (
                 <SceneSection current={section.current} key={section.key} id={section.id} next={sections[i + 1]} prev={sections[i + 1]} removeSection={removeSection} goNext={goNext} goPrev={goPrev} getNext={getNext} getPrev={getPrev} index={i} sectionsLength={sections.length} html={section.html} classification={section.classification} cursorToEnd={section.cursorToEnd} setCurrentSectionById={setCurrentSectionById} insertNewSectionAfterId={insertNewSectionAfterId} insertNewSectionBeforeId={insertNewSectionBeforeId} findSectionById={findSectionById} randomID={randomID} chooseEditingLevel={section.chooseEditingLevel || false} sections={sections} updateSectionById={updateSectionById} />
             ))}

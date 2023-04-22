@@ -1,4 +1,4 @@
-import * as jsondiffpatch from 'jsondiffpatch';
+import * as jsondiffpatch from 'jsondiffpatch-rc';
 
 export function deltaOfData(sections, metaData, previousSections = [], previousMetaData = {}) {
     let current = {

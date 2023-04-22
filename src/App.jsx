@@ -15,6 +15,8 @@ import { listen as listenOnTauriApp } from '@tauri-apps/api/event'
 import { resetDocument, sectionsFromDocument, basenameOfPath } from './lib/helper';
 
 import { confirm as confirmDialog, message as messageDialog } from "@tauri-apps/api/dialog";
+import { DocumentHistory } from './components/DocumentHistory';
+import { StatusLog } from './components/StatusLog';
 
 let lastSavedExport = null;
 
@@ -44,6 +46,9 @@ export function App({fileImportAndExport} = {}) {
     const [focusMode, setFocusMode] = useState(false)
     const [currentIndex, setCurrentIndex] = useState(0);
     const [hideMousePointer, setHideMousePointer] = useState(false);
+    const [showDocumentHistory, setShowDocumentHistory] = useState(false);
+    const [statusLog, setStatusLog] = useState(null);
+
     const appRef = useRef(null);
 
     useEffect(() => {
@@ -120,7 +125,9 @@ export function App({fileImportAndExport} = {}) {
 
     async function handleKeyDownForTauri(ev) {
         if ((ev.metaKey || ev.ctrlKey)) {
-            if (ev.key === 'o') {
+            if (ev.key === '\\' && window.__TAURI__ && localStorage.getItem('lastImportFile')) {
+                setShowDocumentHistory(!showDocumentHistory);
+            } else if (ev.key === 'o') {
                 let data = await openAndReadScreenwriterFile()
                 if (data) {
                     setMetaData(data.metaData || {});
@@ -134,14 +141,23 @@ export function App({fileImportAndExport} = {}) {
                     resetDocument({setMetaData, setSeed});
                 }
             } else if (ev.key === 's') {
+                
                 if (ev.shiftKey) {
                     let {newFilename} = await saveScreenwriterFile(null, metaDataAndSections())
                     if (newFilename) {
+                        setStatusLog({
+                            message: `Saved to file ${newFilename}`,
+                            level: 'ok'
+                        })
                         localStorage.setItem('lastImportFile', newFilename);
                     }
                 } else {
                     let {newFilename} = await saveScreenwriterFile(localStorage.getItem('lastImportFile'), metaDataAndSections(), { saveHistory: true });
                     if (newFilename) {
+                        setStatusLog({
+                            message: `Saved to file ${newFilename} with history`,
+                            level: 'ok'
+                        })
                         localStorage.setItem('lastImportFile', newFilename);
                     }
                 }
@@ -267,8 +283,15 @@ export function App({fileImportAndExport} = {}) {
         <Toolbar setSeed={setSeed} downloadScreenplay={downloadScreenplay} setIntervalDownload={setIntervalDownload} setEditMetaData={setEditMetaData} setMetaData={setMetaData} setFocusMode={setFocusMode} focusMode={focusMode} fileImportAndExport={fileImportAndExport}></Toolbar>
         {editMetaData && <MetaDataEdit metaData={metaData} setMetaData={setMetaData} setEditMetaData={setEditMetaData}></MetaDataEdit>}
         <Cover metaData={metaData}></Cover>
-        <Editor key={seed} seed={seed} currentIndex={currentIndex} />
+        <Editor key={`editor${seed}`} seed={seed} currentIndex={currentIndex} showDocumentHistory={showDocumentHistory} />
+        {showDocumentHistory && (
+            <DocumentHistory seed={seed} setMetaData={setMetaData} setShowDocumentHistory={setShowDocumentHistory} setSeed={setSeed} setStatusLog={setStatusLog}></DocumentHistory>
+        )}
+        {statusLog && (
+            <StatusLog statusLog={statusLog} setStatusLog={setStatusLog}></StatusLog>
+        )}
     </div>;
 }
 
 import './Print.scss';
+

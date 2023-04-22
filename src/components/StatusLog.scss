@@ -1,0 +1,12 @@
+.status-log {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    padding: 0.2rem;
+    font-size: 0.8em;
+    background: var(--color-background);
+    color: var(--color-text);
+    &.error {
+        color: rgb(255, 131, 131);
+    }
+}

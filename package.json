@@ -26,6 +26,7 @@
     "fuzzysort": "^2.0.4",
     "html-react-parser": "^3.0.15",
     "jsondiffpatch": "^0.4.1",
+    "jsondiffpatch-rc": "^0.4.2",
     "jszip": "^3.10.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -37,6 +38,6 @@
     "voca": "^1.4.0"
   },
   "resolutions": {
-    "jsondiffpatch/chalk": "^5.0.1"
+    "jsondiffpatch/chalk": "^5.2"
   }
 }

@@ -1,4 +1,4 @@
-.toc-overview {
+.aside-overview-box {
     position: fixed;
     top: 10%;
     width: min(30rem,calc(0.5 * calc(100% - calc(var(--max-editor-with)))));
@@ -13,6 +13,9 @@
     }
     li {
         list-style: none;
+        &.selected {
+            font-weight: bold;
+        }
     }
     a {
         color: var(--color-text);
@@ -25,6 +28,8 @@
         &:hover {
             background: var(--color-light-grey-opaque);
             color: var(--color-text);
+            cursor: pointer;
+
         }
     }
 }

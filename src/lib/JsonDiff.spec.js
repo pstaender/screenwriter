@@ -60,3 +60,47 @@ test('export with diff', () => {
         metaData: previousMetaData,
     })
 })
+
+test('patch and reverse history', () => {
+    let history = [
+        {
+            sections: [{
+                html: 'EXT. HOUSE',
+                classification: 'description'
+            }]
+        },
+        {
+            sections: [{
+                html: 'EXT. HOUSE',
+                classification: 'description'
+            },
+            {
+                html: 'A person comes closer to the camera',
+                classification: 'description'
+            }]
+        },
+        {
+            sections: [{
+                html: 'EXT. HOUSE',
+                classification: 'description'
+            },
+            {
+                html: 'A person comes closer to the camera.',
+                classification: 'description'
+            },
+            {
+                html: 'PERSON',
+                classification: 'dialogCharacter'
+            }]
+        }
+    ];
+    let deltas = [];
+    for(let i in history) {
+        deltas.push(deltaOfData(history[i].sections, {}, i > 0 ? history[i-1].sections : [], {}))
+    }
+    let sections = history.at(-1).sections
+    for(let i in history) {
+        expect(sections).toEqual(history[history.length - i - 1].sections)
+        sections = reverseDeltaPatch(sections, {}, deltas.pop()).sections
+    }
+})
