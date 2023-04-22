@@ -5,6 +5,9 @@
     margin: 0 auto;
     letter-spacing: 0px;
     counter-reset: scene-counter 0;
+    &.locked {
+        pointer-events: none;
+    }
     [contenteditable] {
         &:focus {
             outline: none;

@@ -14,11 +14,13 @@ export default defineConfig(async () => ({
     strictPort: true,
   },
 
+  // minify: false,
+
   // for `jsondiffpatch`: otherwise it quits with process is undefined; https://github.com/vitejs/vite/issues/1973
   // remove if a newer version of `jsondiffpatch` does not rely on `process` anymore
-  define: {
-    'process.env': {}
-  },
+  // define: {
+  //   'process.env': {}
+  // },
 
   // to make use of `TAURI_DEBUG` and other env variables
   // https://tauri.studio/v1/api/config#buildconfig.beforedevcommand

@@ -52,10 +52,23 @@ export function Editor({ seed, currentIndex } = {}) {
         }
     }
 
+    function resetDocumentAndStartDemo() {
+        // reset for demo
+        document.querySelector('body').classList.remove('dark-mode')
+        document.querySelector('body').classList.remove('focus')
+        document.querySelector('#screenwriter > .focus')?.classList?.remove('focus')
+        // clear document
+        setSections([{
+            html: ''
+        }])
+        setPlayDemo(true)
+        setIsLocked(true)
+    }
+
     const [sections, setSections] = useState([])
     const [showToc, setShowToc] = useState(false);
-
     const [playDemo, setPlayDemo] = useState(false);
+    const [isLocked, setIsLocked] = useState(false);
 
     useEffect(() => {
         // changing seed forces reload
@@ -64,24 +77,14 @@ export function Editor({ seed, currentIndex } = {}) {
 
     useEffect(() => {
         if (window.location.hash === '#demo') {
-            // reset for demo
-            document.querySelector('body').classList.remove('dark-mode')
-            document.querySelector('body').classList.remove('focus')
-            document.querySelector('#screenwriter > .focus')?.classList?.remove('focus')
-            // clear document
-            setSections([{
-                html: ''
-            }])
-            setPlayDemo(true)
+            resetDocumentAndStartDemo()
         } else {
             setPlayDemo(false)
+            setIsLocked(false)
         }
     }, [window.location.hash])
 
     useInterval(() => {
-        if (window.location.hash !== '#demo') {
-            return;
-        }
         if (Math.random() > 0.5) {
             return;
         }
@@ -200,7 +203,7 @@ export function Editor({ seed, currentIndex } = {}) {
     }
 
     return <>
-        <div id="screenwriter-editor" onKeyDown={handleKeyDown}>
+        <div id="screenwriter-editor" onKeyDown={handleKeyDown} className={isLocked ? 'locked' : ''}>
             {sections.map((section, i) => (
                 <SceneSection current={section.current} key={section.key} id={section.id} next={sections[i + 1]} prev={sections[i + 1]} removeSection={removeSection} goNext={goNext} goPrev={goPrev} getNext={getNext} getPrev={getPrev} index={i} sectionsLength={sections.length} html={section.html} classification={section.classification} cursorToEnd={section.cursorToEnd} setCurrentSectionById={setCurrentSectionById} insertNewSectionAfterId={insertNewSectionAfterId} insertNewSectionBeforeId={insertNewSectionBeforeId} findSectionById={findSectionById} randomID={randomID} chooseEditingLevel={section.chooseEditingLevel || false} sections={sections} updateSectionById={updateSectionById} />
             ))}

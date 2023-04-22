@@ -1,7 +1,6 @@
 import { moveCursorToEnd } from "./helper";
 
-let originalText = `
-// Screenwriter Demo Play
+let originalText = `// Screenwriter Demo Play
 
 [descriptionAnnotation]// by Philipp Staender
 
@@ -55,7 +54,7 @@ The COMPUTER wakes up. Its screen turns from dark black into bright white. The s
 
 [dialogText]A software, that provides actual value to your work.
 
-[dialogText]Don't let your creativity disrupted by unneeded features so that you can write your story at high pace and stay focused.
+[dialogText]Don't let your creativity be disrupted by unneeded features - be able to write your story fast and focused.
 
 
 The AUTHOR smiles. He now realises, that he is already looking at a software which might be capable of these challanges.
@@ -82,7 +81,7 @@ The AUTHOR smiles. He now realises, that he is already looking at a software whi
 
 [descriptionAnnotation]THE END
 
-To view the print/pdf-version, hit (⌘/CTRL + P)
+To view the printable version, hit (⌘/CTRL + P)
 
 
 `.trim().replace(/\n{3,}/g,`\n\n`)
