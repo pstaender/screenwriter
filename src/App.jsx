@@ -153,11 +153,12 @@ export function App({fileImportAndExport} = {}) {
                     }
                 } else {
                     let {newFilename} = await saveScreenwriterFile(localStorage.getItem('lastImportFile'), metaDataAndSections(), { saveHistory: true });
+                    setStatusLog({
+                        message: `Saved to file '${newFilename || localStorage.getItem('lastImportFile')}' with history`,
+                        level: 'ok'
+                    })
                     if (newFilename) {
-                        setStatusLog({
-                            message: `Saved to file ${newFilename} with history`,
-                            level: 'ok'
-                        })
+                        
                         localStorage.setItem('lastImportFile', newFilename);
                     }
                 }

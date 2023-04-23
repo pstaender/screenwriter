@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
-import { importFile } from "../lib/tauri";
-import { reverseDeltaPatch, reverseDeltaUnpatch } from "../lib/JsonDiff";
+import { importFile, saveScreenwriterFile } from "../lib/tauri";
+import { reverseDeltaPatch } from "../lib/JsonDiff";
+import './DocumentHistory.scss';
 
 export function DocumentHistory({setShowDocumentHistory, setSeed, seed, setMetaData, setStatusLog}) {
 
@@ -34,6 +35,9 @@ export function DocumentHistory({setShowDocumentHistory, setSeed, seed, setMetaD
         let restored = {...screenplay}
         try {
             for (let h of history) {
+                if (!h.payload) {
+                    continue;
+                }
                 if (h.created === historyItem.created) {
                     break;
                 }
@@ -57,6 +61,13 @@ export function DocumentHistory({setShowDocumentHistory, setSeed, seed, setMetaD
         return dateIsoString.replace(/\.\d+.*$/, '').replace('T', ' ')
     }
 
+    async function deleteHistory() {
+        if (!localStorage.getItem('lastImportFile')) {
+            return;
+        }
+        await saveScreenwriterFile(localStorage.getItem('lastImportFile'), JSON.parse(localStorage.getItem('currentScreenplay')), { saveHistory: false });
+    }
+
     useEffect(() => {
         loadHistoryFromFile()
     }, [seed])
@@ -67,7 +78,7 @@ export function DocumentHistory({setShowDocumentHistory, setSeed, seed, setMetaD
                 handleShowCurrent();
                 handleExit();
             }} onMouseEnter={handleShowCurrent}><a>Newest</a></li>
-            {history && history.map((h,i) => (
+            {history && history.filter(h => h.payload).map((h,i) => (
                 <li className={selected === h.created ? 'selected' : ''} key={h.created} onClick={() => {
                     handleShowHistory(h);
                     handleExit();
@@ -77,11 +88,22 @@ export function DocumentHistory({setShowDocumentHistory, setSeed, seed, setMetaD
                 }}><a>{history[i+1]?.created ? formatDate(h.created) : 'Initial Save'}</a></li>
             ))}
         </ul>
+        {history && history.length > 0 && (
+            <>
+                <br></br>
+                <a onClick={async () => {
+                    await handleExit()
+                    await deleteHistory()
+                    setSeed(Math.random())
+                }}>Delete history</a>
+            </>
+        )}
+        
         <br></br>
         <a onClick={() => {
             handleExit()
             handleShowCurrent()
-        }}>Close Recovery</a>
+        }}>Close recovery</a>
     </div>
     )
 }

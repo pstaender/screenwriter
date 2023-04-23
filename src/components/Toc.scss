@@ -1,6 +1,7 @@
 .aside-overview-box {
     position: fixed;
     top: 10%;
+    left: 1rem;
     width: min(30rem,calc(0.5 * calc(100% - calc(var(--max-editor-with)))));
     height: 80%;
     background: var(--color-almost-white);
