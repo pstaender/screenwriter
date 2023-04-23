@@ -111,14 +111,7 @@ export async function saveScreenwriterFile(fileName = null, { metaData, sections
 
     let format = 'screenwriter';
 
-    if (fileName) {
-        if (fileName.endsWith('.json')) {
-            format = 'json';
-        }
-        if (fileName.endsWith('.txt')) {
-            format = 'txt';
-        }
-    }
+    // console.log(fileName)
 
     let newFilename = null;
 
@@ -134,15 +127,23 @@ export async function saveScreenwriterFile(fileName = null, { metaData, sections
             return {};
         }
         newFilename = fileName;
+    } else {
+        newFilename = fileName;
+    }
+
+    if (newFilename.endsWith('.json')) {
+        format = 'json';
+    }
+    if (newFilename.endsWith('.txt')) {
+        format = 'txt';
     }
 
     let content = await exportDataOfCurrentScreenplay(format);
 
-
     if (format === 'screenwriter') {
-        await saveScreenwriterFormat(fileName, content, { saveHistory });
+        await saveScreenwriterFormat(newFilename, content, { saveHistory });
     } else {
-        await writeTextFile(fileName, content);
+        await writeTextFile(newFilename, content);
     }
     return {
         newFilename

@@ -40,7 +40,7 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
                             setDownloadFormat('json')
                         } else {
                             // plaintext
-                            loadPlainTextToLocalStorage(e.target.result)
+                            data = loadPlainTextToLocalStorage(e.target.result)
                             setDownloadFormat('txt')
                         }
                     } catch (e) {
@@ -48,7 +48,6 @@ export function Toolbar({ setSeed, downloadScreenplay, setIntervalDownload, setE
                         alert(`Could not import file '${file.name}'\n\n${e.message.trim()}`);
                         return;
                     }
-
                     setMetaData(data.metaData);
                     setSeed(Math.random());
                 }

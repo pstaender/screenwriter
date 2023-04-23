@@ -153,8 +153,10 @@ export function App({fileImportAndExport} = {}) {
                     }
                 } else {
                     let {newFilename} = await saveScreenwriterFile(localStorage.getItem('lastImportFile'), metaDataAndSections(), { saveHistory: true });
+                    let filename = newFilename || localStorage.getItem('lastImportFile')
+                    let isScreenwriterFile = filename.endsWith('.screenwriter');
                     setStatusLog({
-                        message: `Saved to file '${newFilename || localStorage.getItem('lastImportFile')}' with history`,
+                        message: `${isScreenwriterFile ? 'Saved' : 'Exported'} to file '${filename}'${isScreenwriterFile ? ' with history' : ''}`,
                         level: 'ok'
                     })
                     if (newFilename) {
@@ -260,25 +262,32 @@ export function App({fileImportAndExport} = {}) {
         if (!appRef) {
             return;
         }
-        // https://github.com/tauri-apps/tauri/discussions/4736
-        listenOnTauriApp('tauri://file-drop', async (event) => {
-            let filePath = event.payload[0];
-            if (filePath) {
-                let data = await importFileToLocalStorage(filePath)
-                setSeed(Math.random())
-                setMetaData(data.metaData || {});
-            }
-        })
+        if (window.__TAURI__) {
+            // https://github.com/tauri-apps/tauri/discussions/4736
+            listenOnTauriApp('tauri://file-drop', async (event) => {
+                let filePath = event.payload[0];
+                if (filePath) {
+                    let data = await importFileToLocalStorage(filePath)
+                    setSeed(Math.random())
+                    setMetaData(data.metaData || {});
+                }
+            })
+        }
+        
     }, [appRef])
 
-    useEffect(() => {
-        if (isVisible) {
-            // force reload
-            setSeed(Math.random())
-        } else {
-            storeScreenplayInLocalStorage()
-        }
-    }, [isVisible])
+    if (!window.__TAURI__) {
+        // only required in webrowser, because th editor may be used in many tabs and needs to be synced
+        useEffect(() => {
+            if (isVisible) {
+                // force reload
+                setSeed(Math.random())
+            } else {
+                storeScreenplayInLocalStorage()
+            }
+        }, [isVisible])
+    }
+    
 
     return <div className={[focusMode ? 'focus' : '', hideMousePointer ? 'no-mouse-pointer' : ''].join(' ')}  onMouseMove={() => setHideMousePointer(false) } ref={appRef}>
         <Toolbar setSeed={setSeed} downloadScreenplay={downloadScreenplay} setIntervalDownload={setIntervalDownload} setEditMetaData={setEditMetaData} setMetaData={setMetaData} setFocusMode={setFocusMode} focusMode={focusMode} fileImportAndExport={fileImportAndExport}></Toolbar>
