@@ -11,10 +11,10 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
 
     const editingLevels = [
         'description',
-        'dialogCharacter',
-        'dialogText',
-        'dialogAnnotation',
-        'descriptionAnnotation',
+        'character',
+        'dialog',
+        'parenthetical',
+        'transition',
     ];
 
     const [editingLevel, setEditingLevel] = useState(classification || 'description');
@@ -50,19 +50,19 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
                     inputRef.current.dataset.chooseEditingLevel = 'editingLevelAlreadyChoosen';
                     let previousSection = inputRef.current?.closest('section')?.previousElementSibling
                     if (previousSection) {
-                        if (previousSection.classList.contains('dialogCharacter')) {
-                            return setEditingLevel('dialogText');
+                        if (previousSection.classList.contains('character')) {
+                            return setEditingLevel('dialog');
                         }
-                        if (previousSection.classList.contains('dialogAnnotation')) {
-                            return setEditingLevel('dialogText');
+                        if (previousSection.classList.contains('parenthetical')) {
+                            return setEditingLevel('dialog');
                         }
-                        if (previousSection.classList.contains('dialogText')) {
+                        if (previousSection.classList.contains('dialog')) {
                             let sibling = previousSection;
                             let names = [];
 
                             // find last relevant character name
                             while (sibling && names.length <= 2) {
-                                if (sibling.classList.contains('dialogCharacter')) {
+                                if (sibling.classList.contains('character')) {
                                     names.push(sibling.querySelector('.edit-field').textContent.trim().replace(/\s*\(.*$/, '').toLocaleUpperCase());
                                 }
                                 names = [...new Set(names)]
@@ -85,7 +85,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
                                     }
                                 }, 100)
                             }
-                            return setEditingLevel('dialogCharacter');
+                            return setEditingLevel('character');
                         }
                     }
                 }
@@ -277,9 +277,9 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
                 inputRef.current.textContent = '';
             }
 
-            if (inputRef.current.dataset.chooseEditingLevel && direction === 1 && editingLevel === 'dialogCharacter') {
+            if (inputRef.current.dataset.chooseEditingLevel && direction === 1 && editingLevel === 'character') {
 
-                nextLevel = 'dialogAnnotation'
+                nextLevel = 'parenthetical'
             }
             setEditingLevel(nextLevel || editingLevels[0]);
             if (inputRef.current?.dataset.chooseEditingLevel && inputRef.current?.dataset.chooseEditingLevel === inputRef.current.textContent) {
@@ -517,7 +517,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
     useEffect(() => {
         let content = inputRef.current?.textContent
         if (content !== null &&
-            (((editingLevel === 'description' && content === content.toLocaleUpperCase()) || editingLevel === 'dialogCharacter'))
+            (((editingLevel === 'description' && content === content.toLocaleUpperCase()) || editingLevel === 'character'))
         ) {
             setAllowToShowSuggestionBox(localStorage.getItem('showSuggestionBox') === 'true');
         } else {

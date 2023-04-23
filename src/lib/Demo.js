@@ -2,7 +2,7 @@ import { moveCursorToEnd } from "./helper";
 
 let originalText = `// Screenwriter Demo Play
 
-[descriptionAnnotation]// by Philipp Staender
+[transition]// by Philipp Staender
 
 [pause] 
 
@@ -12,49 +12,49 @@ The AUTHOR sits at the desk. It was a long day - full of ideas and impressions.
 
 The AUTHOR wants to write down a draft of an idea that came up while sitting at a COFFEE BAR downtown.
 
-[dialogCharacter]Author
+[character]Author
 
-[dialogAnnotation]exhausted
+[parenthetical]exhausted
 
-[dialogText]Why is screenplay writing software complex and expensive? 
+[dialog]Why is screenplay writing software complex and expensive? 
 
-[descriptionAnnotation]FADE TO:
+[transition]FADE TO:
 
 The COMPUTER wakes up. Its screen turns from dark black into bright white. The screen pivots to the direction of the AUTHOR. 
 
-[dialogCharacter]COMPUTER
+[character]COMPUTER
 
-[dialogAnnotation]to AUTHOR
+[parenthetical]to AUTHOR
 
-[dialogText]Maybe you have worked with the wrong software all along…
-
-
-[dialogCharacter]AUTHOR
-
-[dialogAnnotation]bugged
-
-[dialogText]Pff, what do you know…
+[dialog]Maybe you have worked with the wrong software all along…
 
 
-[dialogCharacter]COMPUTER
+[character]AUTHOR
 
-[dialogText]I'm just seeing a tired author. A person looking a picture of misery.
+[parenthetical]bugged
 
-
-[dialogCharacter]AUTHOR
-
-[dialogText]Yeah…
-
-[dialogText]So… what do you recommend?
+[dialog]Pff, what do you know…
 
 
-[dialogCharacter]COMPUTER
+[character]COMPUTER
 
-[dialogText]Use a small and simple software for writing.
+[dialog]I'm just seeing a tired author. A person looking a picture of misery.
 
-[dialogText]A software, that provides actual value to your work.
 
-[dialogText]Don't let your creativity be disrupted by unneeded features - be able to write your story fast and focused.
+[character]AUTHOR
+
+[dialog]Yeah…
+
+[dialog]So… what do you recommend?
+
+
+[character]COMPUTER
+
+[dialog]Use a small and simple software for writing.
+
+[dialog]A software, that provides actual value to your work.
+
+[dialog]Don't let your creativity be disrupted by unneeded features - be able to write your story fast and focused.
 
 
 The AUTHOR smiles. He now realises, that he is already looking at a software which might be capable of these challanges.
@@ -79,7 +79,7 @@ The AUTHOR smiles. He now realises, that he is already looking at a software whi
 
 [pause] ★ Optional: auto-suggestions for characters and scene description
 
-[descriptionAnnotation]THE END
+[transition]THE END
 
 To view the printable version, hit (⌘/CTRL + P)
 

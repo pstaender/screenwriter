@@ -5,15 +5,15 @@ import { deltaOfData, reverseDeltaPatch } from './JsonDiff';
 const exampleScreenplaySections = [
     {
         html: 'John',
-        classification: 'dialogCharacter',
+        classification: 'character',
     },
     {
         html: 'Well, one can\'t have everything.',
-        classification: 'dialogText',
+        classification: 'dialog',
     },
     {
         html: ' CUT TO:',
-        classification: 'descriptionAnnotation',
+        classification: 'transition',
     },
     {
         html: `EXT. JOHN AND MARY'S HOUSE - CONTINUOUS<br>    
@@ -23,15 +23,15 @@ const exampleScreenplaySections = [
     },
     {
         html: `JOHN`,
-        classification: `dialogCharacter`
+        classification: `character`
     },
     {
         html: `wondering`,
-        classification: `dialogAnnotation`
+        classification: `parenthetical`
     },
     {
         html: `Who on Earth could that be? And why the hell is he ringing the bell at this time of the day?`,
-        classification: 'dialogText'
+        classification: 'dialog'
     }
 ];
 const exampleScreenplayMetaData = {
@@ -44,11 +44,11 @@ test('export with diff', () => {
     let previousSections = [
         {
             html: 'John',
-            classification: 'dialogCharacter',
+            classification: 'character',
         },
         {
             html: 'Well, one can\'t have everything…',
-            classification: 'dialogText',
+            classification: 'dialog',
         }
     ];
     let previousMetaData = {
@@ -90,7 +90,7 @@ test('patch and reverse history', () => {
             },
             {
                 html: 'PERSON',
-                classification: 'dialogCharacter'
+                classification: 'character'
             }]
         }
     ];

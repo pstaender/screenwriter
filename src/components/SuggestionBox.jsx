@@ -42,10 +42,10 @@ export function SuggestionBox({ keyPressed, editingLevel, sections, searchText, 
                 .filter(s => s.html.trim() && s.html.toLocaleUpperCase() === s.html)
                 .map(s => s.html.toLocaleUpperCase())
             records = [...new Set(records)]
-        } else if (editingLevel === 'dialogCharacter') {
+        } else if (editingLevel === 'character') {
             // build searches
             records = sections
-                .filter(s => s.classification === 'dialogCharacter')
+                .filter(s => s.classification === 'character')
                 .map(s => s.html.toLocaleUpperCase())
             records = [...new Set(records)]
 

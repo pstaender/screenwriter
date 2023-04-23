@@ -9,17 +9,17 @@ test('import of txt screenplay', async () => {
     sections: [
       {
         text: '                     JOHN',
-        classification: 'dialogCharacter',
+        classification: 'character',
         html: 'JOHN'
       },
       {
         text: "Well, one can't have everything.",
-        classification: 'dialogText',
+        classification: 'dialog',
         html: "Well, one can't have everything."
       },
       {
         text: '                                               CUT TO:',
-        classification: 'descriptionAnnotation',
+        classification: 'transition',
         html: 'CUT TO:'
       },
       {
@@ -35,7 +35,7 @@ test('import of txt screenplay', async () => {
       },
       {
         text: '                                             BACK TO:',
-        classification: 'descriptionAnnotation',
+        classification: 'transition',
         html: 'BACK TO:'
       },
       {
@@ -45,22 +45,22 @@ test('import of txt screenplay', async () => {
       },
       {
         text: '                     JOHN',
-        classification: 'dialogCharacter',
+        classification: 'character',
         html: 'JOHN'
       },
       {
         text: 'Who on Earth could that be?',
-        classification: 'dialogText',
+        classification: 'dialog',
         html: 'Who on Earth could that be?'
       },
       {
         text: '                     MARY',
-        classification: 'dialogCharacter',
+        classification: 'character',
         html: 'MARY'
       },
       {
         text: "I'll go and see.",
-        classification: 'dialogText',
+        classification: 'dialog',
         html: "I'll go and see."
       },
       {
@@ -70,22 +70,22 @@ test('import of txt screenplay', async () => {
       },
       {
         text: '                     MARY',
-        classification: 'dialogCharacter',
+        classification: 'character',
         html: 'MARY'
       },
       {
         text: "Well hello Mike! Come on in!\nJohn, Mike's here!",
-        classification: 'dialogText',
+        classification: 'dialog',
         html: "Well hello Mike! Come on in!<br>John, Mike's here!"
       },
       {
         text: '                     JOHN',
-        classification: 'dialogCharacter',
+        classification: 'character',
         html: 'JOHN'
       },
       {
         text: 'Hiya Mike! What brings you here?',
-        classification: 'dialogText',
+        classification: 'dialog',
         html: 'Hiya Mike! What brings you here?'
       }
     ],
@@ -104,7 +104,7 @@ test('import of external txt screenplay', async () => {
     sections: [
       {
         text: 'FADE IN:',
-        classification: 'descriptionAnnotation',
+        classification: 'transition',
         html: 'FADE IN:'
       },
       {
@@ -119,12 +119,12 @@ test('import of external txt screenplay', async () => {
       },
       {
         text: '                PICARD V.O.',
-        classification: 'dialogCharacter',
+        classification: 'character',
         html: 'PICARD V.O.'
       },
       {
         text: "Captain's log, stardate 42353.7.\nOur destination is planet Cygnus IV, beyond which lies the great unexplored mass of the galaxy.",
-        classification: 'dialogText',
+        classification: 'dialog',
         html: "Captain's log, stardate 42353.7.<br>Our destination is planet Cygnus IV, beyond which lies the great unexplored mass of the galaxy."
       },
       {
@@ -139,12 +139,12 @@ test('import of external txt screenplay', async () => {
       },
       {
         text: '                PICARD V.O.',
-        classification: 'dialogCharacter',
+        classification: 'character',
         html: 'PICARD V.O.'
       },
       {
         text: 'My orders are to examine Farpoint, a starbase built there by the inhabitants of that world.\nMeanwhile ...',
-        classification: 'dialogText',
+        classification: 'dialog',
         html: 'My orders are to examine Farpoint, a starbase built there by the inhabitants of that world.<br>Meanwhile ...'
       },
       {
@@ -159,17 +159,17 @@ test('import of external txt screenplay', async () => {
       },
       {
         text: '                PICARD V.O.',
-        classification: 'dialogCharacter',
+        classification: 'character',
         html: 'PICARD V.O.'
       },
       {
         text: 'continuing',
-        classification: 'dialogAnnotation',
+        classification: 'parenthetical',
         html: 'continuing'
       },
       {
         text: '... I am becoming better acquainted with my new command, this Galaxy Class U.S.S.\nEnterprise.',
-        classification: 'dialogText',
+        classification: 'dialog',
         html: '... I am becoming better acquainted with my new command, this Galaxy Class U.S.S.<br>Enterprise.'
       }
     ],
@@ -177,7 +177,7 @@ test('import of external txt screenplay', async () => {
       title: 'STAR TREK: THE NEXT GENERATION\n"Encounter at Farpoint"',
       author: 'D.C. Fontana and Gene Roddenberry',
       description: '<center>FINAL DRAFT</center>\n<center>April 13, 1987</center>',
-      spacesDialogCharacter: 16,
+      spacesCharacter: 16,
       spacesDialog: 8
     }
   })
@@ -202,7 +202,7 @@ test('import another external plain text script', async () => {
     },
     {
       text: '                                                     CUT TO:',
-      classification: 'descriptionAnnotation',
+      classification: 'transition',
       html: 'CUT TO:'
     },
     {
@@ -217,17 +217,17 @@ test('import another external plain text script', async () => {
     },
     {
       text: '                      ANATOLY',
-      classification: 'dialogCharacter',
+      classification: 'character',
       html: 'ANATOLY'
     },
     {
       text: 'heavy Russian accent',
-      classification: 'dialogAnnotation',
+      classification: 'parenthetical',
       html: 'heavy Russian accent'
     },
     {
       text: 'We are here.',
-      classification: 'dialogText',
+      classification: 'dialog',
       html: 'We are here.'
     },
     {
@@ -252,23 +252,23 @@ test('import another external plain text script', async () => {
     },
     {
       text: '                      BODINE',
-      classification: 'dialogCharacter',
+      classification: 'character',
       html: 'BODINE'
     },
     {
       text: "Come left a little. She's right in front of us, eighteen meters. Fifteen. \n" +
         'Thirteen... you should see it.',
-      classification: 'dialogText',
+      classification: 'dialog',
       html: "Come left a little. She's right in front of us, eighteen meters. Fifteen.<br>Thirteen... you should see it."
     },
     {
       text: '                      ANATOLY',
-      classification: 'dialogCharacter',
+      classification: 'character',
       html: 'ANATOLY'
     },
     {
       text: "Do you see it? I don't see it... \nthere!",
-      classification: 'dialogText',
+      classification: 'dialog',
       html: "Do you see it? I don't see it...<br>there!"
     },
     {
@@ -293,7 +293,7 @@ test('import another external plain text script', async () => {
     },
     {
       text: '                                                   FADE OUT:',
-      classification: 'descriptionAnnotation',
+      classification: 'transition',
       html: 'FADE OUT:'
     },
     {

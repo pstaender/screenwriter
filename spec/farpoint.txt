@@ -1,7 +1,7 @@
 "title": "STAR TREK: THE NEXT GENERATION\n\"Encounter at Farpoint\""
 "author": "D.C. Fontana and Gene Roddenberry"
 "description": "<center>FINAL DRAFT</center>\n<center>April 13, 1987</center>"
-"spacesDialogCharacter": 16
+"spacesCharacter": 16
 "spacesDialog": 8
 
 FADE IN:

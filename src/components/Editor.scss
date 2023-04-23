@@ -44,7 +44,7 @@
         &:hover {
             background: var(--color-almost-white);
         }
-        > div:not(.dialogAnnotation) {
+        > div:not(.parenthetical) {
             &:before {
                 // content: attr(data-id);
                 position: absolute;
@@ -69,37 +69,37 @@
                 padding: 0 0.25rem;
                 font-weight: normal;
             }
-            &.dialogCharacter:focus:after {
+            &.character:focus:after {
                 content: "Character";
             }
-            &.dialogText:focus:after {
+            &.dialog:focus:after {
                 content: "Dialog";
             }
-            &.dialogAnnotation:focus:after {
-                content: "Annot.Diag.";
+            &.parenthetical:focus:after {
+                content: "Parenthetical";
             }
-            &.descriptionAnnotation:focus:after {
-                content: "Annotation";
+            &.transition:focus:after {
+                content: "Tranition";
             }
         }
     }
 
     div.description {
     }
-    div.descriptionAnnotation {
+    div.transition {
         text-align: right;
     }
-    div.dialogCharacter,
-    div.dialogCharacter + .suggestion-box ul {
+    div.character,
+    div.character + .suggestion-box ul {
         padding-left: var(--dialog-character-indent);
         text-transform: uppercase;
         font-weight: bold;
     }
-    div.dialogText {
+    div.dialog {
         padding-left: var(--dialog-text-indent);
         max-width: var(--max-dialog-width);
     }
-    div.dialogAnnotation {
+    div.parenthetical {
         padding-left: var(--dialog-annotation-indent);
         max-width: var(--max-dialog-annotation-width);
         &:before {
@@ -150,21 +150,21 @@
         font-weight: bold;
         font-size: 1rem;
     }
-    section.dialogAnnotation {
+    section.parenthetical {
         padding-top: 0;
         padding-bottom: 0;
         margin-top: -0.5rem;
     }
-    section.dialogCharacter {
+    section.character {
         padding-bottom: 1rem;
     }
-    section.dialogCharacter + section.dialogText {
+    section.character + section.dialog {
         padding-top: 0;
     }
-    section.description + section.dialogCharacter {
+    section.description + section.character {
         margin-top: 1rem;
     }
-    section.dialogText + section.description {
+    section.dialog + section.description {
         margin-top: 2.5rem;
     }
 }
@@ -185,7 +185,7 @@
                 opacity: 1 !important;
             }
         }
-        > section > div:not(.dialogAnnotation) {
+        > section > div:not(.parenthetical) {
             // font display classification boxes
             &:focus:after {
                 display: none;

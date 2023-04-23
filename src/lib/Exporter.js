@@ -10,14 +10,14 @@ export function ExportSections(sections) {
 export function convertDomSectionsToDataStructure(sections) {
     return [...sections].map(el => {
         let classification = 'description';
-        if (el.classList.contains('dialogCharacter')) {
-            classification = 'dialogCharacter';
-        } else if (el.classList.contains('dialogText')) {
-            classification = 'dialogText';
-        } else if (el.classList.contains('descriptionAnnotation')) {
-            classification = 'descriptionAnnotation';
-        } else if (el.classList.contains('dialogAnnotation')) {
-            classification = 'dialogAnnotation';
+        if (el.classList.contains('character')) {
+            classification = 'character';
+        } else if (el.classList.contains('dialog')) {
+            classification = 'dialog';
+        } else if (el.classList.contains('transition')) {
+            classification = 'transition';
+        } else if (el.classList.contains('parenthetical')) {
+            classification = 'parenthetical';
         }
         return {
             html: el.innerHTML,
@@ -30,14 +30,14 @@ export function convertDomSectionsToDataStructure(sections) {
 export function Exporter(sections, metaData = {}) {
 
     let options = {
-        spacesDialogCharacter: 22,
+        spacesCharacter: 22,
         spacesDialog: 11,
         documentWidth: 61,
         dialogWordWrapLength: 33,
     }
 
-    if (metaData['spacesDialogCharacter'] !== undefined) {
-        options.spacesDialogCharacter = Number(metaData['spacesDialogCharacter']);
+    if (metaData['spacesCharacter'] !== undefined) {
+        options.spacesCharacter = Number(metaData['spacesCharacter']);
     }
     if (metaData['spacesDialog'] !== undefined) {
         options.spacesDialog = Number(metaData['spacesDialog']);
@@ -62,18 +62,18 @@ export function Exporter(sections, metaData = {}) {
 
     let parts = [...sections].map(section => {
         let text = section.html.replace(/<br>/ig, `\n`).replace(/\&nbsp;/g, ' ').trim();
-        if (section.classification === 'dialogCharacter') {
+        if (section.classification === 'character') {
             text = `\n` + text.split(`\n`).map(l => {
-                return Array(options.spacesDialogCharacter + 1).join(' ') + l.toLocaleUpperCase().trim()
+                return Array(options.spacesCharacter + 1).join(' ') + l.toLocaleUpperCase().trim()
             }).join(`\n`)
 
         }
-        else if (section.classification === 'dialogAnnotation') {
+        else if (section.classification === 'parenthetical') {
             text = text.split(`\n`).map(l => {
-                return Array(options.spacesDialogCharacter - 4).join(' ') + '('+l.trim()+')';
+                return Array(options.spacesCharacter - 4).join(' ') + '('+l.trim()+')';
             }).join(`\n`)
         }
-        else if (section.classification === 'dialogText') {
+        else if (section.classification === 'dialog') {
             text = text.split(`\n`).map(l => {
                 return Voca.wordWrap(l.trim(), {
                     width: options.dialogWordWrapLength,
@@ -81,7 +81,7 @@ export function Exporter(sections, metaData = {}) {
                 })
             }).join(`\n`)
         }
-        else if (section.classification === 'descriptionAnnotation') {
+        else if (section.classification === 'transition') {
             text = `\n` + Voca.padLeft(text.toLocaleUpperCase().trim(), options.documentWidth - text.length, ' ')
         } else {
             // description
