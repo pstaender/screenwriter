@@ -1480,6 +1480,11 @@ has@^1.0.3:
   dependencies:
     function-bind "^1.1.1"
 
+hrjs@^1.5.7:
+  version "1.5.7"
+  resolved "https://registry.yarnpkg.com/hrjs/-/hrjs-1.5.7.tgz#901c53832fdc3ce9d0db43e5e3b7d749df51a32d"
+  integrity sha512-gJ7qPV0akGdYIOCjkdVLS6Pn6pEUOhHWbgy+W8owYKf4UsN/4SSalcsQalFg+OWAPEGYgRjmVzjQLGWDcUbNxg==
+
 html-dom-parser@3.1.7:
   version "3.1.7"
   resolved "https://registry.yarnpkg.com/html-dom-parser/-/html-dom-parser-3.1.7.tgz#89debae290d1117ad98a174264bb478dce3f3e74"

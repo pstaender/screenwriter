@@ -111,8 +111,6 @@ export async function saveScreenwriterFile(fileName = null, { metaData, sections
 
     let format = 'screenwriter';
 
-    // console.log(fileName)
-
     let newFilename = null;
 
     if (!fileName) {

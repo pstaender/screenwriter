@@ -24,6 +24,7 @@
     "@tauri-apps/api": "^1.2.0",
     "fuse.js": "^6.6.2",
     "fuzzysort": "^2.0.4",
+    "hrjs": "^1.5.7",
     "html-react-parser": "^3.0.15",
     "jsondiffpatch": "^0.4.1",
     "jsondiffpatch-rc": "^0.4.2",

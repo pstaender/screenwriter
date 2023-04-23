@@ -68,3 +68,14 @@ body {
   }
 }
 
+input.bottom-text-input {
+  position: fixed;
+  bottom: 1rem;
+  left: 1rem;
+  font-size: 1rem;
+  color: var(--color-text);
+  background: var(--color-background);
+  border: 2px solid var(--color-text);
+  border-radius: 3px;
+  padding: 0.25rem 0.5rem;
+}

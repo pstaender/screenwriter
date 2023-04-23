@@ -17,6 +17,7 @@ import { resetDocument, sectionsFromDocument, basenameOfPath } from './lib/helpe
 import { confirm as confirmDialog, message as messageDialog } from "@tauri-apps/api/dialog";
 import { DocumentHistory } from './components/DocumentHistory';
 import { StatusLog } from './components/StatusLog';
+import { HR } from './lib/HR';
 
 let lastSavedExport = null;
 
@@ -48,6 +49,9 @@ export function App({fileImportAndExport} = {}) {
     const [hideMousePointer, setHideMousePointer] = useState(false);
     const [showDocumentHistory, setShowDocumentHistory] = useState(false);
     const [statusLog, setStatusLog] = useState(null);
+    const [showBottomTextInput, setShowBottomTextInput] = useState(false);
+    const [bottomTextInputValue, setBottomTextInputValue] = useState(null);
+    const bottomTextInputRef = useRef(null)
 
     const appRef = useRef(null);
 
@@ -123,6 +127,69 @@ export function App({fileImportAndExport} = {}) {
         await saveScreenwriterFile(`${appDataDir}${basenameOfPath(lastImportFile)}`, metaDataAndSections())
     }
 
+    function removeSearchResults() {
+        if (!document.querySelector('body').classList.contains('search-text-mode')) {
+            return
+        }
+        document.querySelectorAll(`[contenteditable] span[data-hr]`).forEach(el => {
+            let parent = el.closest('[contenteditable]')
+            if (!parent) {
+                return
+            }
+            parent.textContent = parent.textContent + ' '
+        })
+        // document.querySelector('body').classList.remove('search-text-mode');
+    }
+
+    function findNextSearch({reverseDirection} = {}) {
+        let current = document.querySelector(`[contenteditable] span[data-hr].current`)
+        if (!current) {
+            current = document.querySelector(`[contenteditable] span[data-hr]`)
+            if (!current) {
+                return;
+            }
+            current.classList.add('current')  
+        } else {
+            let marks = document.querySelectorAll(`[contenteditable] span[data-hr]`);
+            let currentPos = [...marks].map((e, i) => e.classList.contains('current') ? i : null).filter(e => e !== null)
+            current = null;
+            currentPos = currentPos[0]
+            if (reverseDirection) {
+                document.querySelector(`[contenteditable] span[data-hr].current`)?.classList?.remove('current')
+                if (currentPos === 0) {
+                    current = [...marks].at(-1);
+                } else {
+                    current = [...marks][currentPos-1]
+                }
+                current.classList.add('current');
+                current.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+                return
+                // choose last
+                
+            } else if (currentPos === [...marks].length - 1) {
+                current = [...marks].at(0)
+                current.classList.add('current');
+                current.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+                return
+            } else {
+                for(let el of marks) {
+                    if (current) {
+                        current = el;
+                        break;  
+                    }
+                    if (el.classList.contains('current')) {
+                        current = el;
+                        el.classList.remove('current')
+                    }
+                }
+            }
+        }
+        if (current) {
+            current.classList.add('current');
+            current.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+        }
+    }
+
     async function handleKeyDownForTauri(ev) {
         if ((ev.metaKey || ev.ctrlKey)) {
             if (ev.key === '\\' && window.__TAURI__ && localStorage.getItem('lastImportFile')) {
@@ -135,6 +202,15 @@ export function App({fileImportAndExport} = {}) {
                 }
             } else if (ev.key === 'p') {
                 window.print();
+            } else if (ev.key === 'f') {
+                if (document.querySelector('body').classList.contains('search-text-mode')) {
+                    removeSearchResults()
+                    document.querySelector('body').classList.remove('search-text-mode')
+                } else {
+                    setShowBottomTextInput('Search term')   
+                    bottomTextInputRef.current?.focus()
+                    document.querySelector('body').classList.add('search-text-mode');
+                }
             } else if (ev.key === 'n') {
                 let yes = await confirmDialog('Do you want to clear the document?')
                 if (yes) {
@@ -172,16 +248,73 @@ export function App({fileImportAndExport} = {}) {
         }
     }
 
+    async function jumpToScene(jumpTo = null) {
+        // GOTO scene
+        let selected = document.querySelector('#screenwriter-editor section.selected') || document.querySelector('#screenwriter-editor section');
+        
+        let scenes = [];
+        document.querySelectorAll('#screenwriter-editor > section.uppercase.description').forEach((el) => {
+            scenes.push(Number(el.getAttribute('data-index')))
+        })
 
-    function handleKeyDown(ev) {
-        if (ev.key === "Escape") {
-            setEditMetaData(false);
+        function nearestScene() {
+            let sceneNumberBefore = null;
+            let previous = document.querySelector('#screenwriter-editor section.selected');
+
+            while (previous) {
+                if (previous.classList.contains('description') && previous.classList.contains('uppercase')) {
+                    sceneNumberBefore = previous.getAttribute('data-index');
+                    break;
+                }
+                previous = previous.previousElementSibling;
+            }
+            return previous ? scenes.indexOf(Number(sceneNumberBefore)) + 1 : ''
+        }
+        
+
+        //jumpTo = prompt(`Which number of scene jump to?`, nearestScene() || '1')
+        let jumpToSceneNumber = scenes[Number(jumpTo) - 1];
+
+        if (!jumpTo) {
             return;
         }
-        if (focusMode) {
-            setHideMousePointer(true);
+       
+        function selectSection(el) {
+            if (!el) {
+                return;
+            }
+            //setCurrentSectionById(el.querySelector('div').dataset['id']);
+            el.querySelector('div') ? el.querySelector('div').focus() : el.focus();
+
         }
-        // shortcuts for app
+        
+        if (jumpTo === '0') {
+            // jump to 1st element
+            selectSection(
+                document.querySelector(`#screenwriter-editor > section:first-child`)
+            )
+        }
+        else if (jumpToSceneNumber) {
+            // jump to specified section
+            selectSection(
+                document.querySelector(`#screenwriter-editor > section.uppercase.description[data-index="${jumpToSceneNumber}"]`)
+            )
+
+        } else if (jumpTo.trim().toLocaleLowerCase().startsWith('e')) {
+            // jump to last element
+            selectSection(
+                document.querySelector(`#screenwriter-editor > section:last-child`)
+            )
+        } else if (Number(jumpTo) > 1) {
+            // jump to last scene
+            selectSection(
+                document.querySelector(`#screenwriter-editor > section.uppercase.description[data-index="${scenes.at(-1)}"]`)
+            )
+        }
+    }
+
+
+    function handleKeyDown(ev) {
         if (window.__TAURI__) {
             try {
                 handleKeyDownForTauri(ev).catch((err) => {
@@ -193,6 +326,21 @@ export function App({fileImportAndExport} = {}) {
                 messageDialog(e.message, { title: 'Error', type: 'error'});
             }
         }
+        if (ev.key === "Escape") {
+            setEditMetaData(false);
+            return;
+        }
+        if (focusMode) {
+            setHideMousePointer(true);
+        }
+        // shortcuts for app
+
+        if (ev.ctrlKey && ev.key === 'g') {
+            setShowBottomTextInput('Jump to scene')
+            document.querySelector('.bottom-text-input')?.focus();
+            return
+        }
+        
         if ((ev.metaKey || ev.ctrlKey)) {
             if (ev.key === '0') {
                 setFocusMode(!focusMode);
@@ -276,6 +424,53 @@ export function App({fileImportAndExport} = {}) {
         
     }, [appRef])
 
+    useEffect(() => {
+        if (!showBottomTextInput) {
+            return;
+        }
+        document.querySelector('.bottom-text-input')?.focus();
+    }, [showBottomTextInput])
+
+
+    function handleEnterSearch(ev) {
+        if (ev.key === 'Escape') {
+            ev.target.value = '' 
+            setShowBottomTextInput(false);
+            setBottomTextInputValue(null);
+            removeSearchResults()
+            document.querySelector('body').classList.remove('search-text-mode')
+            return
+        }
+        
+        let text = ev.target.value;
+        if (ev.key !== 'Enter') {
+            return;
+        }
+
+        setBottomTextInputValue(text);
+        
+        if (document.querySelector('body').classList.contains('search-text-mode')) {   
+            ev.preventDefault()         
+            let reverseDirection = ev.shiftKey
+            if (text !== bottomTextInputValue) {
+                removeSearchResults()
+                new HR(`section [contenteditable="true"]`, {
+                    highlight: [ev.target.value]  
+                }).hr();
+                setTimeout(() => {
+                    findNextSearch({reverseDirection})
+                }, 100)
+            } else {
+                findNextSearch({reverseDirection})
+            }
+        } else {
+            ev.preventDefault()
+            // goto line
+            jumpToScene(ev.target.value)
+            setShowBottomTextInput(false);
+        }
+    }
+
     if (!window.__TAURI__) {
         // only required in webrowser, because th editor may be used in many tabs and needs to be synced
         useEffect(() => {
@@ -299,6 +494,9 @@ export function App({fileImportAndExport} = {}) {
         )}
         {statusLog && (
             <StatusLog statusLog={statusLog} setStatusLog={setStatusLog}></StatusLog>
+        )}
+        {showBottomTextInput && (
+            <input type="text" className='bottom-text-input' placeholder={showBottomTextInput} onKeyDown={handleEnterSearch} ref={bottomTextInputRef}></input>
         )}
     </div>;
 }
