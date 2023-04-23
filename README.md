@@ -13,6 +13,8 @@ Tested in newest Chrome only. Firefox should work, too. I don't care about Safar
 
 **Try out the editor here: https://screenwriter.zeitpulse.com/**.
 
+To let the editor describes itself: https://screenwriter.zeitpulse.com/#demo
+
 The data is stored in your browsers local storage.
 
 ## Keyboard Usage
@@ -29,6 +31,7 @@ The data is stored in your browsers local storage.
  * `⌘`/`ctrl` + `0`: toggles focus mode
  * `⌘`/`ctrl` + `shift` + `,`: toggles suggestions for character names and scene introductions
  * `⌘`/`ctrl` + `.`: toggles TOC (tabel of content)
+  * `⌘`/`ctrl` + `\`: toggles version/history recovery
  * `ctrl` + `shift` + `G`: jumps to scene by number (`0` jumps to beginning of the document, numbers higher than existing scenes to the last scene, `e` to the end of the document) (this is not implemented in the standalone-app, yet)
 
 ## Features
