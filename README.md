@@ -20,16 +20,16 @@ The data is stored in your browsers local storage.
  * `tab`: change the type of text in the current secion (text, charater for dialog, dialog text, dialog annotation and scene annotation)
  * `shift` + `enter`: inserts a new line (line-break)
  * `enter`: breaks section into parts / inserts new section below if at the end of the section / inserts above if ath the beginning of the section
- * `meta`/`ctrl` + `backspace`: removes the current section
- * `meta`/`ctrl` + `shift` + `arrow-down`: merges this section with next one
- * `meta`/`ctrl` + `arrow-up`: jumps to previous section
- * `meta`/`ctrl` + `arrow-down`: jumps to next section
- * `meta`/`ctrl` + `shift` + `U`: uppercases the section, lowercases if everthing is uppercase
- * `meta`/`ctrl` + `shift` + `S`: downloads screenplay as txt or json file
- * `meta`/`ctrl` + `0`: toggles focus mode
- * `meta`/`ctrl` + `shift` + `,`: toggles suggestions for character names and scene introductions
- * `meta`/`ctrl` + `.`: toggles TOC (tabel of content)
- * `ctrl` + `shift` + `G`: jumps to scene by number (`0` jumps to beginning of the document, numbers higher than existing scenes to the last scene, `e` to the end of the document)
+ * `⌘`/`ctrl` + `backspace`: removes the current section
+ * `⌘`/`ctrl` + `shift` + `arrow-down`: merges this section with next one
+ * `⌘`/`ctrl` + `arrow-up`: jumps to previous section
+ * `⌘`/`ctrl` + `arrow-down`: jumps to next section
+ * `⌘`/`ctrl` + `shift` + `U`: uppercases the section, lowercases if everthing is uppercase
+ * `⌘`/`ctrl` + `shift` + `S`: downloads screenplay as txt or json file
+ * `⌘`/`ctrl` + `0`: toggles focus mode
+ * `⌘`/`ctrl` + `shift` + `,`: toggles suggestions for character names and scene introductions
+ * `⌘`/`ctrl` + `.`: toggles TOC (tabel of content)
+ * `ctrl` + `shift` + `G`: jumps to scene by number (`0` jumps to beginning of the document, numbers higher than existing scenes to the last scene, `e` to the end of the document) (this is not implemented in the standalone-app, yet)
 
 ## Features
 

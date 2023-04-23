@@ -43,7 +43,7 @@ body {
   color: var(--color-text);
   font-family: "iA Writer Duo", monospace;
 }
-body.dark-mode {
+@mixin dark-mode-color-scheme {
   --color-background: #222;
   --color-background-rgb: 34, 34, 34;
   --color-text: #fff;
@@ -55,3 +55,16 @@ body.dark-mode {
     filter: invert(1);
   }
 }
+
+@media (prefers-color-scheme: dark) {
+  body:not(.dark-mode) {
+    @include dark-mode-color-scheme;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  body.dark-mode {
+    @include dark-mode-color-scheme;
+  }
+}
+

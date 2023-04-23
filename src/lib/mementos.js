@@ -1,6 +1,6 @@
 let redos = [];
 
-const debug = true;
+const debug = false;
 
 function getMementos() {
     return JSON.parse(localStorage.getItem('mementos') || '[]');

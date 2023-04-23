@@ -11,7 +11,7 @@ export function Importer(str) {
     let parts = str.split(`\n`)
 
     let options = {
-        spacesDialogCharacter: null, // auto-detect by default
+        spacesCharacter: null, // auto-detect by default
         documentWidth: 61,
         dialogWordWrapLength: 33,
         // spacesAnnotation: 30,
@@ -62,14 +62,14 @@ export function Importer(str) {
     let sections = [];
     let i = 0;
 
-    if (options.spacesDialogCharacter === null || options.spacesDialogCharacter === undefined) {
+    if (options.spacesCharacter === null || options.spacesCharacter === undefined) {
         //auto-detect/guesses dialog spaces
         let firstLine = parts.filter(l => {
             l = l.split(/\n/)[0]
             return l.match(/^\s+?[A-Z][A-Z\s\(\)\.]+$/) && !l.match(/\:\s*$/)
         })
         if (firstLine && firstLine[0]) {
-            options.spacesDialogCharacter = firstLine[0].match(/^\s+/g)[0].length
+            options.spacesCharacter = firstLine[0].match(/^\s+/g)[0].length
         }
     }
 
@@ -79,26 +79,26 @@ export function Importer(str) {
         if (part.trim().at(-1) === ':' && part.toLocaleUpperCase() === part) {
             sections.push({
                 text: part,
-                classification: 'descriptionAnnotation'
+                classification: 'transition'
             })
-        } else if (new RegExp(`^\\s{${options.spacesDialogCharacter},${options.spacesDialogCharacter + 2}}?\\w+`).test(part.split(`\n`)[0])) {
+        } else if (new RegExp(`^\\s{${options.spacesCharacter},${options.spacesCharacter + 2}}?\\w+`).test(part.split(`\n`)[0])) {
             let dialogParts = part.split(`\n`);
             sections.push({
                 text: dialogParts.shift(),
-                classification: 'dialogCharacter'
+                classification: 'character'
             })
             if (dialogParts[0] && dialogParts[0].trim().startsWith('(') && dialogParts[0].trim().endsWith(')')) {
                 let annot = dialogParts.shift().trim();
                 sections = [...sections, ...[{
                     text: annot.substring(1, annot.length-1),
-                    classification: 'dialogAnnotation'
+                    classification: 'parenthetical'
                 }]];
             }
             if (dialogParts[0]) {
                 let text = dialogParts.join(`\n`);
                 sections = [...sections, ...[{
                     text: (options.removeWordWrap) ? removeWordWrap(text.replace(/\n\s+/g, `\n`).trim()) : text,
-                    classification: 'dialogText'
+                    classification: 'dialog'
                 }]];
             }
         }

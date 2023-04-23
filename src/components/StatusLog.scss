@@ -1,0 +1,16 @@
+.status-log {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    padding: 0.2rem;
+    font-size: 0.8em;
+    background: var(--color-background);
+    color: var(--color-text);
+    transition: opacity 0.2s;
+    &.error {
+        color: rgb(255, 131, 131);
+    }
+    &.fade-out {
+        opacity: 0;
+    }
+}

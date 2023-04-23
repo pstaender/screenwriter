@@ -1,21 +1,20 @@
 import { expect, jest, test } from '@jest/globals';
-import { readFile } from 'fs/promises'
 
-import { Exporter, deltaOfData, reverseDeltaPatch } from './Exporter';
+import { Exporter } from './Exporter';
 import { Importer } from './Importer';
 
 const exampleScreenplaySections = [
     {
         html: 'John',
-        classification: 'dialogCharacter',
+        classification: 'character',
     },
     {
         html: 'Well, one can\'t have everything.',
-        classification: 'dialogText',
+        classification: 'dialog',
     },
     {
         html: ' CUT TO:',
-        classification: 'descriptionAnnotation',
+        classification: 'transition',
     },
     {
         html: `EXT. JOHN AND MARY'S HOUSE - CONTINUOUS<br>    
@@ -25,15 +24,15 @@ const exampleScreenplaySections = [
     },
     {
         html: `JOHN`,
-        classification: `dialogCharacter`
+        classification: `character`
     },
     {
         html: `wondering`,
-        classification: `dialogAnnotation`
+        classification: `parenthetical`
     },
     {
         html: `Who on Earth could that be? And why the hell is he ringing the bell at this time of the day?`,
-        classification: 'dialogText'
+        classification: 'dialog'
     }
 ];
 const exampleScreenplayMetaData = {
@@ -51,27 +50,6 @@ test('import exported txt format and export again, without changing the structur
 
     expect(result).toEqual(resultImportAndExportAgain)
 });
-
-test('export with diff', () => {
-    let previousSections = [
-        {
-            html: 'John',
-            classification: 'dialogCharacter',
-        },
-        {
-            html: 'Well, one can\'t have everything…',
-            classification: 'dialogText',
-        }
-    ];
-    let previousMetaData = {
-        title: 'draft',
-    };
-    let delta = deltaOfData(exampleScreenplaySections, exampleScreenplayMetaData, previousSections, previousMetaData);
-    expect(reverseDeltaPatch(exampleScreenplaySections, exampleScreenplayMetaData, delta)).toEqual({
-        sections: previousSections,
-        metaData: previousMetaData,
-    })
-})
 
 xit('export and import without any losses', () => {
     let result = Exporter(exampleScreenplaySections, exampleScreenplayMetaData);

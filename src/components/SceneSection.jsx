@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { getCursorPosition, moveCursor, moveCursorToEnd, splitPositionForHtmlLikePlainText, stripHTMLTags } from "../lib/helper";
 
-import { SuggestionBox } from './SuggestionBox.js'
+import { SuggestionBox } from './SuggestionBox'
 import { popMementos, pushRedo, popRedo, addMemento } from '../lib/mementos.js';
 
 export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSectionById, insertNewSectionAfterId, insertNewSectionBeforeId, removeSection, id, index, sectionsLength, html, classification, setCurrentSectionById, cursorToEnd, randomID, chooseEditingLevel, sections, updateSectionById } = {}) {
@@ -11,10 +11,10 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
 
     const editingLevels = [
         'description',
-        'dialogCharacter',
-        'dialogText',
-        'dialogAnnotation',
-        'descriptionAnnotation',
+        'character',
+        'dialog',
+        'parenthetical',
+        'transition',
     ];
 
     const [editingLevel, setEditingLevel] = useState(classification || 'description');
@@ -50,19 +50,19 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
                     inputRef.current.dataset.chooseEditingLevel = 'editingLevelAlreadyChoosen';
                     let previousSection = inputRef.current?.closest('section')?.previousElementSibling
                     if (previousSection) {
-                        if (previousSection.classList.contains('dialogCharacter')) {
-                            return setEditingLevel('dialogText');
+                        if (previousSection.classList.contains('character')) {
+                            return setEditingLevel('dialog');
                         }
-                        if (previousSection.classList.contains('dialogAnnotation')) {
-                            return setEditingLevel('dialogText');
+                        if (previousSection.classList.contains('parenthetical')) {
+                            return setEditingLevel('dialog');
                         }
-                        if (previousSection.classList.contains('dialogText')) {
+                        if (previousSection.classList.contains('dialog')) {
                             let sibling = previousSection;
                             let names = [];
 
                             // find last relevant character name
                             while (sibling && names.length <= 2) {
-                                if (sibling.classList.contains('dialogCharacter')) {
+                                if (sibling.classList.contains('character')) {
                                     names.push(sibling.querySelector('.edit-field').textContent.trim().replace(/\s*\(.*$/, '').toLocaleUpperCase());
                                 }
                                 names = [...new Set(names)]
@@ -85,7 +85,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
                                     }
                                 }, 100)
                             }
-                            return setEditingLevel('dialogCharacter');
+                            return setEditingLevel('character');
                         }
                     }
                 }
@@ -125,6 +125,75 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
         section.innerHTML = lastRedo.html;
         section.dataset.excludeFromMemento = true;
         section.focus()
+    }
+
+    async function openJumpToScene() {
+        // GOTO scene
+        let previous = inputRef.current.closest('section')
+
+        let scenes = [];
+        document.querySelectorAll('#screenwriter-editor > section.uppercase.description').forEach((el) => {
+            scenes.push(Number(el.getAttribute('data-index')))
+        })
+
+        let sceneNumberBefore = null;
+
+        while (previous) {
+            if (previous.classList.contains('description') && previous.classList.contains('uppercase')) {
+                sceneNumberBefore = previous.getAttribute('data-index');
+                break;
+            }
+            previous = previous.previousElementSibling;
+        }
+
+        let nearestScene = previous ? scenes.indexOf(Number(sceneNumberBefore)) + 1 : ''
+
+
+        // if (window.__TAURI__) {
+        //     await ask(message)
+        // } else {
+        //     prompt(message, defaultValue)
+        // }
+
+        let jumpTo = prompt(`Which number of scene jump to?`, nearestScene || '1')
+        let jumpToSceneNumber = scenes[Number(jumpTo) - 1];
+
+        if (!jumpTo) {
+            return;
+        }
+       
+        function selectSection(el) {
+            if (!el) {
+                return;
+            }
+            //setCurrentSectionById(el.querySelector('div').dataset['id']);
+            el.querySelector('div') ? el.querySelector('div').focus() : el.focus();
+
+        }
+        
+        if (jumpTo === '0') {
+            // jump to 1st element
+            selectSection(
+                document.querySelector(`#screenwriter-editor > section:first-child`)
+            )
+        }
+        else if (jumpToSceneNumber) {
+            // jump to specified section
+            selectSection(
+                document.querySelector(`#screenwriter-editor > section.uppercase.description[data-index="${jumpToSceneNumber}"]`)
+            )
+
+        } else if (jumpTo.trim().toLocaleLowerCase().startsWith('e')) {
+            // jump to last element
+            selectSection(
+                document.querySelector(`#screenwriter-editor > section:last-child`)
+            )
+        } else if (Number(jumpTo) > 1) {
+            // jump to last scene
+            selectSection(
+                document.querySelector(`#screenwriter-editor > section.uppercase.description[data-index="${scenes.at(-1)}"]`)
+            )
+        }
     }
 
     function undoLastStep() {
@@ -208,9 +277,9 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
                 inputRef.current.textContent = '';
             }
 
-            if (inputRef.current.dataset.chooseEditingLevel && direction === 1 && editingLevel === 'dialogCharacter') {
+            if (inputRef.current.dataset.chooseEditingLevel && direction === 1 && editingLevel === 'character') {
 
-                nextLevel = 'dialogAnnotation'
+                nextLevel = 'parenthetical'
             }
             setEditingLevel(nextLevel || editingLevels[0]);
             if (inputRef.current?.dataset.chooseEditingLevel && inputRef.current?.dataset.chooseEditingLevel === inputRef.current.textContent) {
@@ -342,65 +411,8 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
             inputRef.current.textContent = text;
         } else if ((ev.ctrlKey || ev.metaKey) && ev.shiftKey && ev.key === ',') {
             document.getElementById('toggle-show-hide-suggestion-box').click()
-        } else if (ev.ctrlKey && ev.key === 'G') {
-            // GOTO scene
-            let previous = inputRef.current.closest('section')
-
-            let scenes = [];
-            document.querySelectorAll('#screenwriter-editor > section.uppercase.description').forEach((el) => {
-                scenes.push(Number(el.getAttribute('data-index')))
-            })
-
-            let sceneNumberBefore = null;
-
-            while (previous) {
-                if (previous.classList.contains('description') && previous.classList.contains('uppercase')) {
-                    sceneNumberBefore = previous.getAttribute('data-index');
-                    break;
-                }
-                previous = previous.previousElementSibling;
-            }
-
-            let nearestScene = previous ? scenes.indexOf(Number(sceneNumberBefore)) + 1 : ''
-
-            let jumpTo = prompt(`Which number of scene jump to?`, nearestScene || '1')
-            let jumpToSceneNumber = scenes[Number(jumpTo) - 1];
-
-            if (!jumpTo) {
-                return;
-            }
-            function selectSection(el) {
-
-                if (!el) {
-                    return;
-                }
-                //setCurrentSectionById(el.querySelector('div').dataset['id']);
-                el.querySelector('div') ? el.querySelector('div').focus() : el.focus();
-
-            }
-            if (jumpTo === '0') {
-                // jump to 1st element
-                selectSection(
-                    document.querySelector(`#screenwriter-editor > section:first-child`)
-                )
-            }
-            else if (jumpToSceneNumber) {
-                // jump to specified section
-                selectSection(
-                    document.querySelector(`#screenwriter-editor > section.uppercase.description[data-index="${jumpToSceneNumber}"]`)
-                )
-
-            } else if (jumpTo.trim().toLocaleLowerCase().startsWith('e')) {
-                // jump to last element
-                selectSection(
-                    document.querySelector(`#screenwriter-editor > section:last-child`)
-                )
-            } else if (Number(jumpTo) > 1) {
-                // jump to last scene
-                selectSection(
-                    document.querySelector(`#screenwriter-editor > section.uppercase.description[data-index="${scenes.at(-1)}"]`)
-                )
-            }
+        } else if ((ev.ctrlKey && ev.key === 'G')) {
+            openJumpToScene();
             return;
         } else if ((ev.metaKey || ev.ctrlKey) && ev.key === 'z') {
             ev.preventDefault();
@@ -411,6 +423,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
             }
 
         }
+
         updateCSSClasses()
     }
 
@@ -504,7 +517,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
     useEffect(() => {
         let content = inputRef.current?.textContent
         if (content !== null &&
-            (((editingLevel === 'description' && content === content.toLocaleUpperCase()) || editingLevel === 'dialogCharacter'))
+            (((editingLevel === 'description' && content === content.toLocaleUpperCase()) || editingLevel === 'character'))
         ) {
             setAllowToShowSuggestionBox(localStorage.getItem('showSuggestionBox') === 'true');
         } else {

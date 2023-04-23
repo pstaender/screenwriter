@@ -33,7 +33,7 @@ export function Toc({ sections, show, setShow } = {}) {
     }, [show])
 
     return <>
-        {show && (<div className="toc-overview">
+        {show && (<div className="toc-overview aside-overview-box">
             <ul>
                 {sections && sections.map((section, i) => (
                     <>

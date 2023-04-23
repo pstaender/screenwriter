@@ -56,10 +56,10 @@
                 color: inherit !important;
             }
         }
-        &.dialogCharacter,
-        &.dialogText,
-        &.dialogAnnotation,
-        &.descriptionAnnotation {
+        &.character,
+        &.dialog,
+        &.parenthetical,
+        &.transition {
             margin: 0;
             padding: 0;
         }
@@ -72,8 +72,8 @@
                 page-break-before: avoid;
             }
         }
-        &.dialogCharacter,
-        &.dialogAnnotation {
+        &.character,
+        &.parenthetical {
             page-break-after: avoid;
         }
         &.comment {
@@ -90,14 +90,14 @@
         }
     }
     #screenwriter-editor {
-        section.dialogText + section.description {
+        section.dialog + section.description {
             margin-top: 1.25rem;
         }
-        section.description + section.dialogCharacter {
+        section.description + section.character {
             margin-top: 0rem;
         }
     }
-    #screenwriter-editor > section.dialogCharacter {
+    #screenwriter-editor > section.character {
         padding-top: 1rem;
     }
 }
