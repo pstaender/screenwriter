@@ -38,7 +38,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
         }
         if (inputRef?.current) {
             if (inputRef.current.innerHTML) {
-                cleanupContenteditableMarkup();
+                cleanupContenteditableMarkup(inputRef.current);
                 if (cursorToEnd) {
                     moveCursor(inputRef.current, inputRef.current.textContent.trim().length)
                 }
@@ -228,7 +228,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
                     // TypeError: Failed to execute 'setStart' on 'Range': parameter 1 is not of type 'Node'.
                 }
             }, 110);
-            cleanupContenteditableMarkup()
+            cleanupContenteditableMarkup(inputRef.current)
         }
         if (ev.key === 'Backspace' && (ev.metaKey || ev.ctrlKey || inputRef.current.textContent.trim() === '')) {
             ev.preventDefault();
@@ -358,7 +358,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
         updateCSSClasses()
     }
 
-    function cleanupContenteditableMarkup() {
+    function cleanupContenteditableMarkup(el) {
         function removeAllTagsExceptBr(html) {
             html = html.replace(/(<br>|<br(\s+.+?)*>)/ig, '---BRLINEBREAK---');
             const div = document.createElement("div");
@@ -369,7 +369,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
         function trimLineBreaks(html) {
             return html.replace(/^\s*<br>/ig, '').replace(/<br>\s*$/ig, '')
         }
-        inputRef.current.innerHTML = trimLineBreaks(removeAllTagsExceptBr(inputRef.current.innerHTML))
+        el.innerHTML = trimLineBreaks(removeAllTagsExceptBr(el.innerHTML))
     }
 
     function handleFocus(ev) {
@@ -387,7 +387,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
         localStorage.setItem('lastIndexOfCurrent', index);
         setCurrentSectionById(id);
         if (ev.type !== 'Click') {
-            cleanupContenteditableMarkup();
+            cleanupContenteditableMarkup(inputRef.current);
         }
         if (allowToShowSuggestionBox) {
             setTimeout(() => {
@@ -407,7 +407,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
         }
         setIsCurrent(false);
         inputRef.current.dataset.chooseEditingLevel = '';
-        cleanupContenteditableMarkup();
+        cleanupContenteditableMarkup(inputRef.current);
         updateSectionById(id, { html: inputRef.current.innerHTML })
         setTimeout(() => {
             setShowSuggestions(false);
