@@ -335,7 +335,11 @@ export function App({fileImportAndExport} = {}) {
         }
         // shortcuts for app
 
-        if (ev.ctrlKey && ev.key === 'g') {
+        if ((ev.metaKey || ev.ctrlKey) && ev.key === 'g') {
+            if (showBottomTextInput === 'Jump to scene') {
+                setShowBottomTextInput(false)
+                return;
+            }
             setShowBottomTextInput('Jump to scene')
             document.querySelector('.bottom-text-input')?.focus();
             return
