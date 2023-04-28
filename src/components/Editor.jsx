@@ -162,6 +162,10 @@ export function Editor({ seed, currentIndex, showDocumentHistory } = {}) {
         if ((ev.ctrlKey || ev.metaKey) && ev.key === '.') {
             setShowToc(!showToc);
         }
+        if ((ev.ctrlKey || ev.metaKey) && ev.key === '=') {
+            // clear empty sections
+            setSections(sections.filter((s => !!s.html)))
+        }
         if (ev.target?.contentEditable !== 'true') {
             return;
         }

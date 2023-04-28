@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,600;1,400;1,600&display=swap');
+
+body {
+    --font-family: Alegreya, sans-serif;
+}
+section.description:not(.uppercase) + section.description:not(.uppercase) {
+    > .edit-field.description {
+        text-indent: 1.5rem;
+    }
+}
+
+#screenwriter-editor > section.description.uppercase {
+    > div:after, > div:before {
+        display: none !important;
+    }
+}

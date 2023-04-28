@@ -18,6 +18,7 @@ import { confirm as confirmDialog, message as messageDialog } from "@tauri-apps/
 import { DocumentHistory } from './components/DocumentHistory';
 import { StatusLog } from './components/StatusLog';
 import { HR } from './lib/HR';
+import { jsPDF } from "jspdf";
 
 let lastSavedExport = null;
 
@@ -73,6 +74,20 @@ export function App({fileImportAndExport} = {}) {
             metaData,
         }
     }
+
+    function generatePDF() {
+        document.querySelector('body').classList.add('print');
+        const doc = new jsPDF({ unit: 'pt' });
+        const pdfElement = document.getElementById('screenwriter');
+      
+        doc.html(pdfElement, {
+          callback: (pdf) => {
+            pdf.save('MyPdfFile.pdf');
+            document.querySelector('body').classList.remove('print');
+          },
+            autoPaging: 'text'
+        })
+      }
 
     function storeScreenplayInLocalStorage() {
         let data = metaDataAndSections();
@@ -315,7 +330,11 @@ export function App({fileImportAndExport} = {}) {
 
 
     function handleKeyDown(ev) {
+        if ((ev.metaKey || ev.ctrlKey) && ev.shiftKey && ev.key === 'P') {
+            generatePDF()
+        }
         if (window.__TAURI__) {
+            return;
             try {
                 handleKeyDownForTauri(ev).catch((err) => {
                     console.error(err);
@@ -506,4 +525,5 @@ export function App({fileImportAndExport} = {}) {
 }
 
 import './Print.scss';
+// import './Story.scss';
 
