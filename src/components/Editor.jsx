@@ -164,7 +164,12 @@ export function Editor({ seed, currentIndex, showDocumentHistory } = {}) {
         }
         if ((ev.ctrlKey || ev.metaKey) && ev.key === '=') {
             // clear empty sections
-            setSections(sections.filter((s => !!s.html)))
+            let el = document.querySelector('.selected .edit-field')
+            el.blur();
+            setSections(sections.filter(s => !!s.html))
+            setTimeout(() => {
+                document.querySelector('#screenwriter-editor .edit-field')?.focus()
+            }, 10)
         }
         if (ev.target?.contentEditable !== 'true') {
             return;

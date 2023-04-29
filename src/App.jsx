@@ -14,7 +14,7 @@ import { saveScreenwriterFile, ensureAppDir, importFileToLocalStorage, openAndRe
 import { listen as listenOnTauriApp } from '@tauri-apps/api/event'
 import { resetDocument, sectionsFromDocument, basenameOfPath } from './lib/helper';
 
-import { confirm as confirmDialog, message as messageDialog } from "@tauri-apps/api/dialog";
+import { confirm as confirmDialog, message as messageDialog, save } from "@tauri-apps/api/dialog";
 import { DocumentHistory } from './components/DocumentHistory';
 import { StatusLog } from './components/StatusLog';
 import { HR } from './lib/HR';
@@ -79,10 +79,25 @@ export function App({fileImportAndExport} = {}) {
         document.querySelector('body').classList.add('print');
         const doc = new jsPDF({ unit: 'pt' });
         const pdfElement = document.getElementById('screenwriter');
-      
+        let filename = localStorage.getItem('lastImportFile') || 'print';
         doc.html(pdfElement, {
-          callback: (pdf) => {
-            pdf.save('MyPdfFile.pdf');
+          callback: async (pdf) => {
+            if (window.__TAURI__) {
+                let pdfData = pdf.output('arraybuffer');
+                document.querySelector('body').classList.remove('print');
+                filename = await save({
+                    filters: [{
+                        name: 'default',
+                        extensions: ['pdf']
+                    }],
+                });
+                if (!filename) {
+                    filename = 'print.pdf'
+                }
+                await writeBinaryFile(filename, pdfData);
+            } else {
+                await pdf.save(`${filename}.pdf`, { returnPromise: true });
+            }
             document.querySelector('body').classList.remove('print');
           },
             autoPaging: 'text'
@@ -232,7 +247,6 @@ export function App({fileImportAndExport} = {}) {
                     resetDocument({setMetaData, setSeed});
                 }
             } else if (ev.key === 's') {
-                
                 if (ev.shiftKey) {
                     let {newFilename} = await saveScreenwriterFile(null, metaDataAndSections())
                     if (newFilename) {
@@ -334,7 +348,6 @@ export function App({fileImportAndExport} = {}) {
             generatePDF()
         }
         if (window.__TAURI__) {
-            return;
             try {
                 handleKeyDownForTauri(ev).catch((err) => {
                     console.error(err);
@@ -525,5 +538,6 @@ export function App({fileImportAndExport} = {}) {
 }
 
 import './Print.scss';
+import { writeBinaryFile } from '@tauri-apps/api/fs';
 // import './Story.scss';
 
