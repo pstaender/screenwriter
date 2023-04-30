@@ -1,0 +1,93 @@
+#screenwriter-toolbar,
+#github-link,
+.edit-meta-data {
+    display: none;
+}
+#screenwriter-editor {
+    padding-right: 4rem;
+    max-width: inherit;
+    // margin: 0 auto;
+}
+#screenwriter-editor > section {
+    padding: 0;
+    padding-bottom: 1rem;
+
+    padding-left: var(--scene-number-width);
+    padding-right: var(--scene-number-width);
+
+    &.selected {
+        background: none !important;
+    }
+    &:before {
+        display: none;
+    }
+    &.description.uppercase {
+        > div:before {
+            content: counter(scene-counter) " ";
+            text-align: inherit;
+            opacity: inherit;
+            font-size: inherit;
+            top: var(--extra-top-padding);
+            left: inherit;
+            margin-left: calc(-1 * var(--scene-number-width));
+        }
+        > div:after {
+            content: counter(scene-counter);
+            display: block;
+            position: absolute;
+            text-align: inherit;
+            opacity: inherit;
+            font-size: inherit;
+            top: inherit;
+            right: 1rem;
+            font-weight: normal;
+            top: var(--extra-top-padding);
+            margin-right: calc(-1 * var(--scene-number-width));
+            background: inherit !important;
+            color: inherit !important;
+        }
+    }
+    &.character,
+    &.dialog,
+    &.parenthetical,
+    &.transition {
+        margin: 0;
+        padding: 0;
+    }
+    &.description {
+        margin: 0;
+        padding-bottom: 0.8rem;
+        &.uppercase {
+            padding-top: var(--extra-top-padding);
+            page-break-after: avoid;
+            page-break-before: avoid;
+        }
+    }
+    &.character,
+    &.parenthetical {
+        page-break-after: avoid;
+    }
+    &.comment {
+        display: none;
+    }
+    &.h7 {
+        opacity: 0;
+        page-break-after: always;
+    }
+    &:not(.comment) {
+        > div {
+            opacity: 1;
+        }
+    }
+}
+#screenwriter-editor {
+    section.dialog + section.description {
+        margin-top: 1.25rem;
+    }
+    section.description + section.character {
+        margin-top: 0rem;
+    }
+}
+#screenwriter-editor > section.character {
+    padding-top: 1rem;
+}

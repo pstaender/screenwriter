@@ -3,11 +3,6 @@
         --line-height: 1.25em;
         --font-size: 11pt;
     }
-    #screenwriter-toolbar,
-    #github-link,
-    .edit-meta-data {
-        display: none;
-    }
     body {
         --extra-top-padding: 1.25rem;
         --color-background: #fff !important;
@@ -17,87 +12,25 @@
         --dialog-character-indent: 15rem;
         --dialog-text-indent: 9rem;
         --dialog-annotation-indent: 12rem;
+        --scene-number-width: 3rem;
     }
     body {
         font-size: var(--font-size);
     }
-    #screenwriter-editor {
-        padding-right: 2rem;
-    }
-    #screenwriter-editor > section {
-        padding: 0;
-        padding-bottom: 1rem;
-        --scene-number-width: 3rem;
-        padding-left: var(--scene-number-width);
-        padding-right: var(--scene-number-width);
-        &.description.uppercase {
-            > div:before {
-                content: counter(scene-counter) " ";
-                text-align: inherit;
-                opacity: inherit;
-                font-size: inherit;
-                top: var(--extra-top-padding);
-                left: inherit;
-                margin-left: calc(-1 * var(--scene-number-width));
-            }
-            > div:after {
-                content: counter(scene-counter);
-                display: block;
-                position: absolute;
-                text-align: inherit;
-                opacity: inherit;
-                font-size: inherit;
-                top: inherit;
-                right: 1rem;
-                font-weight: normal;
-                top: var(--extra-top-padding);
-                margin-right: calc(-1 * var(--scene-number-width));
-                background: inherit !important;
-                color: inherit !important;
-            }
-        }
-        &.character,
-        &.dialog,
-        &.parenthetical,
-        &.transition {
-            margin: 0;
-            padding: 0;
-        }
-        &.description {
-            margin: 0;
-            padding-bottom: 0.8rem;
-            &.uppercase {
-                padding-top: var(--extra-top-padding);
-                page-break-after: avoid;
-                page-break-before: avoid;
-            }
-        }
-        &.character,
-        &.parenthetical {
-            page-break-after: avoid;
-        }
-        &.comment {
-            display: none;
-        }
-        &.h7 {
-            opacity: 0;
-            page-break-after: always;
-        }
-        &:not(.comment) {
-            > div {
-                opacity: 1;
-            }
-        }
-    }
-    #screenwriter-editor {
-        section.dialog + section.description {
-            margin-top: 1.25rem;
-        }
-        section.description + section.character {
-            margin-top: 0rem;
-        }
-    }
-    #screenwriter-editor > section.character {
-        padding-top: 1rem;
-    }
+    @import "Pdf.scss";
+}
+// is required for html2pdf (https://github.com/eKoopmans/html2pdf.js/issues/79)
+body.print {
+    --line-height: 1.25em;
+    --font-size: 9pt;
+    --extra-top-padding: 1.25rem;
+    --color-background: #fff !important;
+    --color-text: #000 !important;
+    --max-dialog-width: 28rem;
+    --max-dialog-annotation-width: 25rem;
+    --dialog-character-indent: 15rem;
+    --dialog-text-indent: 9rem;
+    --dialog-annotation-indent: 12rem;
+    --scene-number-width: 2rem;
+    @import "Pdf.scss";
 }

@@ -38,10 +38,11 @@ body {
   --dialog-text-indent: 10rem;
   --dialog-annotation-indent: 12rem;
   --max-editor-with: 46rem;
+  --font-family: "iA Writer Duo", monospace;
   background: var(--color-background);
   transition: background 0.4s;
   color: var(--color-text);
-  font-family: "iA Writer Duo", monospace;
+  font-family: var(--font-family);
 }
 @mixin dark-mode-color-scheme {
   --color-background: #222;
@@ -68,3 +69,14 @@ body {
   }
 }
 
+input.bottom-text-input {
+  position: fixed;
+  bottom: 1rem;
+  left: 1rem;
+  font-size: 1rem;
+  color: var(--color-text);
+  background: var(--color-background);
+  border: 2px solid var(--color-text);
+  border-radius: 3px;
+  padding: 0.25rem 0.5rem;
+}

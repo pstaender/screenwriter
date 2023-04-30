@@ -145,6 +145,10 @@ export function Editor({ seed, currentIndex, showDocumentHistory } = {}) {
     }
 
     function insertNewSectionAfterId(currentID, { html, id, classification } = {}) {
+        if (html) {
+            // trim
+            html = html.replace(/^<br>/g, '').replace(/<br>$/g, '')
+        }
         let index = sections.indexOf(sections.filter(s => s.id === currentID)[0])
         insertNewSectionAtIndex(index + 1, { html, id, classification });
     }
@@ -157,6 +161,15 @@ export function Editor({ seed, currentIndex, showDocumentHistory } = {}) {
     function handleKeyDown(ev) {
         if ((ev.ctrlKey || ev.metaKey) && ev.key === '.') {
             setShowToc(!showToc);
+        }
+        if ((ev.ctrlKey || ev.metaKey) && ev.key === '=') {
+            // clear empty sections
+            let el = document.querySelector('.selected .edit-field')
+            el.blur();
+            setSections(sections.filter(s => !!s.html))
+            setTimeout(() => {
+                document.querySelector('#screenwriter-editor .edit-field')?.focus()
+            }, 10)
         }
         if (ev.target?.contentEditable !== 'true') {
             return;

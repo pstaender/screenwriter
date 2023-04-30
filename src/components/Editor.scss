@@ -221,3 +221,10 @@
         }
     }
 }
+span[data-hr] {
+    background: rgb(254, 255, 212);//rgb(255, 222, 112);
+    border-radius: 3px;
+    &.current {
+        background: rgb(255, 250, 122);
+    }
+}

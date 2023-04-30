@@ -27,8 +27,12 @@ The data is stored in your browsers local storage.
  * `⌘`/`ctrl` + `arrow-up`: jumps to previous section
  * `⌘`/`ctrl` + `arrow-down`: jumps to next section
  * `⌘`/`ctrl` + `shift` + `U`: uppercases the section, lowercases if everthing is uppercase
+ * `⌘`/`ctrl` + `shift` + `N`: New Document (clears current without extra warning)
+ * `⌘`/`ctrl` + `shift` + `R`: Reloads document
  * `⌘`/`ctrl` + `shift` + `S`: downloads screenplay as txt or json file
+ * `ctrl` + `shift` + `P`: exports file as pdf in print style
  * `⌘`/`ctrl` + `0`: toggles focus mode
+ * `⌘`/`ctrl` + `shift` + `=`: Removes all empty sections (good for cleanup)
  * `⌘`/`ctrl` + `shift` + `,`: toggles suggestions for character names and scene introductions
  * `⌘`/`ctrl` + `.`: toggles TOC (tabel of content)
   * `⌘`/`ctrl` + `\`: toggles version/history recovery
