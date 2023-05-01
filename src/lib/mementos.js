@@ -54,7 +54,7 @@ export function clearUndo() {
     redos = [];
 }
 
-export function addMemento(action, { html, id, editingLevel, getPrev, getNext }) {
+export function addMemento(action, { html, id, editingLevel, cursorPosition, getPrev, getNext }) {
     let last = getMementos().filter((m) => m.id === id)[0]
     if (last && (
         last.html.trim() === html.trim()
@@ -67,6 +67,7 @@ export function addMemento(action, { html, id, editingLevel, getPrev, getNext })
         editingLevel,
         classification: editingLevel,
         action,
+        cursorPosition,
         prev: getPrev(id)?.id,
         next: getNext(id)?.id,
     });
@@ -77,4 +78,9 @@ export function popMementos() {
     let latestStep = mementos.pop()
     storeMementos(mementos);
     return latestStep;
+}
+
+export function lastMemento() {
+    let mementos = getMementos();
+    return mementos[mementos.length - 1];
 }

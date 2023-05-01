@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { getCursorPosition, moveCursor, moveCursorToEnd, splitPositionForHtmlLikePlainText, stripHTMLTags } from "../lib/helper";
 
 import { SuggestionBox } from './SuggestionBox'
-import { popMementos, pushRedo, popRedo, addMemento } from '../lib/mementos.js';
+import { popMementos, pushRedo, popRedo, addMemento, lastMemento } from '../lib/mementos.js';
 
 export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSectionById, insertNewSectionAfterId, insertNewSectionBeforeId, removeSection, id, index, sectionsLength, html, classification, setCurrentSectionById, cursorToEnd, randomID, chooseEditingLevel, sections, updateSectionById } = {}) {
 
@@ -119,12 +119,16 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
         if (!section) {
             return;
         }
-        //addMemento('delete', { html: inputRef.current.textContent, id, editingLevel, getPrev, getNext })
-        addMemento('onRedo', { html: section.innerHTML, id: lastRedo.id, editingLevel: lastRedo.editingLevel, getPrev, getNext })
+        addMemento('onRedo', { html: section.innerHTML, id: lastRedo.id, editingLevel: lastRedo.editingLevel, getPrev, getNext, cursorPosition: getCursorPosition(section) })
         updateSectionById(lastRedo.id, { html: lastRedo.html })
         section.innerHTML = lastRedo.html;
         section.dataset.excludeFromMemento = true;
         section.focus()
+        if (lastRedo.id === id) {
+            setTimeout(() => {
+                moveCursor(section, section.textContent.length);
+            }, 10)
+        }
     }
 
     function undoLastStep() {
@@ -146,6 +150,9 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
                 } else {
                     insertNewSectionAfterId(id, options)
                 }
+                setTimeout(() => {
+                    moveCursor(section, memento.cursorPosition);
+                }, 10);
                 break;
             } else {
                 if (memento.id) {
@@ -158,6 +165,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
                             html: section.innerHTML,
                             id: memento.id,
                             editingLevel: memento.editingLevel,
+                            cursorPosition: getCursorPosition(section),
                             // classification: editingLevel,
                             action: 'undo',
                         })
@@ -166,6 +174,9 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
                         section.dataset.excludeFromMemento = true;
                         section.focus()
                         updateSectionById(memento.id, { html: memento.html })
+                        setTimeout(() => {
+                            moveCursor(section, memento.cursorPosition);
+                        }, 10);
                         break;
                     }
                 }
@@ -189,6 +200,32 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
         }
     }
 
+    function addMementoIfContentHasChanged(section) {
+        let last = lastMemento()
+        if (!last || last.id !== section.id) {
+            addMemento('editing', {
+                html: section.textContent,
+                id,
+                editingLevel,
+                getPrev,
+                getNext,
+                cursorPosition: getCursorPosition(section),
+            })
+            return;
+        }
+        if (section.textContent === last.html) {
+            return;
+        }
+        addMemento('editing', {
+            html: section.textContent,
+            id: section.id,
+            editingLevel,
+            getPrev,
+            getNext,
+            cursorPosition: getCursorPosition(section),
+        })
+    }
+
     function handleKeyDown(ev) {
         setKeyPressed({ ...ev });
         const content = getContentFromEvent(ev);
@@ -198,6 +235,9 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
 
         let cursorIsAtEndOfSection = getCursorPosition(ev.target) >= content.trim().length;
         let cursorIsAtBeginOfSection = getCursorPosition(ev.target) < 1;
+
+        addMementoIfContentHasChanged(inputRef.current)
+
         if (ev.key === 'Tab') {
             const direction = ev.shiftKey ? -1 : 1;
             ev.preventDefault();
@@ -240,7 +280,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
             // only remove if some elements still exists
             if (document.querySelectorAll('#screenwriter-editor > section').length > 1) {
                 if (inputRef.current.innerHTML?.trim()) {
-                    addMemento('delete', { html: inputRef.current.innerHTML, id, editingLevel, getPrev, getNext })
+                    addMemento('delete', { html: inputRef.current.innerHTML, id, editingLevel, getPrev, getNext, cursorPosition: 0 })
                 }
                 goPrev({ id, cursorToEnd: true })
                 removeSection(id)
@@ -402,7 +442,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
         if (inputRef.current.dataset.excludeFromMemento) {
             inputRef.current.dataset.excludeFromMemento = false;
         } else {
-            addMemento('onBlur', { html: inputRef.current.dataset.innerHTMLBeforeFocus || inputRef.current.textContent, id, editingLevel, getPrev, getNext })
+            addMemento('onBlur', { html: inputRef.current.dataset.innerHTMLBeforeFocus || inputRef.current.textContent, id, editingLevel, getPrev, getNext, cursorPosition: getCursorPosition(inputRef.current) })
             inputRef.current.dataset.innerHTMLBeforeFocus = null;
         }
         setIsCurrent(false);
