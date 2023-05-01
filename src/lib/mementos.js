@@ -11,9 +11,6 @@ function storeMementos(mementos) {
 }
 
 function pushMementos(step) {
-    if (!step.html) {
-        return;
-    }
     let maxDataLength = 12000;
     let mementos = getMementos();
 

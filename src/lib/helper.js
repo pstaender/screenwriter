@@ -259,6 +259,10 @@ function moveCursorToPosition(el, position) {
     let range = document.createRange();
     let selection = window.getSelection();
     range.selectNodeContents(el);
+    if (!el.firstChild) {
+        console.error(`Failed to execute 'setStart' on 'Range': parameter 1 is not of type 'Node'.`)
+        return;
+    }
     range.setStart(el.firstChild, position);
     range.setEnd(el.firstChild, position);
     selection.removeAllRanges();

@@ -166,7 +166,6 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
                             id: memento.id,
                             editingLevel: memento.editingLevel,
                             cursorPosition: getCursorPosition(section),
-                            // classification: editingLevel,
                             action: 'undo',
                         })
                         section.innerHTML = memento.html;
@@ -175,6 +174,9 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
                         section.focus()
                         updateSectionById(memento.id, { html: memento.html })
                         setTimeout(() => {
+                            if (!section) {
+                                return;
+                            }
                             moveCursor(section, memento.cursorPosition);
                         }, 10);
                         break;
@@ -413,14 +415,21 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
     }
 
     function handleFocus(ev) {
-        if (isCurrent) {
-            return;
-        }
-
         if (inputRef.current.dataset.excludeFromMemento) {
             inputRef.current.dataset.excludeFromMemento = false;
         } else {
-            inputRef.current.dataset.innerHTMLBeforeFocus = inputRef.current.innerHTML;
+            addMemento('onFocus', {
+                html: inputRef.current.textContent,
+                id,
+                editingLevel,
+                cursorPosition: 0,
+                getPrev,
+                getNext,
+            });
+        }
+
+        if (isCurrent) {
+            return;
         }
 
         setIsCurrent(true);
@@ -442,8 +451,7 @@ export function SceneSection({ current, goNext, goPrev, getNext, getPrev, findSe
         if (inputRef.current.dataset.excludeFromMemento) {
             inputRef.current.dataset.excludeFromMemento = false;
         } else {
-            addMemento('onBlur', { html: inputRef.current.dataset.innerHTMLBeforeFocus || inputRef.current.textContent, id, editingLevel, getPrev, getNext, cursorPosition: getCursorPosition(inputRef.current) })
-            inputRef.current.dataset.innerHTMLBeforeFocus = null;
+            addMemento('onBlur', { html: inputRef.current.textContent, id, editingLevel, getPrev, getNext, cursorPosition: getCursorPosition(inputRef.current) })
         }
         setIsCurrent(false);
         inputRef.current.dataset.chooseEditingLevel = '';
