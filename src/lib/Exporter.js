@@ -1,5 +1,8 @@
 import Voca from "voca";
 
+function stripTagsAndTrim(input) {
+    return input.replace(/<[^>]+>/ig, ' ').replace(/\s+/g, ' ').trim();
+}
 
 export function ExportSections(sections) {
     return Exporter(
@@ -27,7 +30,7 @@ export function convertDomSectionsToDataStructure(sections) {
     })
 }
 
-export function Exporter(sections, metaData = {}) {
+export function Exporter(sections, metaData = {}, { excludeMetaData = false } = {}) {
 
     let options = {
         spacesCharacter: 22,
@@ -56,7 +59,7 @@ export function Exporter(sections, metaData = {}) {
     if (Object.keys(metaData).length > 0) {
         metaDataText = JSON.stringify(metaData, null, '  ').replace(/^\s+/g, '').substring(1).replace(/\}$/,'').split('\n').map(l => {
             l = l.replace(/,$/, '').trim();
-            return l
+            return stripTagsAndTrim(l)
         }).join('\n').trim()+`\n`
     }
 
@@ -64,25 +67,25 @@ export function Exporter(sections, metaData = {}) {
         let text = section.html.replace(/<br>/ig, `\n`).replace(/\&nbsp;/g, ' ').trim();
         if (section.classification === 'character') {
             text = `\n` + text.split(`\n`).map(l => {
-                return Array(options.spacesCharacter + 1).join(' ') + l.toLocaleUpperCase().trim()
+                return Array(options.spacesCharacter + 1).join(' ') + stripTagsAndTrim(l.toLocaleUpperCase())
             }).join(`\n`)
 
         }
         else if (section.classification === 'parenthetical') {
             text = text.split(`\n`).map(l => {
-                return Array(options.spacesCharacter - 4).join(' ') + '('+l.trim()+')';
+                return Array(options.spacesCharacter - 4).join(' ') + '('+stripTagsAndTrim(l)+')';
             }).join(`\n`)
         }
         else if (section.classification === 'dialog') {
             text = text.split(`\n`).map(l => {
-                return Voca.wordWrap(l.trim(), {
+                return Voca.wordWrap(stripTagsAndTrim(l), {
                     width: options.dialogWordWrapLength,
                     indent: Array(options.spacesDialog + 1).join(' ')
                 })
             }).join(`\n`)
         }
         else if (section.classification === 'transition') {
-            text = `\n` + Voca.padLeft(text.toLocaleUpperCase().trim(), options.documentWidth - text.length, ' ')
+            text = `\n` + Voca.padLeft(stripTagsAndTrim(text.toLocaleUpperCase()), options.documentWidth - text.length, ' ')
         } else {
             // description
             if (!text.trim()) {
@@ -90,7 +93,7 @@ export function Exporter(sections, metaData = {}) {
             }
 
             text = `\n` + text.split(`\n`).map(l => {
-                return Voca.wordWrap(l.trim(), {
+                return Voca.wordWrap(stripTagsAndTrim(l), {
                     width: options.documentWidth,
                 })
             }).join(`\n`)
@@ -98,5 +101,5 @@ export function Exporter(sections, metaData = {}) {
         }
         return text;
     })
-    return metaDataText + parts.join(`\n`);
+    return excludeMetaData ? parts.join(`\n`) : metaDataText + parts.join(`\n`);
 }

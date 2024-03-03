@@ -19,25 +19,25 @@ The data is stored in your browsers local storage.
 
 ## Keyboard Usage
 
- * `tab`: change the type of text in the current secion (text, charater for dialog, dialog text, dialog annotation and scene annotation)
- * `shift` + `enter`: inserts a new line (line-break)
- * `enter`: breaks section into parts / inserts new section below if at the end of the section / inserts above if ath the beginning of the section
- * `⌘`/`ctrl` + `backspace`: removes the current section
- * `⌘`/`ctrl` + `shift` + `arrow-down`: merges this section with next one
- * `⌘`/`ctrl` + `arrow-up`: jumps to previous section
- * `⌘`/`ctrl` + `arrow-down`: jumps to next section
- * `⌘`/`ctrl` + `shift` + `U`: uppercases the section, lowercases if everthing is uppercase
- * `⌘`/`ctrl` + `shift` + `N`: New Document (clears current without extra warning)
- * `⌘`/`ctrl` + `shift` + `R`: Reloads document
- * `⌘`/`ctrl` + `shift` + `S`: downloads screenplay as txt or json file
- * `ctrl` + `shift` + `P`: exports file as pdf in print style
- * `⌘`/`ctrl` + `0`: toggles focus mode
- * `⌘`/`ctrl` + `shift` + `=`: Removes all empty sections (good for cleanup)
- * `⌘`/`ctrl` + `shift` + `,`: toggles suggestions for character names and scene introductions
- * `⌘`/`ctrl` + `.`: toggles TOC (tabel of content)
+  * `TAB`: change the type of text in the current secion (text, charater for dialog, dialog text, dialog annotation and scene annotation)
+  * `shift` + `enter`: inserts a new line (line-break)
+  * `enter`: breaks section into parts / inserts new section below if at the end of the section / inserts above if ath the beginning of the section
+  * `⌘`/`ctrl` + `backspace`: removes the current section
+  * `⌘`/`ctrl` + `shift` + `arrow-down`: merges this section with next one
+  * `⌘`/`ctrl` + `arrow-up`: jumps to previous section
+  * `⌘`/`ctrl` + `arrow-down`: jumps to next section
+  * `⌘`/`ctrl` + `shift` + `U`: uppercases the section, lowercases if everthing is uppercase
+  * `⌘`/`ctrl` + `shift` + `N`: New Document (clears current without extra warning)
+  * `⌘`/`ctrl` + `shift` + `R`: Reloads document
+  * `⌘`/`ctrl` + `shift` + `S`: downloads screenplay as txt or json file
+  * `ctrl` + `shift` + `P`: exports file as pdf in print style
+  * `⌘`/`ctrl` + `0`: toggles focus mode
+  * `⌘`/`ctrl` + `shift` + `=`: Removes all empty sections (good for cleanup)
+  * `⌘`/`ctrl` + `shift` + `,`: toggles suggestions for character names and scene introductions
+  * `⌘`/`ctrl` + `.`: toggles TOC (tabel of content)
+  * `⌘`/`ctrl` + `,`: show settings
   * `⌘`/`ctrl` + `\`: toggles version/history recovery
- * `ctrl` + `shift` + `G`: jumps to scene by number (`0` jumps to beginning of the document, numbers higher than existing scenes to the last scene, `e` to the end of the document) (this is not implemented in the standalone-app, yet)
-
+  * `ctrl` + `shift` + `G`: jumps to scene by number (`0` jumps to beginning of the document, numbers higher than existing scenes to the last scene, `e` to the end of the document) (this is not implemented in the standalone-app, yet)
 ## Features
 
  * detects the beginning of a new scene; just write the whole line uppercase (meta/ctrl+shift+U)
@@ -85,3 +85,4 @@ You can use very limited markup/markdown:
 ## License
 
 MIT
+
