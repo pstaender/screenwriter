@@ -7,7 +7,6 @@ import {
   stripHTMLTags
 } from "../lib/helper";
 
-import { SuggestionBox } from "./SuggestionBox";
 import {
   popMementos,
   pushRedo,
@@ -644,7 +643,8 @@ export function SceneSection({
     >
       <div
         contentEditable={true}
-        onFocus={handleFocus}
+        // focus-event is disabled for now, causes problems with click event
+        // onFocus={handleFocus}
         onBlur={handleBlur}
         ref={inputRef}
         className={["edit-field", editingLevel].join(" ")}

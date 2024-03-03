@@ -8,6 +8,8 @@ import bmc from "../icons/bmc-button.png";
 export function Settings({
   settings,
   setSettings,
+  autoSave,
+  setAutoSave,
   setShowSettings,
   handleEditMetadata,
   darkMode,
@@ -66,6 +68,18 @@ export function Settings({
               onChange={(ev) => setAutoScroll(ev.target.checked)}
             />
           </li>
+          <li className="toggle">
+            <div className="label" onClick={clickNearestToggle}>
+              Auto-Save
+            </div>
+            <Toggle
+              id="autoSave"
+              label="Auto Save"
+              defaultChecked={autoSave}
+              onChange={(ev) => setAutoSave(ev.target.checked)}
+            />
+          </li>
+          
           <li className="toggle">
             <div className="label" onClick={clickNearestToggle}>
               Focus-Mode

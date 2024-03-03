@@ -183,7 +183,7 @@ export function App({ fileImportAndExport } = {}) {
   async function autoSaveTauri(lastImportFile) {
     let appDataDir = await ensureAppDir();
     await saveScreenwriterFile(
-      `${appDataDir}${basenameOfPath(lastImportFile)}`,
+      `${appDataDir}__backup__${basenameOfPath(lastImportFile)}`,
       metaDataAndSections()
     );
   }
@@ -446,7 +446,7 @@ export function App({ fileImportAndExport } = {}) {
     // shortcuts for app
 
     if ((ev.metaKey || ev.ctrlKey) && ev.key === ",") {
-        setShowSettings(!showSettings);
+      setShowSettings(!showSettings);
     }
 
     if ((ev.metaKey || ev.ctrlKey) && ev.key === "g") {
@@ -491,12 +491,18 @@ export function App({ fileImportAndExport } = {}) {
         return;
       }
       if (window.__TAURI__) {
-        // creates an autosave in /$HOME/Library/Application Support/com.screenwriter.dev
-        let lastImportFile = localStorage.getItem("lastImportFile");
-        if (lastImportFile) {
-          autoSaveTauri(lastImportFile).then(() => {
-            lastSavedExport = content;
-          });
+        // creates an autosave in /$HOME/Library/Application Support/com.screenwriter.dev/__backup__$filename
+        let file =
+          localStorage.getItem("lastImportFile") ||
+          localStorage.getItem("lastStoredFile");
+        if (file) {
+          autoSaveTauri(file)
+            .then(() => {
+              lastSavedExport = content;
+            })
+            .catch((err) => {
+              //console.error(err);
+            });
         }
       } else {
         downloadScreenplay();

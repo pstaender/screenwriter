@@ -79,7 +79,7 @@ export function Toolbar({
   const autoSaveIntervalInMilliSeconds = Number(
     localStorage.getItem("autosave")
   );
-  const downloadIntervalInSeconds = 5;
+  const downloadIntervalInSeconds = 120;
 
   const [autoSave, setAutoSave] = useState(autoSaveIntervalInMilliSeconds > 0);
   const [downloadFormat, setDownloadFormat] = useState(
@@ -88,10 +88,6 @@ export function Toolbar({
   const [autoScroll, setAutoScroll] = useState(
     localStorage.getItem("autoScrollToCurrentElement") === "true"
   );
-
-  function handleToggleAutoSave() {
-    setAutoSave(!autoSave);
-  }
 
   function handleEditMetadata() {
     setEditMetaData(true);
@@ -182,14 +178,29 @@ export function Toolbar({
       )}
 
       <div className="icon">
-        <i className="gg-performance" onClick={() => {
+        <i
+          className="gg-performance"
+          onClick={() => {
             setShowSettings(true);
-        }}></i>
+          }}
+        ></i>
       </div>
 
-      {showSettings && <Settings setMetaData={setMetaData} darkMode={darkMode} setDarkMode={setDarkMode} setShowSettings={setShowSettings} autoScroll={autoScroll} setAutoScroll={setAutoScroll} focusMode={focusMode} setFocusMode={setFocusMode} handleEditMetadata={handleEditMetadata}></Settings>}
+      {showSettings && (
+        <Settings
+          setMetaData={setMetaData}
+          darkMode={darkMode}
+          setDarkMode={setDarkMode}
+          setShowSettings={setShowSettings}
+          autoScroll={autoScroll}
+          setAutoScroll={setAutoScroll}
+          focusMode={focusMode}
+          setFocusMode={setFocusMode}
+          handleEditMetadata={handleEditMetadata}
+          autoSave={autoSave}
+          setAutoSave={setAutoSave}
+        ></Settings>
+      )}
     </div>
   );
 }
-
-// localStorage.getItem('autoScrollToCurrentElement') === 'true'

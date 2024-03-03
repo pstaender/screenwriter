@@ -61,7 +61,7 @@ You can use very limited markup/markdown:
 
  * starting with `//` is a comment, i.e. will not be printed and barely visible on screen
  * starting with `#`, `##`, `###` etc. uses headlines, similar to markdown
- * starting with `######` will force a page break on printing
+ * starting with `#######` (h7) will force a page break on printing
 
 ## TODOs
 

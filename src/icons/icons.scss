@@ -61,44 +61,6 @@
     background: currentColor;
 }
 
-.gg-dark-mode {
-    box-sizing: border-box;
-    position: relative;
-    display: block;
-    transform: scale(var(--ggs, 1));
-    border: 2px solid;
-    border-radius: 100px;
-    width: 20px;
-    height: 20px;
-}
-.gg-dark-mode::after,
-.gg-dark-mode::before {
-    content: "";
-    box-sizing: border-box;
-    position: absolute;
-    display: block;
-}
-.gg-dark-mode::before {
-    border: 5px solid;
-    border-top-left-radius: 100px;
-    border-bottom-left-radius: 100px;
-    border-right: 0;
-    width: 9px;
-    height: 18px;
-    top: -1px;
-    left: -1px;
-}
-.gg-dark-mode::after {
-    border: 4px solid;
-    border-top-right-radius: 100px;
-    border-bottom-right-radius: 100px;
-    border-left: 0;
-    width: 4px;
-    height: 8px;
-    right: 4px;
-    top: 4px;
-}
-
 .gg-trash {
     box-sizing: border-box;
     position: relative;
@@ -107,7 +69,10 @@
     width: 10px;
     height: 12px;
     border: 2px solid transparent;
-    box-shadow: 0 0 0 2px, inset -2px 0 0, inset 2px 0 0;
+    box-shadow:
+        0 0 0 2px,
+        inset -2px 0 0,
+        inset 2px 0 0;
     border-bottom-left-radius: 1px;
     border-bottom-right-radius: 1px;
     margin-top: 4px;
@@ -136,104 +101,6 @@
     border-top-right-radius: 2px;
     top: -7px;
     left: -2px;
-}
-
-.gg-more-alt {
-    transform: scale(var(--ggs, 1));
-}
-.gg-more-alt,
-.gg-more-alt::after,
-.gg-more-alt::before {
-    box-sizing: border-box;
-    position: relative;
-    display: block;
-    width: 4px;
-    height: 4px;
-    background: currentColor;
-    border-radius: 100%;
-}
-.gg-more-alt::after,
-.gg-more-alt::before {
-    content: "";
-    position: absolute;
-    top: 0;
-}
-.gg-more-alt::after {
-    left: -6px;
-}
-.gg-more-alt::before {
-    right: -6px;
-}
-
-.gg-timer,
-.gg-timer::before {
-    border: 2px solid;
-    width: 18px;
-    height: 18px;
-    border-radius: 40px;
-}
-.gg-timer {
-    background: linear-gradient(to left, currentColor 10px, transparent 0) no-repeat 6px -2px/2px 6px;
-    box-sizing: border-box;
-    transform: scale(var(--ggs, 1));
-    position: relative;
-    display: block;
-    border-top-color: transparent;
-}
-.gg-timer::after,
-.gg-timer::before {
-    content: "";
-    display: block;
-    box-sizing: border-box;
-    position: absolute;
-}
-.gg-timer::before {
-    border-right-color: transparent;
-    border-left-color: transparent;
-    border-bottom-color: transparent;
-    right: -2px;
-    top: -2px;
-    transform: rotate(45deg);
-}
-.gg-timer::after {
-    width: 2px;
-    height: 6px;
-    background: currentColor;
-    transform: rotate(-50deg);
-    left: 4px;
-    bottom: 5px;
-    border-radius: 100px;
-}
-
-gg-notes {
-    box-sizing: border-box;
-    position: relative;
-    display: block;
-    transform: scale(var(--ggs, 1));
-    width: 20px;
-    height: 22px;
-    border: 2px solid;
-    border-radius: 3px;
-}
-.gg-notes::after,
-.gg-notes::before {
-    content: "";
-    display: block;
-    box-sizing: border-box;
-    position: absolute;
-    border-radius: 3px;
-    height: 2px;
-    background: currentColor;
-    left: 2px;
-}
-.gg-notes::before {
-    box-shadow: 0 4px 0, 0 8px 0;
-    width: 12px;
-    top: 2px;
-}
-.gg-notes::after {
-    width: 6px;
-    top: 14px;
 }
 
 .gg-brackets {
@@ -265,95 +132,7 @@ gg-notes {
     border-left: 0;
     right: 2px;
 }
-.gg-eye {
-    position: relative;
-    display: block;
-    transform: scale(var(--ggs, 1));
-    width: 24px;
-    height: 18px;
-    border-bottom-right-radius: 100px;
-    border-bottom-left-radius: 100px;
-    overflow: hidden;
-    box-sizing: border-box;
-}
-.gg-eye::after,
-.gg-eye::before {
-    content: "";
-    display: block;
-    border-radius: 100px;
-    position: absolute;
-    box-sizing: border-box;
-}
-.gg-eye::after {
-    top: 2px;
-    box-shadow: inset 0 -8px 0 2px, inset 0 0 0 2px;
-    width: 24px;
-    height: 24px;
-}
-.gg-eye::before {
-    width: 8px;
-    height: 8px;
-    border: 2px solid;
-    bottom: 4px;
-    left: 8px;
-}
 
-.gg-add-r {
-    box-sizing: border-box;
-    position: relative;
-    display: block;
-    width: 22px;
-    height: 22px;
-    border: 2px solid;
-    transform: scale(var(--ggs, 1));
-    border-radius: 4px;
-}
-.gg-add-r::after,
-.gg-add-r::before {
-    content: "";
-    display: block;
-    box-sizing: border-box;
-    position: absolute;
-    width: 10px;
-    height: 2px;
-    background: currentColor;
-    border-radius: 5px;
-    top: 8px;
-    left: 4px;
-}
-.gg-add-r::after {
-    width: 2px;
-    height: 10px;
-    top: 4px;
-    left: 8px;
-}
-
-.gg-layout-list {
-    transform: scale(var(--ggs, 1));
-}
-.gg-layout-list,
-.gg-layout-list::after,
-.gg-layout-list::before {
-    box-sizing: border-box;
-    position: relative;
-    display: block;
-    width: 10px;
-    height: 2px;
-    border-left: 6px double;
-    border-right: 4px solid;
-}
-.gg-layout-list::after,
-.gg-layout-list::before {
-    content: "";
-    position: absolute;
-    left: -6px;
-}
-.gg-layout-list::after {
-    bottom: 4px;
-}
-.gg-layout-list::before {
-    top: 4px;
-}
 .gg-font-height {
     box-sizing: border-box;
     position: relative;
@@ -386,115 +165,33 @@ gg-notes {
     right: 6px;
 }
 
-.gg-scroll-v,
-.gg-scroll-v::after,
-.gg-scroll-v::before {
-    display: block;
-    box-sizing: border-box;
-    width: 6px;
-    height: 6px
-}
-.gg-scroll-v {
-    position: relative;
-    transform: scale(var(--ggs,1));
-    border: 2px solid;
-    border-radius: 10px
-}
-.gg-scroll-v::after,
-.gg-scroll-v::before {
-    content: "";
-    position: absolute;
-    transform: rotate(-45deg);
-    left: -2px
-}
-.gg-scroll-v::after {
-    border-bottom: 2px solid;
-    border-left: 2px solid;
-    bottom: -8px
-}
-.gg-scroll-v::before {
-    border-top: 2px solid;
-    border-right: 2px solid;
-    top: -8px
-}
-.gg-menu-boxed {
-    box-sizing: border-box;
-    position: relative;
-    display: block;
-    transform: scale(var(--ggs,1));
-    width: 18px;
-    height: 18px;
-    border-radius: 3px;
-    border: 2px solid;
-}
-.gg-menu-boxed::before {
-    content: "";
-    display: block;
-    box-sizing: border-box;
-    position: absolute;
-    width: 10px;
-    height: 2px;
-    background: currentColor;
-    border-radius: 3px;
-    top:2px;
-    left: 2px;
-    box-shadow: 0 4px 0, 0 8px 0
-}
-.gg-format-separator {
-    transform: scale(var(--ggs,1))
-}
-.gg-format-separator,
-.gg-format-separator::after {
-    box-sizing: border-box;
-    position: relative;
-    display: block;
-    width: 18px;
-    height: 2px;
-    border-radius: 3px;
-    background: currentColor
-}
-.gg-format-separator::after {
-    content: "";
-    position: absolute;
-    top: -12px;
-    left: 3px;
-    opacity: .5;
-    width: 12px;
-    box-shadow:
-        0 4px 0 0,
-        0 8px 0 0,
-        0 16px 0 0
-}
 .gg-performance {
-    background:
-        linear-gradient(to left,
-            currentColor 8px,transparent 0)
-            no-repeat center/2px 6px;
+    background: linear-gradient(to left, currentColor 8px, transparent 0) no-repeat center/2px 6px;
     box-sizing: border-box;
     position: relative;
     display: block;
-    transform: scale(var(--ggs,1));
+    transform: scale(var(--ggs, 1));
     width: 22px;
     height: 22px;
     border: 2px solid;
-    border-radius: 100px
-  }
-  .gg-performance::after,
-  .gg-performance::before {
+    border-radius: 100px;
+}
+.gg-performance::after,
+.gg-performance::before {
     content: "";
     display: block;
     position: absolute;
-    border: 2px solid
-  }
-  .gg-performance::before {
+    border: 2px solid;
+}
+.gg-performance::before {
     bottom: 2px;
     width: 2px;
     height: 2px;
     box-sizing: content-box;
     border-radius: 100px;
-    left: 6px
-  }
-  .gg-performance::after {
+    left: 6px;
+}
+.gg-performance::after {
     box-sizing: border-box;
     border-radius: 3px;
     width: 14px;
@@ -503,5 +200,5 @@ gg-notes {
     border-top-right-radius: 100px;
     border-bottom: 0;
     top: 2px;
-    left: 2px
-  }
+    left: 2px;
+}
