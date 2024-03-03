@@ -130,7 +130,7 @@ export function App({ fileImportAndExport } = {}) {
     return data;
   }
 
-  function downloadScreenplay(format = null) {
+  async function downloadScreenplay(format = null) {
     if (!format) {
       format = localStorage.getItem("exportFormat") === "txt" ? "txt" : "json";
     }
@@ -164,6 +164,12 @@ export function App({ fileImportAndExport } = {}) {
     if (format === "json") {
       content = JSON.stringify(data);
       mimeType = "application/json";
+    } else if (format === "screenwriter") {
+      // https://stuk.github.io/jszip/documentation/examples/download-zip-file.html
+      let zip = new JSZip();
+      zip.file("screenplay.json", JSON.stringify(data));
+      content = await zip.generateAsync({ type: "blob" });
+      mimeType = "application/zip";
     } else {
       content = Exporter(data.sections, data.metaData, {
         excludeMetaData:
@@ -327,9 +333,7 @@ export function App({ fileImportAndExport } = {}) {
           setStatusLog({
             message: `${
               isScreenwriterFile ? "Saved" : "Exported"
-            } to file '${filename}'${
-              isScreenwriterFile ? " with history" : ""
-            }`,
+            } to file '${filename}'`,
             level: "ok"
           });
           if (newFilename) {
@@ -340,6 +344,20 @@ export function App({ fileImportAndExport } = {}) {
         console.debug("reload");
         storeScreenplayInLocalStorage();
         setSeed(Math.random());
+      } else if (ev.shiftKey && ev.key === "A") {
+        console.log();
+        let text = screenplayAsPlainText();
+        if (text) {
+          navigator?.clipboard?.writeText(text).then(
+            () => {
+              /* clipboard successfully set */
+              setStatusLog({
+                message: `Copied to clipboard (${text.length} characters)`,
+                level: "ok"
+              });
+            }
+          );
+        }
       }
     }
   }
@@ -472,6 +490,14 @@ export function App({ fileImportAndExport } = {}) {
     }
   }
 
+  function screenplayAsPlainText() {
+    let data = metaDataAndSections();
+    return Exporter(data.sections, data.metaData, {
+      excludeMetaData:
+        localStorage.getItem("excludeMetaDataOnPlainText") === "true"
+    });
+  }
+
   useInterval(() => {
     // only store, if tab is active
     if (!document.hidden) {
@@ -481,11 +507,7 @@ export function App({ fileImportAndExport } = {}) {
 
   useInterval(
     () => {
-      let data = metaDataAndSections();
-      let content = Exporter(data.sections, data.metaData, {
-        excludeMetaData:
-          localStorage.getItem("excludeMetaDataOnPlainText") === "true"
-      });
+      let content = screenplayAsPlainText();
       let sections = data.sections.filter((s) => !!s.html.trim());
       if (sections?.length == 0 || content === lastSavedExport) {
         return;
@@ -645,6 +667,7 @@ export function App({ fileImportAndExport } = {}) {
         seed={seed}
         currentIndex={currentIndex}
         showDocumentHistory={showDocumentHistory}
+        storeScreenplayInLocalStorage={storeScreenplayInLocalStorage}
       />
       {showDocumentHistory && (
         <DocumentHistory
@@ -676,4 +699,5 @@ export function App({ fileImportAndExport } = {}) {
 
 import "./Print.scss";
 import { writeBinaryFile } from "@tauri-apps/api/fs";
+import JSZip from "jszip";
 // import './Story.scss';

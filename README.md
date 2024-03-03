@@ -19,17 +19,18 @@ The data is stored in your browsers local storage.
 
 ## Keyboard Usage
 
-  * `TAB`: change the type of text in the current secion (text, charater for dialog, dialog text, dialog annotation and scene annotation)
+  * `tab`: change the type of text in the current secion (text, charater for dialog, dialog text, dialog annotation and scene annotation)
   * `shift` + `enter`: inserts a new line (line-break)
-  * `enter`: breaks section into parts / inserts new section below if at the end of the section / inserts above if ath the beginning of the section
-  * `⌘`/`ctrl` + `backspace`: removes the current section
+  * `enter`: breaks section into parts / inserts new section below if at the end of the section / inserts above if at the beginning of the section
+  * `⌘`/`ctrl` + `backspace`: removes section
   * `⌘`/`ctrl` + `shift` + `arrow-down`: merges this section with next one
   * `⌘`/`ctrl` + `arrow-up`: jumps to previous section
   * `⌘`/`ctrl` + `arrow-down`: jumps to next section
   * `⌘`/`ctrl` + `shift` + `U`: uppercases the section, lowercases if everthing is uppercase
   * `⌘`/`ctrl` + `shift` + `N`: New Document (clears current without extra warning)
-  * `⌘`/`ctrl` + `shift` + `R`: Reloads document
+  * `⌘`/`ctrl` + `shift` + `R`: Reloads document (recommended also as workaround when editor behaves erroneous)
   * `⌘`/`ctrl` + `shift` + `S`: downloads screenplay as txt or json file
+  * `⌘`/`ctrl` + `shift` + `A`: copy complete screenplay as plain text to clipboard
   * `ctrl` + `shift` + `P`: exports file as pdf in print style
   * `⌘`/`ctrl` + `0`: toggles focus mode
   * `⌘`/`ctrl` + `shift` + `=`: Removes all empty sections (good for cleanup)
@@ -85,4 +86,5 @@ You can use very limited markup/markdown:
 ## License
 
 MIT
+
 

@@ -148,10 +148,6 @@ export async function saveScreenwriterFile(
     let lastFilename =
       localStorage.getItem("lastImportFile") ||
       localStorage.getItem("lastStoredFile");
-    console.debug({
-        increaseLastNumberOnFilename,
-        lastFilename
-    })
     if (increaseLastNumberOnFilename && lastFilename) {
       defaultPath = lastFilename.replace(
         /([^\d]+?)(\d+)(\.[^\.]+)$/,

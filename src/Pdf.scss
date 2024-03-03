@@ -88,6 +88,9 @@
         margin-top: 0rem;
     }
 }
+#screenwriter-editor > section:hover, #screenwriter-editor > section.selected {
+    background: none !important;
+}
 #screenwriter-editor > section.character {
     padding-top: 1rem;
 }
