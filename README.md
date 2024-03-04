@@ -72,19 +72,20 @@ You can use very limited markup/markdown:
 
 ## Build
 
-    $ yarn install
-    $ yarn build
+    $ npm install
+    $ npm run build
 
 ## Watch / Development
 
-    $ yarn watch
+    $ npm run watch / $ npm run tauri dev
 
 ## Tests
 
-    $ yarn test
+    $ npm run test
 
 ## License
 
 MIT
+
 
 
