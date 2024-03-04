@@ -247,6 +247,9 @@ export function resetDocument({ setSeed, setMetaData }) {
     localStorage.setItem('mementos', '[]');
     localStorage.setItem('lastIndexOfCurrent', 0);
     localStorage.setItem('lastImportFile', '');
+    localStorage.setItem('lastStoredFile', '');
+    // TODO: load history directly from file
+    localStorage.setItem('history', '{}');
     setMetaData({})
 }
 

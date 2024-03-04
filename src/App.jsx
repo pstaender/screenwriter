@@ -132,7 +132,7 @@ export function App({ fileImportAndExport } = {}) {
 
   async function downloadScreenplay(format = null) {
     if (!format) {
-      format = localStorage.getItem("exportFormat") === "txt" ? "txt" : "json";
+      format = localStorage.getItem("exportFormat");
     }
 
     let data = metaDataAndSections();
@@ -345,18 +345,15 @@ export function App({ fileImportAndExport } = {}) {
         storeScreenplayInLocalStorage();
         setSeed(Math.random());
       } else if (ev.shiftKey && ev.key === "A") {
-        console.log();
         let text = screenplayAsPlainText();
         if (text) {
-          navigator?.clipboard?.writeText(text).then(
-            () => {
-              /* clipboard successfully set */
-              setStatusLog({
-                message: `Copied to clipboard (${text.length} characters)`,
-                level: "ok"
-              });
-            }
-          );
+          navigator?.clipboard?.writeText(text).then(() => {
+            /* clipboard successfully set */
+            setStatusLog({
+              message: `Copied to clipboard (${text.length} characters)`,
+              level: "ok"
+            });
+          });
         }
       }
     }
@@ -484,8 +481,20 @@ export function App({ fileImportAndExport } = {}) {
       if (ev.key === "M") {
         setEditMetaData(true);
       }
-      if (ev.shiftKey && ev.key === "S" && fileImportAndExport) {
+      if (ev.shiftKey && ev.key === "s" && fileImportAndExport && !window.__TAURI__) {
         downloadScreenplay();
+      }
+      if (ev.shiftKey && ev.key === "A") {
+        let text = screenplayAsPlainText();
+        if (text) {
+          navigator?.clipboard?.writeText(text).then(() => {
+            /* clipboard successfully set */
+            setStatusLog({
+              message: `Copied to clipboard (${text.length} characters)`,
+              level: "ok"
+            });
+          });
+        }
       }
     }
   }
@@ -699,5 +708,5 @@ export function App({ fileImportAndExport } = {}) {
 
 import "./Print.scss";
 import { writeBinaryFile } from "@tauri-apps/api/fs";
-import JSZip from "jszip";
+import JSZip, { file } from "jszip";
 // import './Story.scss';
