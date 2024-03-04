@@ -9,6 +9,7 @@ import {
   resetDocument
 } from "../lib/helper";
 import { Settings } from "./Settings";
+import JSZip from "jszip";
 
 export function Toolbar({
   setSeed,
@@ -30,6 +31,15 @@ export function Toolbar({
     resetDocument({ setMetaData, setSeed });
   }
 
+  async function loadScreenWriterFile(file) {
+    let zip = await new JSZip().loadAsync(file);
+    return {
+      screenplay: JSON.parse(await zip.files["screenplay.json"].async("text")),
+      // history could be very large, so we don't load it here
+      history: null,//zip.files["history.json"] ? JSON.parse(await zip.files["history.json"].async("text")) : null,
+    };
+  }
+
   useEffect(() => {
     if (darkMode) {
       document.querySelector("body").classList.add("dark-mode");
@@ -41,21 +51,37 @@ export function Toolbar({
   }, [darkMode]);
 
   const onDrop = useCallback((acceptedFiles) => {
+    function convertToPlainText(blob) {
+      let enc = new TextDecoder("utf-8");
+      let arr = new Uint8Array(blob);
+      return enc.decode(arr);
+    }
     // Loop through accepted file(s)
     acceptedFiles.map((file) => {
       const reader = new FileReader();
-      reader.onload = function (e) {
+      reader.onload = async function (e) {
         if (e.target.result) {
           resetCurrentDocument();
           let data = null;
           try {
+            let isScreenWriterFile = file.name
+              .toLowerCase()
+              .endsWith(".screenwriter");
             if (file.type === "application/json") {
-              data = JSON.parse(e.target.result);
+              data = JSON.parse(convertToPlainText(e.target.result));
               loadJSONDataToLocalStorage(data);
               setDownloadFormat("json");
+            } else if (file.type === "application/zip" || isScreenWriterFile) {
+              let { screenplay, history } = await loadScreenWriterFile(e.target.result);
+              // TODO: what do with history?
+              data = screenplay;
+              loadJSONDataToLocalStorage(data);
+              setDownloadFormat("screenwriter");
             } else {
               // plaintext
-              data = loadPlainTextToLocalStorage(e.target.result);
+              data = loadPlainTextToLocalStorage(
+                convertToPlainText(e.target.result)
+              );
               setDownloadFormat("txt");
             }
           } catch (e) {
@@ -70,7 +96,7 @@ export function Toolbar({
         }
       };
       // onload callback gets called after the reader reads the file data
-      reader.readAsText(file);
+      reader.readAsArrayBuffer(file);
 
       return file;
     });
@@ -113,8 +139,8 @@ export function Toolbar({
 
   useEffect(() => {
     if (downloadFormat) {
-      if (downloadFormat !== "json" && downloadFormat !== "txt") {
-        throw new Error(`Only json and txt are allowed`);
+      if (downloadFormat !== "json" && downloadFormat !== "txt" && downloadFormat !== "screenwriter") {
+        throw new Error(`Only json, txt and screenwriter are allowed`);
       }
       localStorage.setItem("exportFormat", downloadFormat);
     }
@@ -128,6 +154,7 @@ export function Toolbar({
             onDrop={onDrop}
             accept={{
               "plain/txt": [".txt"],
+              "application/zip": [".screenwriter"],
               "application/json": [".json"]
             }}
           />
@@ -145,6 +172,19 @@ export function Toolbar({
                 }}
               ></i>
               <div className="icons">
+              <div
+                  className={[
+                    "icon",
+                    downloadFormat === "screenwriter" ? "active" : ""
+                  ].join(" ")}
+                  onClick={() => {
+                    setDownloadFormat("screenwriter");
+                    downloadScreenplay("screenwriter");
+                  }}
+                  data-help="as Screenwriter file"
+                >
+                  <i className="gg-box"></i>
+                </div>
                 <div
                   className={[
                     "icon",

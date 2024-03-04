@@ -26,11 +26,15 @@ body.print {
     --extra-top-padding: 1.25rem;
     --color-background: #fff !important;
     --color-text: #000 !important;
-    --max-dialog-width: 28rem;
+    --max-dialog-width: 100vw;
     --max-dialog-annotation-width: 25rem;
     --dialog-character-indent: 15rem;
     --dialog-text-indent: 9rem;
     --dialog-annotation-indent: 12rem;
     --scene-number-width: 2rem;
+    #screenwriter-editor {
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
     @import "Pdf.scss";
 }

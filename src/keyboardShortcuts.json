@@ -10,6 +10,7 @@
   "`⌘`/`ctrl` + `shift` + `N`": "New Document (clears current without extra warning)",
   "`⌘`/`ctrl` + `shift` + `R`": "Reloads document (recommended also as workaround when editor behaves erroneous)",
   "`⌘`/`ctrl` + `shift` + `S`": "downloads screenplay as txt or json file",
+  "`⌘`/`ctrl` + `shift` + `A`": "copy complete screenplay as plain text to clipboard",
   "`ctrl` + `shift` + `P`": "exports file as pdf in print style",
   "`⌘`/`ctrl` + `0`": "toggles focus mode",
   "`⌘`/`ctrl` + `shift` + `=`": "Removes all empty sections (good for cleanup)",

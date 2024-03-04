@@ -15,6 +15,9 @@ import {
   lastMemento
 } from "../lib/mementos.js";
 
+// see handleFocus
+let lastFocusOnSection = null;
+
 export function SceneSection({
   current,
   goNext,
@@ -520,6 +523,11 @@ export function SceneSection({
   }
 
   function handleFocus(ev) {
+    if (lastFocusOnSection && ev.timeStamp < lastFocusOnSection + 100) {
+      // prevent multiple handleFocus fire events (just focus, if last focus event is more than 100ms ago)
+      return;
+    }
+    lastFocusOnSection = ev.timeStamp;
     if (inputRef.current.dataset.excludeFromMemento) {
       inputRef.current.dataset.excludeFromMemento = false;
     } else {
@@ -569,9 +577,8 @@ export function SceneSection({
 
   function handleClick(ev) {
     if (ev.target === ev.currentTarget) {
-      // clicked only on section, not the div[contenteditable] inside
-      ev.target.querySelector("div").click();
-      handleFocus(ev);
+      // console.log('!', ev.target.querySelector('div[contenteditable="true"]'))
+      ev.target.querySelector('div[contenteditable="true"]').focus();
     }
   }
 
@@ -644,7 +651,7 @@ export function SceneSection({
       <div
         contentEditable={true}
         // focus-event is disabled for now, causes problems with click event
-        // onFocus={handleFocus}
+        onFocus={handleFocus}
         onBlur={handleBlur}
         ref={inputRef}
         className={["edit-field", editingLevel].join(" ")}
