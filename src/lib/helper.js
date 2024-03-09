@@ -248,6 +248,7 @@ export function resetDocument({ setSeed, setMetaData }) {
     localStorage.setItem('lastIndexOfCurrent', 0);
     localStorage.setItem('lastImportFile', '');
     localStorage.setItem('lastStoredFile', '');
+    // localStorage.setItem('hideSettingsIcon', '');
     // TODO: load history directly from file
     localStorage.setItem('history', '{}');
     setMetaData({})

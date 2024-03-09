@@ -217,7 +217,7 @@ export function Toolbar({
         </>
       )}
 
-      <div className="icon">
+      <div className="icon" style={localStorage.getItem('hideSettingsIcon') === 'true' ? {display: 'none'} : {}}>
         <i
           className="gg-performance"
           onClick={() => {

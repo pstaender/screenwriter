@@ -24,7 +24,7 @@ Tested in newest Chrome. Firefox works, too. Safari does well - mostly.
   * `⌘`/`ctrl` + `shift` + `arrow-down`: merges this section with next one
   * `⌘`/`ctrl` + `arrow-up`: jumps to previous section
   * `⌘`/`ctrl` + `arrow-down`: jumps to next section
-  * `⌘`/`ctrl` + `shift` + `U`: uppercases the section, lowercases if everthing is uppercase
+  * `⌘`/`ctrl` + `shift` + `U`: toggles section between uppercase, lowercases and capitalized
   * `⌘`/`ctrl` + `shift` + `N`: New Document (clears current without extra warning)
   * `⌘`/`ctrl` + `shift` + `R`: Reloads document (recommended also as workaround when editor behaves erroneous)
   * `⌘`/`ctrl` + `shift` + `S`: downloads screenplay as txt or json file
@@ -83,3 +83,4 @@ You can use very limited markup/markdown:
 ## License
 
 MIT
+

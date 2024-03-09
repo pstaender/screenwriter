@@ -481,6 +481,12 @@ export function App({ fileImportAndExport } = {}) {
       if (ev.key === "M") {
         setEditMetaData(true);
       }
+      if (ev.key === "N") {
+        if (confirm('Do you want to clear the document?')) {
+          resetDocument({ setMetaData, setSeed });
+        }
+      }
+      
       if (ev.shiftKey && ev.key === "s" && fileImportAndExport && !window.__TAURI__) {
         downloadScreenplay();
       }
@@ -517,6 +523,7 @@ export function App({ fileImportAndExport } = {}) {
   useInterval(
     () => {
       let content = screenplayAsPlainText();
+      let data = metaDataAndSections();
       let sections = data.sections.filter((s) => !!s.html.trim());
       if (sections?.length == 0 || content === lastSavedExport) {
         return;

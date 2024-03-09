@@ -17,7 +17,7 @@ export function Settings({
   autoScroll,
   setAutoScroll,
   focusMode,
-  setFocusMode
+  setFocusMode,
 } = {}) {
   const ref = useRef(null);
 
@@ -89,6 +89,20 @@ export function Settings({
               label="Focus Mode"
               defaultChecked={focusMode}
               onChange={(ev) => setFocusMode(ev.target.checked)}
+            />
+          </li>
+
+          <li className="toggle">
+            <div className="label" onClick={clickNearestToggle}>
+              Hide Settings icon
+            </div>
+            <Toggle
+              id="hideSettingsIcon"
+              label="Hide Settings Icon"
+              defaultChecked={localStorage.getItem('hideSettingsIcon') === 'true'}
+              onChange={(ev) => {
+                localStorage.setItem('hideSettingsIcon', ev.target.checked)
+              }}
             />
           </li>
           {window.__TAURI__ && (

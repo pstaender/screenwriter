@@ -487,7 +487,18 @@ export function SceneSection({
       }
     } else if ((ev.metaKey || ev.ctrlKey) && ev.shiftKey && ev.key === "u") {
       let text = inputRef.current.textContent.toLocaleUpperCase();
-      if (text === inputRef.current.textContent) {
+      const capitalizeString = (str) => {
+        str = str.trim();
+        let whitespaces = str.match(/[\s\t\n]+/g) || [];
+        let parts = str.split(/[\s\t\n]+/);
+
+        return parts.map((word, i) => word ? word[0].toLocaleUpperCase() + word.substring(1).toLocaleLowerCase() + (whitespaces[i] || '') : '').join('');
+      }
+      if (inputRef.current.textContent === inputRef.current.textContent.toLocaleLowerCase()) {
+        // capitalize first letter of each word
+        text = capitalizeString(inputRef.current.textContent);
+      }
+      else if (text === inputRef.current.textContent) {
         text = inputRef.current.textContent.toLocaleLowerCase();
       }
       inputRef.current.textContent = text;
@@ -577,7 +588,6 @@ export function SceneSection({
 
   function handleClick(ev) {
     if (ev.target === ev.currentTarget) {
-      // console.log('!', ev.target.querySelector('div[contenteditable="true"]'))
       ev.target.querySelector('div[contenteditable="true"]').focus();
     }
   }
