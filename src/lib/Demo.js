@@ -61,7 +61,7 @@ The AUTHOR smiles. He now realises, that he is already looking at a software whi
 
 ### Features of Screenwriter
 
-[pause] ★ Import and Export of plain text
+[pause] ★ Import and Export of plain text and json files
 
 [pause] ★ Focus Mode
 
@@ -76,8 +76,6 @@ The AUTHOR smiles. He now realises, that he is already looking at a software whi
 [pause] ★ runs in modern browsers
 
 [pause] ★ export as pdf/print
-
-[pause] ★ Optional: auto-suggestions for characters and scene description
 
 [transition]THE END
 

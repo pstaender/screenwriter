@@ -1,21 +1,19 @@
 # Screenwriter
-## Write distraction-free screenplays in your desktop browser
+## Distraction-free screenplay editor in your desktop browser
 
 ![status](https://github.com/pstaender/screenwriter/actions/workflows/specs.yml/badge.svg)
 
-<img width="1185" alt="Screenshot 2023-03-31 at 11 44 37" src="https://user-images.githubusercontent.com/140571/229086507-b4b63dd7-52ba-4c90-b97c-4dab1fc2bcbb.png">
-
-Stores data as local storage, imports and exports txt files. Made for keyboard-intensive usage (see below).
-
-Tested in newest Chrome only. Firefox should work, too. I don't care about Safari.
-
-## Demo
-
-**Try out the editor here: https://screenwriter.zeitpulse.com/**.
+**Use screenwriter here for free: https://screenwriter.zeitpulse.com/**.
 
 To let the editor describes itself: https://screenwriter.zeitpulse.com/#demo
 
-The data is stored in your browsers local storage.
+The data is stored in your browsers' local storage and not on any remote server.
+
+<img width="1185" alt="Screenshot 2023-03-31 at 11 44 37" src="https://user-images.githubusercontent.com/140571/229086507-b4b63dd7-52ba-4c90-b97c-4dab1fc2bcbb.png">
+
+Screenwrier imports and exports txt files and also has a native json file format. It's made for keyboard-intensive usage (see keyboard shortcuts below).
+
+Tested in newest Chrome. Firefox works, too. Safari does well - mostly.
 
 ## Keyboard Usage
 
@@ -56,7 +54,7 @@ The data is stored in your browsers local storage.
  
 <img width="1189" alt="Screenshot 2023-03-31 at 11 46 53" src="https://user-images.githubusercontent.com/140571/229086759-31aa087d-cb28-443f-82c6-a36200b16a26.png">
 
-## A bit of markdown
+## A taste of markdown
 
 You can use very limited markup/markdown:
 
@@ -67,7 +65,6 @@ You can use very limited markup/markdown:
 ## TODOs
 
  * faster cleanup of html/plain-text during text changes
- * index overview windows
  * https://pagedjs.org/posts/2020-04-15-starterkits-for-pagedjs/
 
 ## Build
@@ -86,6 +83,3 @@ You can use very limited markup/markdown:
 ## License
 
 MIT
-
-
-
